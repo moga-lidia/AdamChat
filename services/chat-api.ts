@@ -1,4 +1,4 @@
-const BASE_URL = 'https://ai.chatbot.zaha.tech/chatbot-ai/stream-assistant';
+const BASE_URL = "https://ai.chatbot.zaha.tech/chatbot-ai/stream-assistant";
 
 interface StreamCallbacks {
   onToken: (token: string) => void;
@@ -11,9 +11,7 @@ export function streamResponse(
   sessionId: string,
   lang: string,
   callbacks: StreamCallbacks,
-): AbortController {
-  const controller = new AbortController();
-
+): { abort: () => void } {
   const params = new URLSearchParams({
     prompt,
     sessionId,
@@ -22,66 +20,61 @@ export function streamResponse(
 
   const url = `${BASE_URL}?${params.toString()}`;
 
+  // Use XMLHttpRequest for streaming — works on React Native / Expo Go
+  const xhr = new XMLHttpRequest();
+  let processedLength = 0;
   let conversationHistoryId: number | undefined;
 
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      Accept: 'text/event-stream',
-      'Cache-Control': 'no-cache',
-    },
-    signal: controller.signal,
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+  xhr.open("GET", url, true);
+  xhr.setRequestHeader("Accept", "text/event-stream");
+  xhr.setRequestHeader("Cache-Control", "no-cache");
 
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('No response body');
-      }
+  xhr.onprogress = () => {
+    const newText = xhr.responseText.substring(processedLength);
+    processedLength = xhr.responseText.length;
 
-      const decoder = new TextDecoder();
-      let buffer = '';
+    const lines = newText.split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("data:")) continue;
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+      const jsonStr = trimmed.slice(5);
+      if (!jsonStr) continue;
 
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        // Keep the last incomplete line in the buffer
-        buffer = lines.pop() ?? '';
-
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed.startsWith('data:')) continue;
-
-          const jsonStr = trimmed.slice(5);
-          if (!jsonStr) continue;
-
-          try {
-            const data = JSON.parse(jsonStr);
-            if (data.tokenText) {
-              callbacks.onToken(data.tokenText);
-            }
-            if (data.conversationHistoryId) {
-              conversationHistoryId = data.conversationHistoryId;
-            }
-          } catch {
-            // malformed JSON chunk — skip
-          }
+      try {
+        const data = JSON.parse(jsonStr);
+        if (data.tokenText) {
+          callbacks.onToken(data.tokenText);
         }
+        if (data.conversationHistoryId) {
+          conversationHistoryId = data.conversationHistoryId;
+        }
+      } catch {
+        // malformed JSON chunk — skip
       }
+    }
+  };
 
+  xhr.onloadend = () => {
+    if (xhr.status >= 200 && xhr.status < 300) {
       callbacks.onDone(conversationHistoryId);
-    })
-    .catch((err: Error) => {
-      if (err.name !== 'AbortError') {
-        callbacks.onError(err);
-      }
-    });
+    } else if (xhr.status > 0) {
+      callbacks.onError(new Error(`HTTP ${xhr.status}`));
+    }
+  };
 
-  return controller;
+  xhr.onerror = () => {
+    callbacks.onError(new Error("Network error"));
+  };
+
+  xhr.ontimeout = () => {
+    callbacks.onError(new Error("Request timeout"));
+  };
+
+  xhr.timeout = 60000;
+  xhr.send();
+
+  return {
+    abort: () => xhr.abort(),
+  };
 }

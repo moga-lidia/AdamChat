@@ -125,7 +125,7 @@ export default function MainScreen() {
   const [streamingText, setStreamingText] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const flatListRef = useRef<FlatList>(null);
-  const abortRef = useRef<AbortController | null>(null);
+  const abortRef = useRef<{ abort: () => void } | null>(null);
 
   // Load session on mount
   useEffect(() => {
@@ -352,12 +352,14 @@ export default function MainScreen() {
   const messages = session?.messages ?? [];
   const displayMessages: ChatMessageType[] = [
     ...messages,
-    ...(isStreaming && streamingText
+    ...(isStreaming
       ? [
           {
             id: "_streaming",
             role: "assistant" as const,
-            content: streamingText,
+            content:
+              streamingText ||
+              "Se genereaza raspunsul, te rog sa astepti...",
             timestamp: Date.now(),
           },
         ]
