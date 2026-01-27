@@ -18,7 +18,6 @@ export function streamResponse(
     prompt,
     sessionId,
     lang,
-    isMainWebsite: 'false',
   });
 
   const url = `${BASE_URL}?${params.toString()}`;
@@ -27,7 +26,10 @@ export function streamResponse(
 
   fetch(url, {
     method: 'GET',
-    headers: { Accept: 'text/event-stream' },
+    headers: {
+      Accept: 'text/event-stream',
+      'Cache-Control': 'no-cache',
+    },
     signal: controller.signal,
   })
     .then(async (response) => {

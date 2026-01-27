@@ -6,6 +6,7 @@ export interface ChatMessage {
   content: string;
   timestamp: number;
   conversationHistoryId?: number;
+  isError?: boolean;
 }
 
 export interface ChatSession {
