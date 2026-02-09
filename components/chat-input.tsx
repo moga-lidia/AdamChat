@@ -5,7 +5,6 @@ import {
   TextInput,
   Pressable,
   Platform,
-  KeyboardAvoidingView,
 } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -20,7 +19,7 @@ export function ChatInput({ onSend, disabled }: Props) {
   const bg = useThemeColor({ light: '#e8e9e4', dark: '#2A2A2A' }, 'background');
   const textColor = useThemeColor({}, 'text');
   const placeholderColor = useThemeColor({ light: '#999', dark: '#666' }, 'icon');
-  const accentColor = useThemeColor({ light: '#DCB36C', dark: '#A67C3D' }, 'tint');
+  const accentColor = useThemeColor({ light: '#2f2482', dark: '#c1c1e3' }, 'tint');
 
   const handleSend = () => {
     const trimmed = text.trim();
@@ -30,42 +29,37 @@ export function ChatInput({ onSend, disabled }: Props) {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
-      <View style={[styles.container, { backgroundColor: bg }]}>
-        <TextInput
-          style={[styles.input, { color: textColor }]}
-          placeholder="Pune o intrebare biblica..."
-          placeholderTextColor={placeholderColor}
-          value={text}
-          onChangeText={setText}
-          multiline
-          maxLength={2000}
-          editable={!disabled}
-          onSubmitEditing={handleSend}
-          blurOnSubmit={false}
+    <View style={[styles.container, { backgroundColor: bg }]}>
+      <TextInput
+        style={[styles.input, { color: textColor }]}
+        placeholder="Pune o intrebare biblica..."
+        placeholderTextColor={placeholderColor}
+        value={text}
+        onChangeText={setText}
+        multiline
+        maxLength={2000}
+        editable={!disabled}
+        onSubmitEditing={handleSend}
+        blurOnSubmit={false}
+      />
+      <Pressable
+        onPress={handleSend}
+        disabled={disabled || !text.trim()}
+        style={({ pressed }) => [
+          styles.sendButton,
+          {
+            backgroundColor: text.trim() && !disabled ? accentColor : 'transparent',
+            opacity: pressed ? 0.7 : 1,
+          },
+        ]}
+      >
+        <IconSymbol
+          name="arrow.up"
+          size={20}
+          color={text.trim() && !disabled ? '#FFFFFF' : placeholderColor}
         />
-        <Pressable
-          onPress={handleSend}
-          disabled={disabled || !text.trim()}
-          style={({ pressed }) => [
-            styles.sendButton,
-            {
-              backgroundColor: text.trim() && !disabled ? accentColor : 'transparent',
-              opacity: pressed ? 0.7 : 1,
-            },
-          ]}
-        >
-          <IconSymbol
-            name="arrow.up"
-            size={20}
-            color={text.trim() && !disabled ? '#FFFFFF' : placeholderColor}
-          />
-        </Pressable>
-      </View>
-    </KeyboardAvoidingView>
+      </Pressable>
+    </View>
   );
 }
 

@@ -1,23 +1,25 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { Image, StyleSheet, View, Text } from 'react-native';
 import type { ChatMessage as ChatMessageType } from '@/types/chat';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface Props {
   message: ChatMessageType;
+  fontSize?: number;
 }
 
-export function ChatMessage({ message }: Props) {
+export function ChatMessage({ message, fontSize }: Props) {
   const isUser = message.role === 'user';
   const textColor = useThemeColor({}, 'text');
-  const userBubbleBg = useThemeColor({ light: '#DCB36C', dark: '#A67C3D' }, 'tint');
+  const userBubbleBg = useThemeColor({ light: '#2f2482', dark: '#c1c1e3' }, 'tint');
   const assistantBubbleBg = useThemeColor({ light: '#e8e9e4', dark: '#2A2A2A' }, 'background');
 
   return (
     <View style={[styles.row, isUser ? styles.rowUser : styles.rowAssistant]}>
       {!isUser && (
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>✝</Text>
-        </View>
+        <Image
+          source={require('@/assets/images/logo-speranta.jpg')}
+          style={styles.avatar}
+        />
       )}
       <View
         style={[
@@ -31,6 +33,7 @@ export function ChatMessage({ message }: Props) {
           style={[
             styles.text,
             { color: isUser ? '#FFFFFF' : textColor },
+            fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
           ]}
         >
           {message.content}
@@ -56,15 +59,8 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#DCB36C',
-    alignItems: 'center',
-    justifyContent: 'center',
     marginRight: 8,
     marginTop: 4,
-  },
-  avatarText: {
-    fontSize: 16,
-    color: '#FFFFFF',
   },
   bubble: {
     maxWidth: '78%',

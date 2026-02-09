@@ -2,8 +2,11 @@ import * as Crypto from "expo-crypto";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
+  Animated,
   FlatList,
   Image,
+  Keyboard,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,8 +15,11 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AuthModal } from "@/components/auth-modal";
 import { ChatInput } from "@/components/chat-input";
 import { ChatMessage } from "@/components/chat-message";
+import { HeaderMenu } from "@/components/header-menu";
+import { SettingsPanel } from "@/components/settings-panel";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { streamResponse } from "@/services/chat-api";
 import {
@@ -126,8 +132,40 @@ export default function MainScreen() {
   const [session, setSession] = useState<ChatSession | null>(null);
   const [streamingText, setStreamingText] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [fontSize, setFontSize] = useState(14);
+  const [contrast, setContrast] = useState(100);
+  const [brightness, setBrightness] = useState(100);
   const flatListRef = useRef<FlatList>(null);
   const abortRef = useRef<{ abort: () => void } | null>(null);
+  const keyboardPadding = useRef(new Animated.Value(0)).current;
+
+  // Keyboard handling
+  useEffect(() => {
+    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const onShow = Keyboard.addListener(showEvent, (e) => {
+      Animated.timing(keyboardPadding, {
+        toValue: e.endCoordinates.height,
+        duration: Platform.OS === "ios" ? e.duration : 200,
+        useNativeDriver: false,
+      }).start();
+    });
+    const onHide = Keyboard.addListener(hideEvent, (e) => {
+      Animated.timing(keyboardPadding, {
+        toValue: 0,
+        duration: Platform.OS === "ios" ? (e as any).duration : 200,
+        useNativeDriver: false,
+      }).start();
+    });
+
+    return () => {
+      onShow.remove();
+      onHide.remove();
+    };
+  }, [insets.bottom]);
 
   // Load session on mount
   useEffect(() => {
@@ -270,11 +308,35 @@ export default function MainScreen() {
     );
   }, []);
 
+  const settingsOverlay = (
+    <SettingsPanel
+      visible={showSettings}
+      onClose={() => setShowSettings(false)}
+      fontSize={fontSize}
+      onFontSizeChange={setFontSize}
+      contrast={contrast}
+      onContrastChange={setContrast}
+      brightness={brightness}
+      onBrightnessChange={setBrightness}
+    />
+  );
+
   // ── Welcome Screen ──
   if (screen === "welcome") {
     return (
       <View style={[styles.container, { backgroundColor: bg }]}>
-        <Header insets={insets} headerBg={headerBg} borderColor={borderColor} />
+        <Header
+          insets={insets}
+          headerBg={headerBg}
+          borderColor={borderColor}
+          rightAction={
+            <HeaderMenu
+              onAccount={() => setAuthModalVisible(true)}
+              onSettings={() => setShowSettings((v) => !v)}
+            />
+          }
+        />
+        {settingsOverlay}
         <View style={styles.welcomeBody}>
           <Text style={[styles.welcomeText, { color: textColor }]}>
             Conecteaza-te in portal si bucura-te de toate avantajele: pastrezi
@@ -291,6 +353,10 @@ export default function MainScreen() {
             <Text style={styles.startButtonText}>START</Text>
           </Pressable>
         </View>
+        <AuthModal
+          visible={authModalVisible}
+          onClose={() => setAuthModalVisible(false)}
+        />
       </View>
     );
   }
@@ -302,13 +368,25 @@ export default function MainScreen() {
 
     return (
       <View style={[styles.container, { backgroundColor: bg }]}>
-        <Header insets={insets} headerBg={headerBg} borderColor={borderColor} />
+        <Header
+          insets={insets}
+          headerBg={headerBg}
+          borderColor={borderColor}
+          rightAction={
+            <HeaderMenu
+              onAccount={() => setAuthModalVisible(true)}
+              onSettings={() => setShowSettings((v) => !v)}
+            />
+          }
+        />
+        {settingsOverlay}
         <ScrollView contentContainerStyle={styles.langBody}>
           {LANG_MESSAGES.map((msg, i) => (
             <View key={i} style={styles.langMessageRow}>
-              <View style={styles.logo}>
-                <Text style={styles.logoIcon}>✝</Text>
-              </View>
+              <Image
+                source={require("@/assets/images/logo.jpg")}
+                style={styles.logoImage}
+              />
               <View style={styles.langBubbleWrap}>
                 <View
                   style={[styles.langBubble, { backgroundColor: bubbleBg }]}
@@ -340,6 +418,10 @@ export default function MainScreen() {
             ))}
           </View>
         </ScrollView>
+        <AuthModal
+          visible={authModalVisible}
+          onClose={() => setAuthModalVisible(false)}
+        />
       </View>
     );
   }
@@ -375,28 +457,24 @@ export default function MainScreen() {
         headerBg={headerBg}
         borderColor={borderColor}
         rightAction={
-          <Pressable
-            onPress={handleNewChat}
-            style={({ pressed }) => [
-              styles.newChatButton,
-              { borderColor, opacity: pressed ? 0.6 : 1 },
-            ]}
-          >
-            <Text style={styles.newChatButtonText}>+</Text>
-          </Pressable>
+          <HeaderMenu
+            onAccount={() => setAuthModalVisible(true)}
+            onSettings={() => setShowSettings((v) => !v)}
+            onNewChat={handleNewChat}
+          />
         }
       />
+      {settingsOverlay}
 
       <FlatList
         ref={flatListRef}
         data={displayMessages}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <ChatMessage message={item} />}
+        renderItem={({ item }) => <ChatMessage message={item} fontSize={fontSize} />}
         contentContainerStyle={styles.messageList}
         keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
         ListFooterComponent={
-          // Show quick actions only when chat has just the initial lang+welcome messages
           showQuickActions ? (
             <View style={styles.quickActions}>
               {QUICK_ACTIONS[session!.lang!].map((action) => (
@@ -416,9 +494,13 @@ export default function MainScreen() {
         }
       />
 
-      <View style={{ paddingBottom: insets.bottom }}>
+      <Animated.View style={{ paddingBottom: Animated.add(keyboardPadding, insets.bottom) }}>
         <ChatInput onSend={sendMessage} disabled={isStreaming} />
-      </View>
+      </Animated.View>
+      <AuthModal
+        visible={authModalVisible}
+        onClose={() => setAuthModalVisible(false)}
+      />
     </View>
   );
 }
@@ -448,7 +530,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   logoText: {
-    color: "#1A56A8",
+    color: "#2f2482",
     fontSize: 18,
     fontWeight: "800",
     letterSpacing: 1,
@@ -517,26 +599,13 @@ const styles = StyleSheet.create({
   },
   langButton: {
     borderWidth: 1.5,
-    borderColor: "#1A56A8",
+    borderColor: "#2f2482",
     borderRadius: 20,
     paddingHorizontal: 18,
     paddingVertical: 8,
   },
   langButtonText: {
-    color: "#1A56A8",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-
-  // New chat button
-  newChatButton: {
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  newChatButtonText: {
-    color: "#1A56A8",
+    color: "#2f2482",
     fontSize: 14,
     fontWeight: "600",
   },
@@ -555,13 +624,13 @@ const styles = StyleSheet.create({
   },
   quickActionButton: {
     borderWidth: 1.5,
-    borderColor: "#1A56A8",
+    borderColor: "#2f2482",
     borderRadius: 22,
     paddingHorizontal: 22,
     paddingVertical: 10,
   },
   quickActionText: {
-    color: "#1A56A8",
+    color: "#2f2482",
     fontSize: 15,
     fontWeight: "600",
   },

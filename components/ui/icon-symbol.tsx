@@ -21,6 +21,10 @@ const MAPPING = {
   'arrow.up': 'arrow-upward',
   'gearshape.fill': 'settings',
   'plus': 'add',
+  'person.fill': 'person',
+  'envelope.fill': 'email',
+  'line.3.horizontal': 'menu',
+  'xmark': 'close',
 } as IconMapping;
 
 /**
