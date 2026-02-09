@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   FlatList,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -94,9 +95,10 @@ function Header({
       ]}
     >
       <View style={styles.headerLeft}>
-        <View style={styles.logo}>
-          <Text style={styles.logoIcon}>✝</Text>
-        </View>
+        <Image
+          source={require("@/assets/images/logo.jpg")}
+          style={styles.logoImage}
+        />
         <Text style={styles.logoText}>ADAM</Text>
       </View>
       {rightAction}
@@ -106,9 +108,9 @@ function Header({
 
 export default function MainScreen() {
   const insets = useSafeAreaInsets();
-  const bg = useThemeColor({ light: "#F5F5F5", dark: "#111" }, "background");
+  const bg = useThemeColor({ light: "#f4f5f0", dark: "#111" }, "background");
   const headerBg = useThemeColor(
-    { light: "#FFFFFF", dark: "#1A1A1A" },
+    { light: "#f4f5f0", dark: "#1A1A1A" },
     "background",
   );
   const borderColor = useThemeColor({ light: "#E0E0E0", dark: "#333" }, "icon");
@@ -439,19 +441,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  logo: {
+  logoImage: {
     width: 30,
     height: 30,
     borderRadius: 6,
-    backgroundColor: "#1A56A8",
-    alignItems: "center",
-    justifyContent: "center",
     marginRight: 8,
-  },
-  logoIcon: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
   },
   logoText: {
     color: "#1A56A8",
