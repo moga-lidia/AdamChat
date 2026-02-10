@@ -10,7 +10,7 @@ interface Props {
 export function ChatMessage({ message, fontSize }: Props) {
   const isUser = message.role === 'user';
   const textColor = useThemeColor({}, 'text');
-  const userBubbleBg = useThemeColor({ light: '#2f2482', dark: '#c1c1e3' }, 'tint');
+  const userBubbleBg = useThemeColor({ light: '#2f2482', dark: '#4a3a9e' }, 'tint');
   const assistantBubbleBg = useThemeColor({ light: '#e8e9e4', dark: '#2A2A2A' }, 'background');
 
   return (

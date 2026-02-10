@@ -1,6 +1,10 @@
-import { useEffect, useState } from 'react';
+import * as AuthSession from "expo-auth-session";
+import Constants from "expo-constants";
+import * as WebBrowser from "expo-web-browser";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Linking,
   Modal,
   Pressable,
@@ -8,70 +12,78 @@ import {
   Text,
   TextInput,
   View,
-} from 'react-native';
-import * as AuthSession from 'expo-auth-session';
-import * as WebBrowser from 'expo-web-browser';
+} from "react-native";
 
-import { useAuth } from '@/hooks/use-auth';
-import { fetchAdvantages, verifyGoogleToken, signInWithEmail } from '@/services/auth-api';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  fetchAdvantages,
+  signInWithEmail,
+  verifyGoogleToken,
+} from "@/services/auth-api";
 
 WebBrowser.maybeCompleteAuthSession();
 
-const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
+const GOOGLE_CLIENT_ID =
+  Constants.expoConfig?.extra?.googleClientId ??
+  Constants.manifest?.extra?.googleClientId ??
+  (
+    Constants.manifest2?.extra?.expoClient?.extra as
+      | Record<string, string>
+      | undefined
+  )?.googleClientId ??
+  "";
 
 interface Props {
   visible: boolean;
   onClose: () => void;
 }
 
-type ModalView = 'main' | 'email';
+type ModalView = "main" | "email" | "register" | "forgot";
 
 export function AuthModal({ visible, onClose }: Props) {
   const { user, signIn, signOut } = useAuth();
-  const [view, setView] = useState<ModalView>('main');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [view, setView] = useState<ModalView>("main");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const discovery = AuthSession.useAutoDiscovery('https://accounts.google.com');
+  const discovery = AuthSession.useAutoDiscovery("https://accounts.google.com");
   const redirectUri = AuthSession.makeRedirectUri();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: GOOGLE_CLIENT_ID,
       redirectUri,
-      scopes: ['openid', 'profile', 'email'],
+      scopes: ["openid", "profile", "email"],
       responseType: AuthSession.ResponseType.IdToken,
     },
     discovery,
   );
 
-  // Handle Google auth response
   useEffect(() => {
-    if (response?.type === 'success' && response.params.id_token) {
+    if (response?.type === "success" && response.params.id_token) {
       const authUser = verifyGoogleToken(response.params.id_token);
       if (authUser) {
         signIn(authUser);
         onClose();
       } else {
-        setError('Nu am putut verifica contul Google.');
+        setError("Nu am putut verifica contul Google.");
       }
     }
   }, [response]);
 
-  // Fetch advantages when modal opens
   useEffect(() => {
-    if (visible) {
-      fetchAdvantages().then((data) => {
-        if (data) console.log('[AuthModal] advantages:', data);
-      });
-    }
+    // TODO: re-enable fetchAdvantages() once the API endpoint is live
     if (!visible) {
-      setView('main');
-      setEmail('');
-      setPassword('');
+      setView("main");
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
       setError(null);
     }
   }, [visible]);
@@ -83,7 +95,7 @@ export function AuthModal({ visible, onClose }: Props) {
 
   const handleEmailSignIn = async () => {
     if (!email.trim() || !password.trim()) {
-      setError('Completează email-ul și parola.');
+      setError("Completeaza email-ul si parola.");
       return;
     }
     setLoading(true);
@@ -94,7 +106,7 @@ export function AuthModal({ visible, onClose }: Props) {
       signIn(authUser);
       onClose();
     } else {
-      setError('Autentificarea cu email nu este disponibilă momentan.');
+      setError("Autentificarea cu email nu este disponibila momentan.");
     }
   };
 
@@ -105,19 +117,36 @@ export function AuthModal({ visible, onClose }: Props) {
 
   // Authenticated view
   if (user) {
+    const initial =
+      user.name?.[0]?.toUpperCase() ?? user.email?.[0]?.toUpperCase();
     return (
       <Modal
         visible={visible}
         transparent
-        animationType="slide"
+        animationType="fade"
         onRequestClose={onClose}
       >
-        <Pressable style={styles.overlay} onPress={onClose}>
-          <Pressable style={styles.modal} onPress={(e) => e.stopPropagation()}>
-            <View style={styles.handle} />
-            <Text style={styles.title}>Contul tău</Text>
+        <Pressable style={styles.backdrop} onPress={onClose}>
+          <View style={styles.dialog} onStartShouldSetResponder={() => true}>
+            <View style={styles.dialogHeader}>
+              <View />
+              <Pressable
+                onPress={onClose}
+                style={({ pressed }) => [
+                  styles.closeButton,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <IconSymbol name="xmark" size={18} color="#666" />
+              </Pressable>
+            </View>
+
+            <View style={styles.avatarCircle}>
+              <Text style={styles.avatarText}>{initial}</Text>
+            </View>
+            <Text style={styles.userName}>{user.name ?? "Utilizator"}</Text>
             <Text style={styles.userEmail}>{user.email}</Text>
-            {user.name && <Text style={styles.userName}>{user.name}</Text>}
+
             <Pressable
               onPress={handleSignOut}
               style={({ pressed }) => [
@@ -125,9 +154,9 @@ export function AuthModal({ visible, onClose }: Props) {
                 { opacity: pressed ? 0.8 : 1 },
               ]}
             >
-              <Text style={styles.signOutText}>Deconectează-te</Text>
+              <Text style={styles.signOutText}>Deconecteaza-te</Text>
             </Pressable>
-          </Pressable>
+          </View>
         </Pressable>
       </Modal>
     );
@@ -137,33 +166,49 @@ export function AuthModal({ visible, onClose }: Props) {
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.modal} onPress={(e) => e.stopPropagation()}>
-          <View style={styles.handle} />
+      <Pressable style={styles.backdrop} onPress={onClose}>
+        <View style={styles.dialog} onStartShouldSetResponder={() => true}>
+          <View style={styles.dialogHeader}>
+            {view !== "main" ? (
+              <Pressable
+                onPress={() => {
+                  setError(null);
+                  setView(view === "email" ? "main" : "email");
+                }}
+                style={({ pressed }) => [
+                  styles.backButton,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <IconSymbol name="chevron.left" size={16} color="#2f2482" />
+                <Text style={styles.backText}>Inapoi</Text>
+              </Pressable>
+            ) : (
+              <View />
+            )}
+            <Pressable
+              onPress={onClose}
+              style={({ pressed }) => [
+                styles.closeButton,
+                { opacity: pressed ? 0.6 : 1 },
+              ]}
+            >
+              <IconSymbol name="xmark" size={18} color="#666" />
+            </Pressable>
+          </View>
 
-          {view === 'main' ? (
+          {view === "main" && (
             <>
-              <Text style={styles.title}>
-                Conectează-te pentru a descoperi mai multe!
-              </Text>
+              <Image
+                source={require("@/assets/images/logo-speranta.jpg")}
+                style={styles.logo}
+              />
+              <Text style={styles.title}>Bine ai venit!</Text>
               <Text style={styles.subtitle}>
-                Prin conectare, ești de acord cu{' '}
-                <Text
-                  style={styles.link}
-                  onPress={() => Linking.openURL('https://hope.study/privacy')}
-                >
-                  Politica de confidențialitate
-                </Text>
-                {' '}și{' '}
-                <Text
-                  style={styles.link}
-                  onPress={() => Linking.openURL('https://hope.study/terms')}
-                >
-                  Termeni de utilizare
-                </Text>
+                Conecteaza-te pentru a descoperi mai multe
               </Text>
 
               {error && <Text style={styles.error}>{error}</Text>}
@@ -178,190 +223,486 @@ export function AuthModal({ visible, onClose }: Props) {
                 ]}
               >
                 <Text style={styles.googleG}>G</Text>
-                <Text style={styles.authButtonText}>Continuă cu Google</Text>
+                <Text style={styles.googleButtonText}>Continua cu Google</Text>
               </Pressable>
 
               <Pressable
-                onPress={() => { setError(null); setView('email'); }}
+                onPress={() => {
+                  setError(null);
+                  setView("email");
+                }}
                 style={({ pressed }) => [
                   styles.authButton,
                   styles.emailButton,
                   { opacity: pressed ? 0.8 : 1 },
                 ]}
               >
-                <IconSymbol name="envelope.fill" size={18} color="#FFFFFF" />
-                <Text style={styles.authButtonText}>Continuă cu Email</Text>
+                <IconSymbol name="envelope.fill" size={18} color="#2f2482" />
+                <Text style={styles.emailButtonText}>Continua cu Email</Text>
               </Pressable>
+
+              <Text style={styles.terms}>
+                Prin conectare, esti de acord cu{" "}
+                <Text
+                  style={styles.link}
+                  onPress={() => Linking.openURL("https://hope.study/privacy")}
+                >
+                  Politica de confidentialitate
+                </Text>{" "}
+                si{" "}
+                <Text
+                  style={styles.link}
+                  onPress={() => Linking.openURL("https://hope.study/terms")}
+                >
+                  Termenii de utilizare
+                </Text>
+              </Text>
             </>
-          ) : (
+          )}
+
+          {view === "email" && (
             <>
-              <Pressable
-                onPress={() => { setError(null); setView('main'); }}
-                style={styles.backButton}
-              >
-                <Text style={styles.backText}>← Înapoi</Text>
-              </Pressable>
-
-              <Text style={styles.title}>Conectare cu Email</Text>
-
               {error && <Text style={styles.error}>{error}</Text>}
 
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor="#888"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                value={email}
-                onChangeText={setEmail}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Parolă"
-                placeholderTextColor="#888"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-              />
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="E-mail *"
+                  placeholderTextColor="#999"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  value={email}
+                  onChangeText={setEmail}
+                />
+                <View style={styles.inputIconDivider} />
+                <View style={styles.inputIconWrap}>
+                  <IconSymbol name="envelope.fill" size={18} color="#999" />
+                </View>
+              </View>
+
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Parola *"
+                  placeholderTextColor="#999"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <View style={styles.inputIconDivider} />
+                <View style={styles.inputIconWrap}>
+                  <IconSymbol name="lock.fill" size={18} color="#999" />
+                </View>
+              </View>
 
               <Pressable
                 onPress={handleEmailSignIn}
                 disabled={loading}
                 style={({ pressed }) => [
-                  styles.authButton,
                   styles.submitButton,
                   { opacity: pressed || loading ? 0.7 : 1 },
                 ]}
               >
                 {loading ? (
-                  <ActivityIndicator color="#FFFFFF" size="small" />
+                  <ActivityIndicator color="#2f2482" size="small" />
                 ) : (
-                  <Text style={styles.authButtonText}>Conectează-te</Text>
+                  <Text style={styles.submitButtonText}>Autentificare</Text>
                 )}
               </Pressable>
+
+              <View style={styles.linksRow}>
+                <Pressable
+                  onPress={() => { setError(null); setView("register"); }}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+                >
+                  <Text style={styles.linkText}>Creeaza un cont</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => { setError(null); setView("forgot"); }}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+                >
+                  <Text style={styles.linkText}>Ai uitat parola</Text>
+                </Pressable>
+              </View>
             </>
           )}
-        </Pressable>
+
+          {view === "register" && (
+            <>
+              {error && <Text style={styles.error}>{error}</Text>}
+
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Prenume *"
+                  placeholderTextColor="#999"
+                  autoCapitalize="words"
+                  value={firstName}
+                  onChangeText={setFirstName}
+                />
+              </View>
+
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Nume *"
+                  placeholderTextColor="#999"
+                  autoCapitalize="words"
+                  value={lastName}
+                  onChangeText={setLastName}
+                />
+              </View>
+
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="E-mail *"
+                  placeholderTextColor="#999"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
+
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Parola *"
+                  placeholderTextColor="#999"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                />
+              </View>
+
+              <Text style={styles.termsSmall}>
+                Prin semnare, esti de acord cu{" "}
+                <Text
+                  style={styles.link}
+                  onPress={() => Linking.openURL("https://hope.study/privacy")}
+                >
+                  Politica de confidentialitate
+                </Text>{" "}
+                si{" "}
+                <Text
+                  style={styles.link}
+                  onPress={() => Linking.openURL("https://hope.study/terms")}
+                >
+                  Termeni de utilizare
+                </Text>
+              </Text>
+
+              <Pressable
+                onPress={() => {
+                  // TODO: integrate with backend registration endpoint
+                  setError("Inregistrarea nu este disponibila momentan.");
+                }}
+                disabled={loading}
+                style={({ pressed }) => [
+                  styles.submitButton,
+                  { opacity: pressed || loading ? 0.7 : 1 },
+                ]}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#2f2482" size="small" />
+                ) : (
+                  <Text style={styles.submitButtonText}>Creeaza un cont</Text>
+                )}
+              </Pressable>
+
+              <View style={styles.bottomLinkRow}>
+                <Text style={styles.bottomLinkLabel}>Ai un cont? </Text>
+                <Pressable
+                  onPress={() => { setError(null); setView("email"); }}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+                >
+                  <Text style={styles.linkText}>Autentificare</Text>
+                </Pressable>
+              </View>
+            </>
+          )}
+
+          {view === "forgot" && (
+            <>
+              {error && <Text style={styles.error}>{error}</Text>}
+
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="E-mail *"
+                  placeholderTextColor="#999"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  value={email}
+                  onChangeText={setEmail}
+                />
+                <View style={styles.inputIconDivider} />
+                <View style={styles.inputIconWrap}>
+                  <IconSymbol name="envelope.fill" size={18} color="#999" />
+                </View>
+              </View>
+
+              <Pressable
+                onPress={() => {
+                  // TODO: integrate with backend password reset endpoint
+                  setError("Resetarea parolei nu este disponibila momentan.");
+                }}
+                disabled={loading}
+                style={({ pressed }) => [
+                  styles.submitButton,
+                  { opacity: pressed || loading ? 0.7 : 1 },
+                ]}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#2f2482" size="small" />
+                ) : (
+                  <Text style={styles.submitButtonText}>Trimite cererea</Text>
+                )}
+              </Pressable>
+
+              <View style={styles.bottomLinkRow}>
+                <Pressable
+                  onPress={() => { setError(null); setView("email"); }}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+                >
+                  <Text style={styles.linkText}>Autentificare</Text>
+                </Pressable>
+              </View>
+            </>
+          )}
+        </View>
       </Pressable>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
+  backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
   },
-  modal: {
-    backgroundColor: '#1A1A2E',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+  dialog: {
+    width: "100%",
+    maxWidth: 360,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
     paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 40,
+    paddingTop: 16,
+    paddingBottom: 24,
+    boxShadow: "0px 8px 24px rgba(0,0,0,0.15)",
+    elevation: 12,
+    alignItems: "center",
   },
-  handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#555',
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  title: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  subtitle: {
-    color: '#AAAAAA',
-    fontSize: 13,
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 24,
-  },
-  link: {
-    color: '#7B6FE8',
-    textDecorationLine: 'underline',
-  },
-  error: {
-    color: '#FF6B6B',
-    fontSize: 13,
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  authButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 12,
-    paddingVertical: 14,
-    marginBottom: 12,
-    gap: 10,
-  },
-  googleButton: {
-    backgroundColor: '#2f2482',
-  },
-  emailButton: {
-    backgroundColor: '#333355',
-  },
-  submitButton: {
-    backgroundColor: '#2f2482',
-  },
-  googleG: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  authButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 12,
-  },
-  backText: {
-    color: '#7B6FE8',
-    fontSize: 15,
-  },
-  input: {
-    backgroundColor: '#2A2A3E',
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    color: '#FFFFFF',
-    fontSize: 15,
-    marginBottom: 12,
-  },
-  // Authenticated state
-  userEmail: {
-    color: '#CCCCCC',
-    fontSize: 15,
-    textAlign: 'center',
+  dialogHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "stretch",
     marginBottom: 4,
   },
-  userName: {
-    color: '#888888',
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 20,
+  closeButton: {
+    padding: 4,
   },
-  signOutButton: {
-    backgroundColor: '#333355',
+  logo: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    marginBottom: 16,
+  },
+  title: {
+    color: "#1A1A1A",
+    fontSize: 20,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 6,
+  },
+  subtitle: {
+    color: "#777",
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  error: {
+    color: "#D32F2F",
+    fontSize: 13,
+    textAlign: "center",
+    marginBottom: 12,
+    backgroundColor: "#FDECEA",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    overflow: "hidden",
+    alignSelf: "stretch",
+  },
+  authButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 12,
     paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 8,
+    marginBottom: 10,
+    gap: 10,
+    alignSelf: "stretch",
+  },
+  googleButton: {
+    backgroundColor: "#2f2482",
+  },
+  googleG: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  googleButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  emailButton: {
+    backgroundColor: "#F5F5F5",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+  },
+  emailButtonText: {
+    color: "#2f2482",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  terms: {
+    color: "#999",
+    fontSize: 11,
+    textAlign: "center",
+    lineHeight: 17,
+    marginTop: 12,
+    paddingHorizontal: 8,
+  },
+  link: {
+    color: "#2f2482",
+    textDecorationLine: "underline",
+  },
+  // Email view
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  backText: {
+    color: "#2f2482",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "stretch",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    marginBottom: 14,
+    overflow: "hidden",
+  },
+  inputField: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    color: "#1A1A1A",
+    fontSize: 15,
+  },
+  inputIconDivider: {
+    width: 1,
+    height: 28,
+    backgroundColor: "#E0E0E0",
+  },
+  inputIconWrap: {
+    paddingHorizontal: 14,
+  },
+  submitButton: {
+    alignSelf: "stretch",
+    borderWidth: 2,
+    borderColor: "#2f2482",
+    borderRadius: 28,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 4,
+    marginBottom: 16,
+  },
+  submitButtonText: {
+    color: "#2f2482",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  linksRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignSelf: "stretch",
+    paddingHorizontal: 4,
+  },
+  linkText: {
+    color: "#2f2482",
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  termsSmall: {
+    color: "#777",
+    fontSize: 12,
+    textAlign: "center",
+    lineHeight: 18,
+    marginBottom: 16,
+    alignSelf: "stretch",
+  },
+  bottomLinkRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bottomLinkLabel: {
+    color: "#777",
+    fontSize: 13,
+  },
+  // Authenticated state
+  avatarCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#2f2482",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  avatarText: {
+    color: "#FFFFFF",
+    fontSize: 22,
+    fontWeight: "700",
+  },
+  userName: {
+    color: "#1A1A1A",
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 4,
+  },
+  userEmail: {
+    color: "#777",
+    fontSize: 14,
+    marginBottom: 24,
+  },
+  signOutButton: {
+    backgroundColor: "#FFF0F0",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    alignSelf: "stretch",
   },
   signOutText: {
-    color: '#FF6B6B',
-    fontSize: 16,
-    fontWeight: '600',
+    color: "#D32F2F",
+    fontSize: 15,
+    fontWeight: "600",
   },
 });

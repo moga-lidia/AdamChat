@@ -25,6 +25,8 @@ const MAPPING = {
   'envelope.fill': 'email',
   'line.3.horizontal': 'menu',
   'xmark': 'close',
+  'lock.fill': 'lock',
+  'chevron.left': 'chevron-left',
 } as IconMapping;
 
 /**

@@ -28,7 +28,7 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
     Animated.timing(fadeAnim, {
       toValue: open ? 1 : 0,
       duration: 150,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
   }, [open]);
 
@@ -80,7 +80,7 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
               style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
             >
               <IconSymbol name="person.fill" size={20} color="#2f2482" />
-              <Text style={[styles.menuLabel, { color: textColor }]}>Cont</Text>
+              <Text style={[styles.menuLabel, { color: textColor }]}>Autentifica-te</Text>
             </Pressable>
 
             <View style={[styles.separator, { backgroundColor: borderColor }]} />
@@ -124,10 +124,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
     paddingVertical: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
+    boxShadow: '0px 4px 12px rgba(0,0,0,0.15)',
     elevation: 8,
   },
   menuItem: {

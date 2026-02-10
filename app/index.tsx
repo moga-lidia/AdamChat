@@ -321,6 +321,37 @@ export default function MainScreen() {
     />
   );
 
+  // Brightness overlay: black to dim (<100), white to brighten (>100)
+  // Contrast overlay: gray to wash out (<100), black to deepen (>100)
+  const visualOverlays = (
+    <>
+      {brightness !== 100 && (
+        <View
+          pointerEvents="none"
+          style={[
+            styles.filterOverlay,
+            {
+              backgroundColor: "#000",
+              opacity: (100 - brightness) / 50,
+            },
+          ]}
+        />
+      )}
+      {contrast !== 100 && (
+        <View
+          pointerEvents="none"
+          style={[
+            styles.filterOverlay,
+            {
+              backgroundColor: "#808080",
+              opacity: (100 - contrast) / 50,
+            },
+          ]}
+        />
+      )}
+    </>
+  );
+
   // ── Welcome Screen ──
   if (screen === "welcome") {
     return (
@@ -353,6 +384,7 @@ export default function MainScreen() {
             <Text style={styles.startButtonText}>START</Text>
           </Pressable>
         </View>
+        {visualOverlays}
         <AuthModal
           visible={authModalVisible}
           onClose={() => setAuthModalVisible(false)}
@@ -418,6 +450,7 @@ export default function MainScreen() {
             ))}
           </View>
         </ScrollView>
+        {visualOverlays}
         <AuthModal
           visible={authModalVisible}
           onClose={() => setAuthModalVisible(false)}
@@ -497,6 +530,7 @@ export default function MainScreen() {
       <Animated.View style={{ paddingBottom: Animated.add(keyboardPadding, insets.bottom) }}>
         <ChatInput onSend={sendMessage} disabled={isStreaming} />
       </Animated.View>
+      {visualOverlays}
       <AuthModal
         visible={authModalVisible}
         onClose={() => setAuthModalVisible(false)}
@@ -508,6 +542,10 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  filterOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 10,
   },
 
   // Header

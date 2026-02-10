@@ -27,7 +27,6 @@ export function streamResponse(
 
   xhr.open("GET", url, true);
   xhr.setRequestHeader("Accept", "text/event-stream");
-  xhr.setRequestHeader("Cache-Control", "no-cache");
 
   xhr.onprogress = () => {
     const newText = xhr.responseText.substring(processedLength);
@@ -56,6 +55,9 @@ export function streamResponse(
   };
 
   xhr.onloadend = () => {
+    console.log('[CHAT DEBUG] onloadend status:', xhr.status, 'response length:', xhr.responseText?.length);
+    console.log('[CHAT DEBUG] response headers:', xhr.getAllResponseHeaders());
+    console.log('[CHAT DEBUG] response body (first 500):', xhr.responseText?.substring(0, 500));
     if (xhr.status >= 200 && xhr.status < 300) {
       callbacks.onDone(conversationHistoryId);
     } else if (xhr.status > 0) {
@@ -64,6 +66,8 @@ export function streamResponse(
   };
 
   xhr.onerror = () => {
+    console.log('[CHAT DEBUG] network error, status:', xhr.status);
+    console.log('[CHAT DEBUG] error response:', xhr.responseText?.substring(0, 500));
     callbacks.onError(new Error("Network error"));
   };
 
@@ -72,6 +76,7 @@ export function streamResponse(
   };
 
   xhr.timeout = 60000;
+  console.log('[CHAT DEBUG] sending request to:', url);
   xhr.send();
 
   return {

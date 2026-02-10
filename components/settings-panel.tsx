@@ -1,12 +1,13 @@
 import { useCallback, useRef } from "react";
 import {
   GestureResponderEvent,
-  PanResponder,
+  Modal,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 
 interface SliderProps {
   label: string;
@@ -17,30 +18,33 @@ interface SliderProps {
   onValueChange: (value: number) => void;
 }
 
-function CustomSlider({ label, value, min, max, suffix, onValueChange }: SliderProps) {
-  const trackWidth = useRef(0);
-  const callbackRef = useRef(onValueChange);
-  callbackRef.current = onValueChange;
+function CustomSlider({
+  label,
+  value,
+  min,
+  max,
+  suffix,
+  onValueChange,
+}: SliderProps) {
+  const trackRef = useRef<View>(null);
+  const trackLayout = useRef({ x: 0, width: 0 });
+
+  const computeValue = useCallback(
+    (pageX: number) => {
+      const { x, width } = trackLayout.current;
+      if (width <= 0) return;
+      const ratio = Math.max(0, Math.min(1, (pageX - x) / width));
+      onValueChange(Math.round(min + ratio * (max - min)));
+    },
+    [min, max, onValueChange],
+  );
 
   const handleTouch = useCallback(
     (evt: GestureResponderEvent) => {
-      if (trackWidth.current > 0) {
-        const x = evt.nativeEvent.locationX;
-        const ratio = Math.max(0, Math.min(1, x / trackWidth.current));
-        callbackRef.current(Math.round(min + ratio * (max - min)));
-      }
+      computeValue(evt.nativeEvent.pageX);
     },
-    [min, max],
+    [computeValue],
   );
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: (evt) => handleTouch(evt),
-      onPanResponderMove: (evt) => handleTouch(evt),
-    }),
-  ).current;
 
   const ratio = (value - min) / (max - min);
   const displayValue = suffix ? `${value}${suffix}` : `${value}`;
@@ -52,19 +56,24 @@ function CustomSlider({ label, value, min, max, suffix, onValueChange }: SliderP
         <Text style={sliderStyles.value}>{displayValue}</Text>
       </View>
       <View
-        style={sliderStyles.track}
-        onLayout={(e) => {
-          trackWidth.current = e.nativeEvent.layout.width;
+        ref={trackRef}
+        style={sliderStyles.trackOuter}
+        onLayout={() => {
+          trackRef.current?.measureInWindow((x, _y, width) => {
+            trackLayout.current = { x, width };
+          });
         }}
-        {...panResponder.panHandlers}
+        onStartShouldSetResponder={() => true}
+        onMoveShouldSetResponder={() => true}
+        onResponderGrant={handleTouch}
+        onResponderMove={handleTouch}
       >
-        <View style={[sliderStyles.trackFill, { width: `${ratio * 100}%` }]} />
-        <View
-          style={[
-            sliderStyles.thumb,
-            { left: `${ratio * 100}%` },
-          ]}
-        />
+        <View style={sliderStyles.track}>
+          <View
+            style={[sliderStyles.trackFill, { width: `${ratio * 100}%` }]}
+          />
+        </View>
+        <View style={[sliderStyles.thumb, { left: `${ratio * 100}%` }]} />
       </View>
     </View>
   );
@@ -72,46 +81,48 @@ function CustomSlider({ label, value, min, max, suffix, onValueChange }: SliderP
 
 const sliderStyles = StyleSheet.create({
   container: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   labelRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: 12,
   },
   label: {
-    color: "#FFFFFF",
-    fontSize: 14,
+    color: "#333",
+    fontSize: 15,
     fontWeight: "600",
   },
   value: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "500",
+    color: "#2f2482",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  trackOuter: {
+    height: 32,
+    justifyContent: "center",
   },
   track: {
     height: 6,
-    backgroundColor: "rgba(255,255,255,0.25)",
+    backgroundColor: "#E0E0E0",
     borderRadius: 3,
-    justifyContent: "center",
   },
   trackFill: {
     height: 6,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#2f2482",
     borderRadius: 3,
   },
   thumb: {
     position: "absolute",
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     backgroundColor: "#FFFFFF",
-    marginLeft: -10,
-    top: -7,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
+    borderWidth: 2,
+    borderColor: "#2f2482",
+    marginLeft: -11,
+    top: 5,
+    boxShadow: "0px 2px 4px rgba(0,0,0,0.15)",
     elevation: 3,
   },
 });
@@ -137,94 +148,93 @@ export function SettingsPanel({
   brightness,
   onBrightnessChange,
 }: SettingsPanelProps) {
-  if (!visible) return null;
-
   return (
-    <View style={panelStyles.overlay}>
-      <View style={panelStyles.panel}>
-        <View style={panelStyles.header}>
-          <Text style={panelStyles.title}>Setari</Text>
-          <Pressable
-            onPress={onClose}
-            style={({ pressed }) => [
-              panelStyles.closeButton,
-              { opacity: pressed ? 0.6 : 1 },
-            ]}
-          >
-            <Text style={panelStyles.closeText}>—</Text>
-          </Pressable>
-        </View>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <Pressable style={panelStyles.backdrop} onPress={onClose}>
+        <View
+          style={panelStyles.dialog}
+          onStartShouldSetResponder={() => true}
+        >
+          <View style={panelStyles.header}>
+            <Text style={panelStyles.title}>Setari</Text>
+            <Pressable
+              onPress={onClose}
+              style={({ pressed }) => [
+                panelStyles.closeButton,
+                { opacity: pressed ? 0.6 : 1 },
+              ]}
+            >
+              <IconSymbol name="xmark" size={18} color="#666" />
+            </Pressable>
+          </View>
 
-        <CustomSlider
-          label="Mărime Font"
-          value={fontSize}
-          min={12}
-          max={24}
-          onValueChange={onFontSizeChange}
-        />
-        <CustomSlider
-          label="Contrast"
-          value={contrast}
-          min={50}
-          max={150}
-          suffix="%"
-          onValueChange={onContrastChange}
-        />
-        <CustomSlider
-          label="Luminozitate"
-          value={brightness}
-          min={50}
-          max={150}
-          suffix="%"
-          onValueChange={onBrightnessChange}
-        />
-      </View>
-    </View>
+          <CustomSlider
+            label="Marime Font"
+            value={fontSize}
+            min={12}
+            max={24}
+            onValueChange={onFontSizeChange}
+          />
+          <CustomSlider
+            label="Contrast"
+            value={contrast}
+            min={70}
+            max={100}
+            suffix="%"
+            onValueChange={onContrastChange}
+          />
+          <CustomSlider
+            label="Luminozitate"
+            value={brightness}
+            min={70}
+            max={100}
+            suffix="%"
+            onValueChange={onBrightnessChange}
+          />
+        </View>
+      </Pressable>
+    </Modal>
   );
 }
 
 const panelStyles = StyleSheet.create({
-  overlay: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    zIndex: 100,
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
   },
-  panel: {
-    backgroundColor: "#2f2482",
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 20,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+  dialog: {
+    width: "100%",
+    maxWidth: 360,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 8,
+    boxShadow: "0px 8px 24px rgba(0,0,0,0.15)",
+    elevation: 12,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
+    alignItems: "flex-start",
+    marginBottom: 24,
+    marginTop: -8,
+    marginRight: -12,
   },
   title: {
-    color: "#FFFFFF",
-    fontSize: 16,
+    color: "#2f2482",
+    fontSize: 18,
     fontWeight: "700",
   },
   closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  closeText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "700",
+    padding: 4,
   },
 });
