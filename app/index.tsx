@@ -151,7 +151,7 @@ export default function MainScreen() {
 
     const onShow = Keyboard.addListener(showEvent, (e) => {
       Animated.timing(keyboardPadding, {
-        toValue: e.endCoordinates.height,
+        toValue: e.endCoordinates.height - insets.bottom,
         duration: Platform.OS === "ios" ? e.duration : 200,
         useNativeDriver: false,
       }).start();
@@ -272,6 +272,8 @@ export default function MainScreen() {
   const sendMessage = useCallback(
     (prompt: string, displayText?: string) => {
       if (!session || isStreaming || !session.lang) return;
+
+      Keyboard.dismiss();
 
       const userMessage: ChatMessageType = {
         id: Crypto.randomUUID(),
@@ -549,16 +551,18 @@ export default function MainScreen() {
         <ChatInput onSend={sendMessage} disabled={isStreaming} />
       </Animated.View>
       {visualOverlays}
-      <SseWebView
-        url={sseUrl}
-        onToken={handleSseToken}
-        onDone={handleSseDone}
-        onError={handleSseError}
-      />
       <AuthModal
         visible={authModalVisible}
         onClose={() => setAuthModalVisible(false)}
       />
+      <View style={styles.sseContainer} pointerEvents="none">
+        <SseWebView
+          url={sseUrl}
+          onToken={handleSseToken}
+          onDone={handleSseDone}
+          onError={handleSseError}
+        />
+      </View>
     </View>
   );
 }
@@ -566,6 +570,12 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  sseContainer: {
+    position: "absolute",
+    width: 0,
+    height: 0,
+    overflow: "hidden",
   },
   filterOverlay: {
     ...StyleSheet.absoluteFillObject,

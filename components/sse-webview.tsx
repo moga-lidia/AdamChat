@@ -1,5 +1,5 @@
 import { parseSseData } from "@/services/chat-api";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { StyleSheet } from "react-native";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 
@@ -11,19 +11,19 @@ interface Props {
 }
 
 /**
- * Hidden WebView that loads the chat server's page, then injects
- * an EventSource script. This runs on the real domain origin so
- * the server accepts the connection.
+ * Always-mounted hidden WebView that loads the chat server's page,
+ * then injects an EventSource script when a URL is provided.
+ * Runs on the real domain origin so the server accepts the connection.
  */
 export function SseWebView({ url, onToken, onDone, onError }: Props) {
   const webViewRef = useRef<WebView>(null);
   const historyIdRef = useRef<number | undefined>(undefined);
   const receivedData = useRef(false);
-  const injectedRef = useRef(false);
+  const pageLoaded = useRef(false);
+  const activeUrl = useRef<string | null>(null);
 
   const handleMessage = useCallback(
     (event: WebViewMessageEvent) => {
-      console.log("[SSE] Message:", event.nativeEvent.data.substring(0, 300));
       try {
         const msg = JSON.parse(event.nativeEvent.data);
 
@@ -37,12 +37,11 @@ export function SseWebView({ url, onToken, onDone, onError }: Props) {
             historyIdRef.current = parsed.conversationHistoryId;
           }
         } else if (msg.type === "done") {
-          console.log("[SSE] Done event");
           onDone(historyIdRef.current);
           receivedData.current = false;
           historyIdRef.current = undefined;
+          activeUrl.current = null;
         } else if (msg.type === "error") {
-          console.log("[SSE] Error event, hadData:", receivedData.current);
           if (receivedData.current) {
             onDone(historyIdRef.current);
           } else {
@@ -50,8 +49,7 @@ export function SseWebView({ url, onToken, onDone, onError }: Props) {
           }
           receivedData.current = false;
           historyIdRef.current = undefined;
-        } else if (msg.type === "log") {
-          console.log("[SSE-WV]", msg.message);
+          activeUrl.current = null;
         }
       } catch (e) {
         console.error("[SSE] Parse error:", e);
@@ -60,58 +58,52 @@ export function SseWebView({ url, onToken, onDone, onError }: Props) {
     [onToken, onDone, onError],
   );
 
-  const handleLoadEnd = useCallback(() => {
-    if (!url || injectedRef.current) return;
-    injectedRef.current = true;
-
+  const injectEventSource = useCallback((targetUrl: string) => {
     const script = `
       (function() {
-        // First test: can we even fetch the endpoint?
-        window.ReactNativeWebView.postMessage(JSON.stringify({
-          type: 'log', message: 'Testing fetch to: ' + ${JSON.stringify(url)}.substring(0, 80)
-        }));
-        fetch(${JSON.stringify(url)}, {
-          headers: { 'Accept': 'text/event-stream' }
-        }).then(function(res) {
-          window.ReactNativeWebView.postMessage(JSON.stringify({
-            type: 'log', message: 'Fetch status: ' + res.status + ' type: ' + res.headers.get('content-type')
-          }));
-          return res.text();
-        }).then(function(body) {
-          window.ReactNativeWebView.postMessage(JSON.stringify({
-            type: 'log', message: 'Fetch body (first 300): ' + body.substring(0, 300)
-          }));
-          // Parse SSE data lines
-          var lines = body.split('\\n');
-          for (var i = 0; i < lines.length; i++) {
-            var line = lines[i].trim();
-            if (line.indexOf('data:') === 0) {
-              window.ReactNativeWebView.postMessage(JSON.stringify({
-                type: 'data', payload: line.substring(5)
-              }));
-            }
-          }
-          window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'done' }));
-        }).catch(function(err) {
-          window.ReactNativeWebView.postMessage(JSON.stringify({
-            type: 'log', message: 'Fetch error: ' + err.message
-          }));
+        try {
+          var source = new EventSource(${JSON.stringify(targetUrl)});
+          source.onmessage = function(e) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              type: 'data', payload: e.data
+            }));
+          };
+          source.onerror = function() {
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              type: source.readyState === 2 ? 'error' : 'done'
+            }));
+            source.close();
+          };
+        } catch(err) {
           window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'error' }));
-        });
+        }
       })();
       true;
     `;
-
-    console.log("[SSE] Page loaded, injecting EventSource script");
     webViewRef.current?.injectJavaScript(script);
-  }, [url]);
+  }, []);
 
-  if (!url) {
-    injectedRef.current = false;
-    return null;
-  }
+  const handleLoadEnd = useCallback(() => {
+    pageLoaded.current = true;
+    // If a URL was queued before the page loaded, inject now
+    if (activeUrl.current) {
+      injectEventSource(activeUrl.current);
+    }
+  }, [injectEventSource]);
 
-  console.log("[SSE] Loading server page before EventSource");
+  // When url changes, inject the EventSource script
+  useEffect(() => {
+    activeUrl.current = url;
+    if (!url) {
+      receivedData.current = false;
+      historyIdRef.current = undefined;
+      return;
+    }
+    if (pageLoaded.current) {
+      injectEventSource(url);
+    }
+    // If page hasn't loaded yet, handleLoadEnd will pick it up
+  }, [url, injectEventSource]);
 
   return (
     <WebView
