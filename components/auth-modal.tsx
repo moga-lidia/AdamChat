@@ -17,7 +17,7 @@ import {
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  fetchAdvantages,
+  registerWithEmail,
   signInWithEmail,
   verifyGoogleToken,
 } from "@/services/auth-api";
@@ -100,13 +100,13 @@ export function AuthModal({ visible, onClose }: Props) {
     }
     setLoading(true);
     setError(null);
-    const authUser = await signInWithEmail(email.trim(), password.trim());
+    const result = await signInWithEmail(email.trim(), password.trim());
     setLoading(false);
-    if (authUser) {
-      signIn(authUser);
-      onClose();
+    if ("error" in result) {
+      setError(result.error);
     } else {
-      setError("Autentificarea cu email nu este disponibila momentan.");
+      signIn(result.user);
+      onClose();
     }
   };
 
@@ -313,13 +313,19 @@ export function AuthModal({ visible, onClose }: Props) {
 
               <View style={styles.linksRow}>
                 <Pressable
-                  onPress={() => { setError(null); setView("register"); }}
+                  onPress={() => {
+                    setError(null);
+                    setView("register");
+                  }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
                 >
                   <Text style={styles.linkText}>Creeaza un cont</Text>
                 </Pressable>
                 <Pressable
-                  onPress={() => { setError(null); setView("forgot"); }}
+                  onPress={() => {
+                    setError(null);
+                    setView("forgot");
+                  }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
                 >
                   <Text style={styles.linkText}>Ai uitat parola</Text>
@@ -396,9 +402,31 @@ export function AuthModal({ visible, onClose }: Props) {
               </Text>
 
               <Pressable
-                onPress={() => {
-                  // TODO: integrate with backend registration endpoint
-                  setError("Inregistrarea nu este disponibila momentan.");
+                onPress={async () => {
+                  if (
+                    !firstName.trim() ||
+                    !lastName.trim() ||
+                    !email.trim() ||
+                    !password.trim()
+                  ) {
+                    setError("Completeaza toate campurile.");
+                    return;
+                  }
+                  setLoading(true);
+                  setError(null);
+                  const result = await registerWithEmail({
+                    firstName: firstName.trim(),
+                    lastName: lastName.trim(),
+                    email: email.trim(),
+                    password: password.trim(),
+                  });
+                  setLoading(false);
+                  if ("error" in result) {
+                    setError(result.error);
+                  } else {
+                    signIn(result.user);
+                    onClose();
+                  }
                 }}
                 disabled={loading}
                 style={({ pressed }) => [
@@ -416,7 +444,10 @@ export function AuthModal({ visible, onClose }: Props) {
               <View style={styles.bottomLinkRow}>
                 <Text style={styles.bottomLinkLabel}>Ai un cont? </Text>
                 <Pressable
-                  onPress={() => { setError(null); setView("email"); }}
+                  onPress={() => {
+                    setError(null);
+                    setView("email");
+                  }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
                 >
                   <Text style={styles.linkText}>Autentificare</Text>
@@ -466,7 +497,10 @@ export function AuthModal({ visible, onClose }: Props) {
 
               <View style={styles.bottomLinkRow}>
                 <Pressable
-                  onPress={() => { setError(null); setView("email"); }}
+                  onPress={() => {
+                    setError(null);
+                    setView("email");
+                  }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
                 >
                   <Text style={styles.linkText}>Autentificare</Text>
