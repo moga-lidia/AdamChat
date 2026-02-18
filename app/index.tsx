@@ -20,8 +20,9 @@ import { ChatInput } from "@/components/chat-input";
 import { ChatMessage } from "@/components/chat-message";
 import { HeaderMenu } from "@/components/header-menu";
 import { SettingsPanel } from "@/components/settings-panel";
+import { SseWebView } from "@/components/sse-webview";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { streamResponse } from "@/services/chat-api";
+import { buildStreamUrl } from "@/services/chat-api";
 import {
   appendMessage,
   clearSession,
@@ -132,13 +133,13 @@ export default function MainScreen() {
   const [session, setSession] = useState<ChatSession | null>(null);
   const [streamingText, setStreamingText] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [sseUrl, setSseUrl] = useState<string | null>(null);
   const [authModalVisible, setAuthModalVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [fontSize, setFontSize] = useState(14);
   const [contrast, setContrast] = useState(100);
   const [brightness, setBrightness] = useState(100);
   const flatListRef = useRef<FlatList>(null);
-  const abortRef = useRef<{ abort: () => void } | null>(null);
   const keyboardPadding = useRef(new Animated.Value(0)).current;
 
   // Keyboard handling
@@ -226,6 +227,48 @@ export default function MainScreen() {
     setScreen("chat");
   };
 
+  const accumulatedRef = useRef("");
+
+  const handleSseToken = useCallback((token: string) => {
+    accumulatedRef.current += token;
+    setStreamingText(accumulatedRef.current);
+  }, []);
+
+  const handleSseDone = useCallback((conversationHistoryId?: number) => {
+    const content = accumulatedRef.current;
+    if (content) {
+      const assistantMessage: ChatMessageType = {
+        id: Crypto.randomUUID(),
+        role: "assistant",
+        content,
+        timestamp: Date.now(),
+        conversationHistoryId,
+      };
+      setSession((prev) =>
+        prev ? appendMessage(prev, assistantMessage) : prev,
+      );
+    }
+    setStreamingText("");
+    setIsStreaming(false);
+    setSseUrl(null);
+    accumulatedRef.current = "";
+  }, []);
+
+  const handleSseError = useCallback(() => {
+    const errorMessage: ChatMessageType = {
+      id: Crypto.randomUUID(),
+      role: "assistant",
+      content: "Ne pare rau, a aparut o eroare. Incearca din nou.",
+      timestamp: Date.now(),
+      isError: true,
+    };
+    setSession((prev) => (prev ? appendMessage(prev, errorMessage) : prev));
+    setStreamingText("");
+    setIsStreaming(false);
+    setSseUrl(null);
+    accumulatedRef.current = "";
+  }, []);
+
   const sendMessage = useCallback(
     (prompt: string, displayText?: string) => {
       if (!session || isStreaming || !session.lang) return;
@@ -241,45 +284,10 @@ export default function MainScreen() {
       setSession(updatedSession);
       setIsStreaming(true);
       setStreamingText("");
+      accumulatedRef.current = "";
 
-      let accumulated = "";
-
-      abortRef.current = streamResponse(prompt, session.id, session.lang, {
-        onToken: (token) => {
-          accumulated += token;
-          setStreamingText(accumulated);
-        },
-        onDone: (conversationHistoryId) => {
-          const assistantMessage: ChatMessageType = {
-            id: Crypto.randomUUID(),
-            role: "assistant",
-            content: accumulated,
-            timestamp: Date.now(),
-            conversationHistoryId,
-          };
-          setSession((prev) =>
-            prev ? appendMessage(prev, assistantMessage) : prev,
-          );
-          setStreamingText("");
-          setIsStreaming(false);
-          abortRef.current = null;
-        },
-        onError: () => {
-          const errorMessage: ChatMessageType = {
-            id: Crypto.randomUUID(),
-            role: "assistant",
-            content: "Ne pare rau, a aparut o eroare. Incearca din nou.",
-            timestamp: Date.now(),
-            isError: true,
-          };
-          setSession((prev) =>
-            prev ? appendMessage(prev, errorMessage) : prev,
-          );
-          setStreamingText("");
-          setIsStreaming(false);
-          abortRef.current = null;
-        },
-      });
+      const url = buildStreamUrl(prompt, session.id, session.lang);
+      setSseUrl(url);
     },
     [session, isStreaming],
   );
@@ -294,12 +302,10 @@ export default function MainScreen() {
           text: "Da",
           style: "destructive",
           onPress: async () => {
-            if (abortRef.current) {
-              abortRef.current.abort();
-              abortRef.current = null;
-            }
+            setSseUrl(null);
             setIsStreaming(false);
             setStreamingText("");
+            accumulatedRef.current = "";
             await clearSession();
             const id = Crypto.randomUUID();
             setSession(createSession(id));
@@ -543,6 +549,12 @@ export default function MainScreen() {
         <ChatInput onSend={sendMessage} disabled={isStreaming} />
       </Animated.View>
       {visualOverlays}
+      <SseWebView
+        url={sseUrl}
+        onToken={handleSseToken}
+        onDone={handleSseDone}
+        onError={handleSseError}
+      />
       <AuthModal
         visible={authModalVisible}
         onClose={() => setAuthModalVisible(false)}

@@ -6,80 +6,74 @@ interface StreamCallbacks {
   onError: (error: Error) => void;
 }
 
-export function streamResponse(
+/**
+ * Build the SSE URL for a chat request.
+ * The actual fetch happens inside a WebView (see SseWebView component)
+ * to bypass TLS fingerprinting on the server.
+ */
+export function buildStreamUrl(
   prompt: string,
   sessionId: string,
   lang: string,
-  callbacks: StreamCallbacks,
-): { abort: () => void } {
-  const params = new URLSearchParams({
-    prompt,
-    sessionId,
-    lang,
-  });
+): string {
+  const params = new URLSearchParams({ prompt, sessionId, lang });
+  return `${BASE_URL}?${params.toString()}`;
+}
 
-  const url = `${BASE_URL}?${params.toString()}`;
+/**
+ * Generate the HTML that runs inside the hidden WebView.
+ * It opens an EventSource connection and posts each SSE message
+ * back to React Native via postMessage.
+ */
+export function buildSseHtml(url: string): string {
+  return `
+<!DOCTYPE html>
+<html><body><script>
+  try {
+    window.ReactNativeWebView.postMessage(JSON.stringify({
+      type: 'log',
+      message: 'Opening EventSource: ' + ${JSON.stringify(url)}.substring(0, 100)
+    }));
+    var source = new EventSource(${JSON.stringify(url)});
+    source.onopen = function() {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'log',
+        message: 'EventSource connected, readyState: ' + source.readyState
+      }));
+    };
+    source.onmessage = function(e) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'data',
+        payload: e.data
+      }));
+    };
+    source.onerror = function(e) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'log',
+        message: 'EventSource error, readyState: ' + source.readyState
+      }));
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'error'
+      }));
+      source.close();
+    };
+  } catch(err) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({
+      type: 'error',
+      message: err.message
+    }));
+  }
+</script></body></html>`;
+}
 
-  // Use XMLHttpRequest for streaming — works on React Native / Expo Go
-  const xhr = new XMLHttpRequest();
-  let processedLength = 0;
-  let conversationHistoryId: number | undefined;
-
-  xhr.open("GET", url, true);
-  xhr.setRequestHeader("Accept", "text/event-stream");
-
-  xhr.onprogress = () => {
-    const newText = xhr.responseText.substring(processedLength);
-    processedLength = xhr.responseText.length;
-
-    const lines = newText.split("\n");
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed.startsWith("data:")) continue;
-
-      const jsonStr = trimmed.slice(5);
-      if (!jsonStr) continue;
-
-      try {
-        const data = JSON.parse(jsonStr);
-        if (data.tokenText) {
-          callbacks.onToken(data.tokenText);
-        }
-        if (data.conversationHistoryId) {
-          conversationHistoryId = data.conversationHistoryId;
-        }
-      } catch {
-        // malformed JSON chunk — skip
-      }
-    }
-  };
-
-  xhr.onloadend = () => {
-    console.log('[CHAT DEBUG] onloadend status:', xhr.status, 'response length:', xhr.responseText?.length);
-    console.log('[CHAT DEBUG] response headers:', xhr.getAllResponseHeaders());
-    console.log('[CHAT DEBUG] response body (first 500):', xhr.responseText?.substring(0, 500));
-    if (xhr.status >= 200 && xhr.status < 300) {
-      callbacks.onDone(conversationHistoryId);
-    } else if (xhr.status > 0) {
-      callbacks.onError(new Error(`HTTP ${xhr.status}`));
-    }
-  };
-
-  xhr.onerror = () => {
-    console.log('[CHAT DEBUG] network error, status:', xhr.status);
-    console.log('[CHAT DEBUG] error response:', xhr.responseText?.substring(0, 500));
-    callbacks.onError(new Error("Network error"));
-  };
-
-  xhr.ontimeout = () => {
-    callbacks.onError(new Error("Request timeout"));
-  };
-
-  xhr.timeout = 60000;
-  console.log('[CHAT DEBUG] sending request to:', url);
-  xhr.send();
-
-  return {
-    abort: () => xhr.abort(),
-  };
+/** Parse an SSE data string into token + conversationHistoryId. */
+export function parseSseData(raw: string): {
+  tokenText?: string;
+  conversationHistoryId?: number;
+} | null {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }
