@@ -48,6 +48,7 @@ export function AuthModal({ visible, onClose }: Props) {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,6 +85,7 @@ export function AuthModal({ visible, onClose }: Props) {
       setLastName("");
       setEmail("");
       setPassword("");
+      setShowPassword(false);
       setError(null);
     }
   }, [visible]);
@@ -286,14 +288,21 @@ export function AuthModal({ visible, onClose }: Props) {
                   style={styles.inputField}
                   placeholder="Parola *"
                   placeholderTextColor="#999"
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
                 />
                 <View style={styles.inputIconDivider} />
-                <View style={styles.inputIconWrap}>
-                  <IconSymbol name="lock.fill" size={18} color="#999" />
-                </View>
+                <Pressable
+                  onPress={() => setShowPassword((v) => !v)}
+                  style={styles.inputIconWrap}
+                >
+                  <IconSymbol
+                    name={showPassword ? "eye.fill" : "eye.slash.fill"}
+                    size={18}
+                    color="#999"
+                  />
+                </Pressable>
               </View>
 
               <Pressable
@@ -378,10 +387,21 @@ export function AuthModal({ visible, onClose }: Props) {
                   style={styles.inputField}
                   placeholder="Parola *"
                   placeholderTextColor="#999"
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
                 />
+                <View style={styles.inputIconDivider} />
+                <Pressable
+                  onPress={() => setShowPassword((v) => !v)}
+                  style={styles.inputIconWrap}
+                >
+                  <IconSymbol
+                    name={showPassword ? "eye.fill" : "eye.slash.fill"}
+                    size={18}
+                    color="#999"
+                  />
+                </Pressable>
               </View>
 
               <Text style={styles.termsSmall}>
