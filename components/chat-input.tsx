@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
+    fontFamily: 'Poppins_400Regular',
     maxHeight: 120,
     paddingHorizontal: 8,
     paddingVertical: Platform.OS === 'ios' ? 8 : 4,

@@ -573,19 +573,21 @@ const styles = StyleSheet.create({
   title: {
     color: "#1A1A1A",
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: "Poppins_700Bold",
     textAlign: "center",
     marginBottom: 6,
   },
   subtitle: {
     color: "#777",
     fontSize: 14,
+    fontFamily: "Poppins_400Regular",
     textAlign: "center",
     marginBottom: 24,
   },
   error: {
     color: "#D32F2F",
     fontSize: 13,
+    fontFamily: "Poppins_400Regular",
     textAlign: "center",
     marginBottom: 12,
     backgroundColor: "#FDECEA",
@@ -616,7 +618,7 @@ const styles = StyleSheet.create({
   googleButtonText: {
     color: "#FFFFFF",
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: "Poppins_600SemiBold",
   },
   emailButton: {
     backgroundColor: "#F5F5F5",
@@ -626,11 +628,12 @@ const styles = StyleSheet.create({
   emailButtonText: {
     color: "#2f2482",
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: "Poppins_600SemiBold",
   },
   terms: {
     color: "#999",
     fontSize: 11,
+    fontFamily: "Poppins_400Regular",
     textAlign: "center",
     lineHeight: 17,
     marginTop: 12,
@@ -649,7 +652,7 @@ const styles = StyleSheet.create({
   backText: {
     color: "#2f2482",
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: "Poppins_600SemiBold",
   },
   inputRow: {
     flexDirection: "row",
@@ -668,6 +671,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     color: "#1A1A1A",
     fontSize: 15,
+    fontFamily: "Poppins_400Regular",
   },
   inputIconDivider: {
     width: 1,
@@ -691,7 +695,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "#2f2482",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "Poppins_600SemiBold",
   },
   linksRow: {
     flexDirection: "row",
@@ -702,11 +706,12 @@ const styles = StyleSheet.create({
   linkText: {
     color: "#2f2482",
     fontSize: 13,
-    fontWeight: "500",
+    fontFamily: "Poppins_500Medium",
   },
   termsSmall: {
     color: "#777",
     fontSize: 12,
+    fontFamily: "Poppins_400Regular",
     textAlign: "center",
     lineHeight: 18,
     marginBottom: 16,
@@ -720,6 +725,7 @@ const styles = StyleSheet.create({
   bottomLinkLabel: {
     color: "#777",
     fontSize: 13,
+    fontFamily: "Poppins_400Regular",
   },
   // Authenticated state
   avatarCircle: {
@@ -734,17 +740,18 @@ const styles = StyleSheet.create({
   avatarText: {
     color: "#FFFFFF",
     fontSize: 22,
-    fontWeight: "700",
+    fontFamily: "Poppins_700Bold",
   },
   userName: {
     color: "#1A1A1A",
     fontSize: 18,
-    fontWeight: "700",
+    fontFamily: "Poppins_700Bold",
     marginBottom: 4,
   },
   userEmail: {
     color: "#777",
     fontSize: 14,
+    fontFamily: "Poppins_400Regular",
     marginBottom: 24,
   },
   signOutButton: {
@@ -757,6 +764,6 @@ const styles = StyleSheet.create({
   signOutText: {
     color: "#D32F2F",
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: "Poppins_600SemiBold",
   },
 });

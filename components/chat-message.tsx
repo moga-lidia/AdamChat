@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 15,
-    lineHeight: 21,
+    fontFamily: 'Poppins_400Regular',
+    lineHeight: 22,
   },
 });

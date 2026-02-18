@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   menuLabel: {
     fontSize: 15,
-    fontWeight: '500',
+    fontFamily: 'Poppins_500Medium',
   },
   separator: {
     height: StyleSheet.hairlineWidth,

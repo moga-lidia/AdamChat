@@ -143,8 +143,10 @@ export default function MainScreen() {
 
   // Keyboard handling
   useEffect(() => {
-    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
     const onShow = Keyboard.addListener(showEvent, (e) => {
       Animated.timing(keyboardPadding, {
@@ -369,7 +371,14 @@ export default function MainScreen() {
         />
         {settingsOverlay}
         <View style={styles.welcomeBody}>
-          <Text style={[styles.welcomeText, { color: textColor }]}>
+          <Image
+            source={require("@/assets/images/logo.jpg")}
+            style={styles.welcomeLogo}
+          />
+          <Text style={[styles.welcomeTitle, { color: "#2f2482" }]}>
+            Bine ai venit!
+          </Text>
+          <Text style={[styles.welcomeText, { color: "#7B7799" }]}>
             Conecteaza-te in portal si bucura-te de toate avantajele: pastrezi
             automat raspunsurile, poti relua oricand discutiile anterioare si ai
             totul sincronizat pe orice dispozitiv.
@@ -475,8 +484,7 @@ export default function MainScreen() {
             id: "_streaming",
             role: "assistant" as const,
             content:
-              streamingText ||
-              "Se genereaza raspunsul, te rog sa astepti...",
+              streamingText || "Se genereaza raspunsul, te rog sa astepti...",
             timestamp: Date.now(),
           },
         ]
@@ -503,7 +511,9 @@ export default function MainScreen() {
         ref={flatListRef}
         data={displayMessages}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <ChatMessage message={item} fontSize={fontSize} />}
+        renderItem={({ item }) => (
+          <ChatMessage message={item} fontSize={fontSize} />
+        )}
         contentContainerStyle={styles.messageList}
         keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
@@ -527,7 +537,9 @@ export default function MainScreen() {
         }
       />
 
-      <Animated.View style={{ paddingBottom: Animated.add(keyboardPadding, insets.bottom) }}>
+      <Animated.View
+        style={{ paddingBottom: Animated.add(keyboardPadding, insets.bottom) }}
+      >
         <ChatInput onSend={sendMessage} disabled={isStreaming} />
       </Animated.View>
       {visualOverlays}
@@ -570,7 +582,7 @@ const styles = StyleSheet.create({
   logoText: {
     color: "#2f2482",
     fontSize: 18,
-    fontWeight: "800",
+    fontFamily: "Poppins_700Bold",
     letterSpacing: 1,
   },
 
@@ -581,22 +593,35 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 36,
   },
+  welcomeLogo: {
+    width: 80,
+    height: 80,
+    borderRadius: 20,
+    marginBottom: 20,
+  },
+  welcomeTitle: {
+    fontSize: 24,
+    fontFamily: "Poppins_600SemiBold",
+    marginBottom: 12,
+    textAlign: "center",
+  },
   welcomeText: {
-    fontSize: 16,
+    fontSize: 15,
+    fontFamily: "Poppins_400Regular",
     lineHeight: 24,
     textAlign: "center",
-    marginBottom: 32,
+    marginBottom: 36,
   },
   startButton: {
-    backgroundColor: "#2C2C2E",
-    borderRadius: 12,
-    paddingHorizontal: 48,
-    paddingVertical: 14,
+    backgroundColor: "#B5B7DD",
+    borderRadius: 28,
+    paddingHorizontal: 56,
+    paddingVertical: 16,
   },
   startButtonText: {
-    color: "#FFFFFF",
+    color: "#2F2482",
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Poppins_700Bold",
     letterSpacing: 1.5,
   },
 
@@ -622,7 +647,8 @@ const styles = StyleSheet.create({
   },
   langBubbleText: {
     fontSize: 15,
-    lineHeight: 21,
+    fontFamily: "Poppins_400Regular",
+    lineHeight: 22,
   },
   langTime: {
     fontSize: 12,
@@ -645,7 +671,7 @@ const styles = StyleSheet.create({
   langButtonText: {
     color: "#2f2482",
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: "Poppins_600SemiBold",
   },
 
   // Chat
@@ -670,6 +696,6 @@ const styles = StyleSheet.create({
   quickActionText: {
     color: "#2f2482",
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: "Poppins_600SemiBold",
   },
 });
