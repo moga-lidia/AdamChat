@@ -15,8 +15,10 @@ module.exports = {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
+      bundleIdentifier: "com.lidiaszm.adamchat",
     },
     android: {
+      package: "com.lidiaszm.adamchat",
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
         foregroundImage: "./assets/AppIcons/playstore.png",
@@ -49,6 +51,9 @@ module.exports = {
     },
     extra: {
       googleClientId: GOOGLE_CLIENT_ID,
+      eas: {
+        projectId: "a5eeec83-811f-4e49-851a-cdbd288b205f",
+      },
     },
   },
 };
