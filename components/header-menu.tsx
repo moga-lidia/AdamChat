@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  Alert,
   Animated,
   Modal,
   Pressable,
@@ -8,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useAuth } from '@/hooks/use-auth';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface HeaderMenuProps {
@@ -17,6 +19,7 @@ interface HeaderMenuProps {
 }
 
 export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps) {
+  const { user, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -75,13 +78,37 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
               },
             ]}
           >
-            <Pressable
-              onPress={() => handleItem(onAccount)}
-              style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
-            >
-              <IconSymbol name="person.fill" size={20} color="#2f2482" />
-              <Text style={[styles.menuLabel, { color: textColor }]}>Autentifica-te</Text>
-            </Pressable>
+            {user ? (
+              <Pressable
+                onPress={() => {
+                  setOpen(false);
+                  Alert.alert(
+                    'Deconectare',
+                    'Esti sigur ca vrei sa te deconectezi?',
+                    [
+                      { text: 'Anuleaza', style: 'cancel' },
+                      {
+                        text: 'Deconecteaza-te',
+                        style: 'destructive',
+                        onPress: () => signOut(),
+                      },
+                    ],
+                  );
+                }}
+                style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
+              >
+                <IconSymbol name="rectangle.portrait.and.arrow.right" size={20} color="#D32F2F" />
+                <Text style={[styles.menuLabel, { color: '#D32F2F' }]}>Deconecteaza-te</Text>
+              </Pressable>
+            ) : (
+              <Pressable
+                onPress={() => handleItem(onAccount)}
+                style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
+              >
+                <IconSymbol name="person.fill" size={20} color="#2f2482" />
+                <Text style={[styles.menuLabel, { color: textColor }]}>Autentifica-te</Text>
+              </Pressable>
+            )}
 
             <View style={[styles.separator, { backgroundColor: borderColor }]} />
 
