@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface SliderProps {
   label: string;
@@ -148,6 +149,7 @@ export function SettingsPanel({
   brightness,
   onBrightnessChange,
 }: SettingsPanelProps) {
+  const { t } = useI18n();
   return (
     <Modal
       visible={visible}
@@ -161,7 +163,7 @@ export function SettingsPanel({
           onStartShouldSetResponder={() => true}
         >
           <View style={panelStyles.header}>
-            <Text style={panelStyles.title}>Setari</Text>
+            <Text style={panelStyles.title}>{t.settings.title}</Text>
             <Pressable
               onPress={onClose}
               style={({ pressed }) => [
@@ -174,14 +176,14 @@ export function SettingsPanel({
           </View>
 
           <CustomSlider
-            label="Marime Font"
+            label={t.settings.fontSize}
             value={fontSize}
             min={12}
             max={24}
             onValueChange={onFontSizeChange}
           />
           <CustomSlider
-            label="Contrast"
+            label={t.settings.contrast}
             value={contrast}
             min={70}
             max={100}
@@ -189,7 +191,7 @@ export function SettingsPanel({
             onValueChange={onContrastChange}
           />
           <CustomSlider
-            label="Luminozitate"
+            label={t.settings.brightness}
             value={brightness}
             min={70}
             max={100}

@@ -27,6 +27,7 @@ const MAPPING = {
   'xmark': 'close',
   'lock.fill': 'lock',
   'chevron.left': 'chevron-left',
+  'chevron.down': 'keyboard-arrow-down',
 } as IconMapping;
 
 /**

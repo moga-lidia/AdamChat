@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { AuthProvider } from '@/hooks/use-auth';
+import { I18nProvider } from '@/hooks/use-i18n';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,12 +35,14 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <ThemeProvider value={DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-        </Stack>
-        <StatusBar style="dark" />
-      </ThemeProvider>
+      <I18nProvider>
+        <ThemeProvider value={DefaultTheme}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+          </Stack>
+          <StatusBar style="dark" />
+        </ThemeProvider>
+      </I18nProvider>
     </AuthProvider>
   );
 }

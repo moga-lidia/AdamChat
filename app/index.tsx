@@ -8,7 +8,6 @@ import {
   Keyboard,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -21,6 +20,8 @@ import { ChatMessage } from "@/components/chat-message";
 import { HeaderMenu } from "@/components/header-menu";
 import { SettingsPanel } from "@/components/settings-panel";
 import { SseWebView } from "@/components/sse-webview";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useI18n } from "@/hooks/use-i18n";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { buildStreamUrl } from "@/services/chat-api";
 import {
@@ -37,46 +38,179 @@ import type {
   Lang,
 } from "@/types/chat";
 
-const LANG_MESSAGES = [
-  "Salut! Inainte de a incepe, te rog sa selectezi limba preferata.",
-  "Hello! Before we begin, please select your preferred language.",
-  "Udvozlom! Mielott elkezdenénk, kerjuk, valassza ki a kivant nyelvet.",
+const LANG_OPTIONS: { label: string; flag: string; value: Lang }[] = [
+  { label: "Română", flag: "🇷🇴", value: "ro" },
+  { label: "English", flag: "🇬🇧", value: "en" },
+  { label: "Magyar", flag: "🇭🇺", value: "hu" },
 ];
 
-const LANG_OPTIONS: { label: string; value: Lang }[] = [
-  { label: "Romana", value: "ro" },
-  { label: "English", value: "en" },
-  { label: "Magyar", value: "hu" },
-];
+// ── Language Dropdown ──
+function LanguageDropdown({
+  value,
+  onChange,
+}: {
+  value: Lang;
+  onChange: (lang: Lang) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const heightAnim = useRef(new Animated.Value(0)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
 
-const WELCOME_MESSAGES: Record<Lang, string> = {
-  ro: "Buna! Sunt aici sa te ajut cu raspunsuri la intrebari despre Biblie si viata spirituala. Spune-mi, te rog, cu ce pot incepe?",
-  en: "Hello! I am here to help you with answers to questions about the Bible and spiritual life. Please tell me, how can I help?",
-  hu: "Szia! Azért vagyok itt, hogy segítsek a Bibliával és a lelki élettel kapcsolatos kérdéseidben. Kérlek, mondd el, miben segíthetek?",
-};
+  const selected = LANG_OPTIONS.find((o) => o.value === value)!;
 
-interface QuickAction {
-  label: string;
-  prompt: string;
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(heightAnim, {
+        toValue: open ? 1 : 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(rotateAnim, {
+        toValue: open ? 1 : 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [open, heightAnim, rotateAnim]);
+
+  const chevronRotation = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "180deg"],
+  });
+
+  const dropdownHeight = heightAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, LANG_OPTIONS.length * 42],
+  });
+
+  const handleSelect = (lang: Lang) => {
+    onChange(lang);
+    setOpen(false);
+  };
+
+  return (
+    <View style={dropdownStyles.wrapper}>
+      <Pressable
+        onPress={() => setOpen((v) => !v)}
+        style={({ pressed }) => [
+          dropdownStyles.trigger,
+          open && dropdownStyles.triggerOpen,
+          { opacity: pressed ? 0.85 : 1 },
+        ]}
+      >
+        <Text style={dropdownStyles.flag}>{selected.flag}</Text>
+        <Text style={dropdownStyles.triggerLabel}>{selected.label}</Text>
+        <Animated.View style={{ transform: [{ rotate: chevronRotation }] }}>
+          <IconSymbol name="chevron.down" size={16} color="#7B7799" />
+        </Animated.View>
+      </Pressable>
+
+      <Animated.View
+        style={[
+          dropdownStyles.menu,
+          {
+            maxHeight: dropdownHeight,
+            opacity: heightAnim,
+            borderWidth: open ? 1.5 : 0,
+          },
+        ]}
+      >
+        {LANG_OPTIONS.map((opt) => {
+          const isActive = opt.value === value;
+          return (
+            <Pressable
+              key={opt.value}
+              onPress={() => handleSelect(opt.value)}
+              style={({ pressed }) => [
+                dropdownStyles.option,
+                isActive && dropdownStyles.optionActive,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <Text style={dropdownStyles.flag}>{opt.flag}</Text>
+              <Text
+                style={[
+                  dropdownStyles.optionLabel,
+                  isActive && dropdownStyles.optionLabelActive,
+                ]}
+              >
+                {opt.label}
+              </Text>
+              {isActive && <View style={dropdownStyles.checkDot} />}
+            </Pressable>
+          );
+        })}
+      </Animated.View>
+    </View>
+  );
 }
 
-const QUICK_ACTIONS: Record<Lang, QuickAction[]> = {
-  ro: [
-    { label: "Motiveaza-ma", prompt: "MOTIVATION" },
-    { label: "Spune-mi ceva ce nu stiu", prompt: "TELL_ME_SOMETHING" },
-    { label: "Meditatia zilei", prompt: "DAILY_MEDITATION" },
-  ],
-  en: [
-    { label: "Motivate me", prompt: "MOTIVATION" },
-    { label: "Tell me something I don't know", prompt: "TELL_ME_SOMETHING" },
-    { label: "Daily meditation", prompt: "DAILY_MEDITATION" },
-  ],
-  hu: [
-    { label: "Motiválj", prompt: "MOTIVATION" },
-    { label: "Mondj valamit, amit nem tudok", prompt: "TELL_ME_SOMETHING" },
-    { label: "A nap meditációja", prompt: "DAILY_MEDITATION" },
-  ],
-};
+const dropdownStyles = StyleSheet.create({
+  wrapper: {
+    width: 180,
+    zIndex: 10,
+  },
+  trigger: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.55)",
+    borderWidth: 1,
+    borderColor: "rgba(47,36,130,0.15)",
+    borderRadius: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  triggerOpen: {
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+    borderBottomColor: "rgba(47,36,130,0.08)",
+  },
+  flag: {
+    fontSize: 17,
+  },
+  triggerLabel: {
+    flex: 1,
+    color: "#7B7799",
+    fontSize: 14,
+    fontFamily: "Poppins_500Medium",
+  },
+  menu: {
+    overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.65)",
+    borderColor: "rgba(47,36,130,0.15)",
+    borderTopWidth: 0,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    marginTop: -1,
+  },
+  option: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  optionActive: {
+    backgroundColor: "rgba(47,36,130,0.06)",
+  },
+  optionLabel: {
+    flex: 1,
+    color: "#999",
+    fontSize: 14,
+    fontFamily: "Poppins_400Regular",
+  },
+  optionLabelActive: {
+    color: "#2f2482",
+    fontFamily: "Poppins_500Medium",
+  },
+  checkDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#2f2482",
+  },
+});
 
 // ── Header component (shared across all screens) ──
 function Header({
@@ -115,20 +249,15 @@ function Header({
 
 export default function MainScreen() {
   const insets = useSafeAreaInsets();
+  const { lang, t, setLang } = useI18n();
   const bg = useThemeColor({ light: "#f4f5f0", dark: "#111" }, "background");
   const headerBg = useThemeColor(
     { light: "#f4f5f0", dark: "#1A1A1A" },
     "background",
   );
   const borderColor = useThemeColor({ light: "#E0E0E0", dark: "#333" }, "icon");
-  const textColor = useThemeColor({}, "text");
-  const subtitleColor = useThemeColor({ light: "#777", dark: "#888" }, "icon");
-  const bubbleBg = useThemeColor(
-    { light: "#EDEDEE", dark: "#2A2A2A" },
-    "background",
-  );
 
-  type Screen = "welcome" | "lang" | "chat";
+  type Screen = "welcome" | "chat";
   const [screen, setScreen] = useState<Screen>("welcome");
   const [session, setSession] = useState<ChatSession | null>(null);
   const [streamingText, setStreamingText] = useState("");
@@ -168,7 +297,7 @@ export default function MainScreen() {
       onShow.remove();
       onHide.remove();
     };
-  }, [insets.bottom]);
+  }, [insets.bottom, keyboardPadding]);
 
   // Load session on mount
   useEffect(() => {
@@ -176,9 +305,8 @@ export default function MainScreen() {
       const existing = await loadSession();
       if (existing) {
         setSession(existing);
-        if (existing.messages.length > 0 && existing.lang) {
-          setScreen("chat");
-        } else if (existing.lang) {
+        if (existing.lang) {
+          setLang(existing.lang);
           setScreen("chat");
         }
       } else {
@@ -186,7 +314,7 @@ export default function MainScreen() {
         setSession(createSession(id));
       }
     })();
-  }, []);
+  }, [setLang]);
 
   // Persist session on change
   useEffect(() => {
@@ -201,28 +329,16 @@ export default function MainScreen() {
     }, 100);
   }, [session?.messages.length, streamingText, screen]);
 
-  const handleStart = () => setScreen("lang");
-
-  const handleLangSelect = (lang: Lang) => {
+  const handleStart = () => {
     if (!session) return;
-    const langLabel = LANG_OPTIONS.find((o) => o.value === lang)!.label;
     const withLang = setSessionLang(session, lang);
-    // Add the language choice as a user message
-    const langMsg: ChatMessageType = {
-      id: Crypto.randomUUID(),
-      role: "user",
-      content: langLabel,
-      timestamp: Date.now(),
-    };
-    const withUserMsg = appendMessage(withLang, langMsg);
-    // Add the welcome assistant message
     const welcomeMsg: ChatMessageType = {
       id: Crypto.randomUUID(),
       role: "assistant",
-      content: WELCOME_MESSAGES[lang],
+      content: t.chat.welcomeMessage,
       timestamp: Date.now(),
     };
-    const withWelcome = appendMessage(withUserMsg, welcomeMsg);
+    const withWelcome = appendMessage(withLang, welcomeMsg);
     setSession(withWelcome);
     setScreen("chat");
   };
@@ -258,7 +374,7 @@ export default function MainScreen() {
     const errorMessage: ChatMessageType = {
       id: Crypto.randomUUID(),
       role: "assistant",
-      content: "Ne pare rau, a aparut o eroare. Incearca din nou.",
+      content: t.chat.errorMessage,
       timestamp: Date.now(),
       isError: true,
     };
@@ -267,7 +383,7 @@ export default function MainScreen() {
     setIsStreaming(false);
     setSseUrl(null);
     accumulatedRef.current = "";
-  }, []);
+  }, [t]);
 
   const sendMessage = useCallback(
     (prompt: string, displayText?: string) => {
@@ -295,28 +411,24 @@ export default function MainScreen() {
   );
 
   const handleNewChat = useCallback(() => {
-    Alert.alert(
-      "Conversatie noua",
-      "Sigur vrei sa stergi conversatia curenta?",
-      [
-        { text: "Anuleaza", style: "cancel" },
-        {
-          text: "Da",
-          style: "destructive",
-          onPress: async () => {
-            setSseUrl(null);
-            setIsStreaming(false);
-            setStreamingText("");
-            accumulatedRef.current = "";
-            await clearSession();
-            const id = Crypto.randomUUID();
-            setSession(createSession(id));
-            setScreen("lang");
-          },
+    Alert.alert(t.menu.newChatConfirmTitle, t.menu.newChatConfirmMessage, [
+      { text: t.menu.cancel, style: "cancel" },
+      {
+        text: t.menu.confirm,
+        style: "destructive",
+        onPress: async () => {
+          setSseUrl(null);
+          setIsStreaming(false);
+          setStreamingText("");
+          accumulatedRef.current = "";
+          await clearSession();
+          const id = Crypto.randomUUID();
+          setSession(createSession(id));
+          setScreen("welcome");
         },
-      ],
-    );
-  }, []);
+      },
+    ]);
+  }, [t]);
 
   const settingsOverlay = (
     <SettingsPanel
@@ -384,13 +496,12 @@ export default function MainScreen() {
             style={styles.welcomeLogo}
           />
           <Text style={[styles.welcomeTitle, { color: "#2f2482" }]}>
-            Bine ai venit!
+            {t.welcome.title}
           </Text>
           <Text style={[styles.welcomeText, { color: "#7B7799" }]}>
-            Conecteaza-te in portal si bucura-te de toate avantajele: pastrezi
-            automat raspunsurile, poti relua oricand discutiile anterioare si ai
-            totul sincronizat pe orice dispozitiv.
+            {t.welcome.description}
           </Text>
+
           <Pressable
             onPress={handleStart}
             style={({ pressed }) => [
@@ -398,75 +509,17 @@ export default function MainScreen() {
               { opacity: pressed ? 0.8 : 1 },
             ]}
           >
-            <Text style={styles.startButtonText}>START</Text>
+            <Text style={styles.startButtonText}>{t.welcome.start}</Text>
           </Pressable>
         </View>
-        {visualOverlays}
-        <AuthModal
-          visible={authModalVisible}
-          onClose={() => setAuthModalVisible(false)}
-        />
-      </View>
-    );
-  }
 
-  // ── Language Selection Screen ──
-  if (screen === "lang") {
-    const now = new Date();
-    const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, "0")}`;
+        {/* Language selector pinned to bottom */}
+        <View
+          style={[styles.welcomeFooter, { paddingBottom: insets.bottom + 16 }]}
+        >
+          <LanguageDropdown value={lang} onChange={setLang} />
+        </View>
 
-    return (
-      <View style={[styles.container, { backgroundColor: bg }]}>
-        <Header
-          insets={insets}
-          headerBg={headerBg}
-          borderColor={borderColor}
-          rightAction={
-            <HeaderMenu
-              onAccount={() => setAuthModalVisible(true)}
-              onSettings={() => setShowSettings((v) => !v)}
-            />
-          }
-        />
-        {settingsOverlay}
-        <ScrollView contentContainerStyle={styles.langBody}>
-          {LANG_MESSAGES.map((msg, i) => (
-            <View key={i} style={styles.langMessageRow}>
-              <Image
-                source={require("@/assets/images/logo.jpg")}
-                style={styles.logoImage}
-              />
-              <View style={styles.langBubbleWrap}>
-                <View
-                  style={[styles.langBubble, { backgroundColor: bubbleBg }]}
-                >
-                  <Text style={[styles.langBubbleText, { color: textColor }]}>
-                    {msg}
-                  </Text>
-                </View>
-                <Text style={[styles.langTime, { color: subtitleColor }]}>
-                  {timeStr}
-                </Text>
-              </View>
-            </View>
-          ))}
-
-          {/* Language buttons */}
-          <View style={styles.langButtons}>
-            {LANG_OPTIONS.map((opt) => (
-              <Pressable
-                key={opt.value}
-                onPress={() => handleLangSelect(opt.value)}
-                style={({ pressed }) => [
-                  styles.langButton,
-                  { opacity: pressed ? 0.7 : 1 },
-                ]}
-              >
-                <Text style={styles.langButtonText}>{opt.label}</Text>
-              </Pressable>
-            ))}
-          </View>
-        </ScrollView>
         {visualOverlays}
         <AuthModal
           visible={authModalVisible}
@@ -477,7 +530,7 @@ export default function MainScreen() {
   }
 
   // ── Chat Screen ──
-  // Show quick actions after language selection (2 initial messages) or after an error
+  // Show quick actions after welcome message (1 initial message) or after an error
   const lastMessage = session?.messages[session.messages.length - 1];
   const showQuickActions =
     session?.lang &&
@@ -491,8 +544,7 @@ export default function MainScreen() {
           {
             id: "_streaming",
             role: "assistant" as const,
-            content:
-              streamingText || "Se genereaza raspunsul, te rog sa astepti...",
+            content: streamingText || t.chat.streamingPlaceholder,
             timestamp: Date.now(),
           },
         ]
@@ -528,7 +580,7 @@ export default function MainScreen() {
         ListFooterComponent={
           showQuickActions ? (
             <View style={styles.quickActions}>
-              {QUICK_ACTIONS[session!.lang!].map((action) => (
+              {t.quickActions.map((action) => (
                 <Pressable
                   key={action.prompt}
                   onPress={() => sendMessage(action.prompt, action.label)}
@@ -634,6 +686,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 36,
   },
+  welcomeFooter: {
+    alignItems: "center",
+    paddingTop: 8,
+  },
+
   startButton: {
     backgroundColor: "#B5B7DD",
     borderRadius: 28,
@@ -645,55 +702,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Poppins_700Bold",
     letterSpacing: 1.5,
-  },
-
-  // Language selection
-  langBody: {
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-  },
-  langMessageRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 16,
-  },
-  langBubbleWrap: {
-    flex: 1,
-  },
-  langBubble: {
-    borderRadius: 18,
-    borderTopLeftRadius: 4,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    maxWidth: "85%",
-  },
-  langBubbleText: {
-    fontSize: 15,
-    fontFamily: "Poppins_400Regular",
-    lineHeight: 22,
-  },
-  langTime: {
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
-  },
-  langButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 10,
-    marginTop: 8,
-  },
-  langButton: {
-    borderWidth: 1.5,
-    borderColor: "#2f2482",
-    borderRadius: 20,
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-  },
-  langButtonText: {
-    color: "#2f2482",
-    fontSize: 14,
-    fontFamily: "Poppins_600SemiBold",
   },
 
   // Chat

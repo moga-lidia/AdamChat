@@ -16,6 +16,7 @@ import {
 
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useAuth } from "@/hooks/use-auth";
+import { useI18n } from "@/hooks/use-i18n";
 import {
   registerWithEmail,
   signInWithEmail,
@@ -43,6 +44,7 @@ type ModalView = "main" | "email" | "register" | "forgot";
 
 export function AuthModal({ visible, onClose }: Props) {
   const { user, signIn, signOut } = useAuth();
+  const { lang, t } = useI18n();
   const [view, setView] = useState<ModalView>("main");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -72,7 +74,7 @@ export function AuthModal({ visible, onClose }: Props) {
         signIn(authUser);
         onClose();
       } else {
-        setError("Nu am putut verifica contul Google.");
+        setError(t.auth.googleVerifyError);
       }
     }
   }, [response]);
@@ -97,12 +99,12 @@ export function AuthModal({ visible, onClose }: Props) {
 
   const handleEmailSignIn = async () => {
     if (!email.trim() || !password.trim()) {
-      setError("Completeaza email-ul si parola.");
+      setError(t.auth.fillEmailAndPassword);
       return;
     }
     setLoading(true);
     setError(null);
-    const result = await signInWithEmail(email.trim(), password.trim());
+    const result = await signInWithEmail(email.trim(), password.trim(), lang);
     setLoading(false);
     if ("error" in result) {
       setError(result.error);
@@ -146,7 +148,7 @@ export function AuthModal({ visible, onClose }: Props) {
             <View style={styles.avatarCircle}>
               <Text style={styles.avatarText}>{initial}</Text>
             </View>
-            <Text style={styles.userName}>{user.name ?? "Utilizator"}</Text>
+            <Text style={styles.userName}>{user.name ?? t.auth.user}</Text>
             <Text style={styles.userEmail}>{user.email}</Text>
 
             <Pressable
@@ -156,7 +158,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 { opacity: pressed ? 0.8 : 1 },
               ]}
             >
-              <Text style={styles.signOutText}>Deconecteaza-te</Text>
+              <Text style={styles.signOutText}>{t.auth.signOut}</Text>
             </Pressable>
           </View>
         </Pressable>
@@ -186,7 +188,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 ]}
               >
                 <IconSymbol name="chevron.left" size={16} color="#2f2482" />
-                <Text style={styles.backText}>Inapoi</Text>
+                <Text style={styles.backText}>{t.auth.back}</Text>
               </Pressable>
             ) : (
               <View />
@@ -208,9 +210,9 @@ export function AuthModal({ visible, onClose }: Props) {
                 source={require("@/assets/images/logo-speranta.jpg")}
                 style={styles.logo}
               />
-              <Text style={styles.title}>Bine ai venit!</Text>
+              <Text style={styles.title}>{t.auth.welcomeTitle}</Text>
               <Text style={styles.subtitle}>
-                Conecteaza-te pentru a descoperi mai multe
+                {t.auth.welcomeSubtitle}
               </Text>
 
               {error && <Text style={styles.error}>{error}</Text>}
@@ -225,7 +227,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 ]}
               >
                 <Text style={styles.googleG}>G</Text>
-                <Text style={styles.googleButtonText}>Continua cu Google</Text>
+                <Text style={styles.googleButtonText}>{t.auth.continueWithGoogle}</Text>
               </Pressable>
 
               <Pressable
@@ -240,23 +242,23 @@ export function AuthModal({ visible, onClose }: Props) {
                 ]}
               >
                 <IconSymbol name="envelope.fill" size={18} color="#2f2482" />
-                <Text style={styles.emailButtonText}>Continua cu Email</Text>
+                <Text style={styles.emailButtonText}>{t.auth.continueWithEmail}</Text>
               </Pressable>
 
               <Text style={styles.terms}>
-                Prin conectare, esti de acord cu{" "}
+                {t.auth.termsText}{" "}
                 <Text
                   style={styles.link}
                   onPress={() => Linking.openURL("https://hope.study/privacy")}
                 >
-                  Politica de confidentialitate
+                  {t.auth.privacyPolicy}
                 </Text>{" "}
-                si{" "}
+                {t.auth.and}{" "}
                 <Text
                   style={styles.link}
                   onPress={() => Linking.openURL("https://hope.study/terms")}
                 >
-                  Termenii de utilizare
+                  {t.auth.termsOfUse}
                 </Text>
               </Text>
             </>
@@ -269,7 +271,7 @@ export function AuthModal({ visible, onClose }: Props) {
               <View style={styles.inputRow}>
                 <TextInput
                   style={styles.inputField}
-                  placeholder="E-mail *"
+                  placeholder={t.auth.email}
                   placeholderTextColor="#999"
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -286,7 +288,7 @@ export function AuthModal({ visible, onClose }: Props) {
               <View style={styles.inputRow}>
                 <TextInput
                   style={styles.inputField}
-                  placeholder="Parola *"
+                  placeholder={t.auth.password}
                   placeholderTextColor="#999"
                   secureTextEntry={!showPassword}
                   value={password}
@@ -316,7 +318,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 {loading ? (
                   <ActivityIndicator color="#2f2482" size="small" />
                 ) : (
-                  <Text style={styles.submitButtonText}>Autentificare</Text>
+                  <Text style={styles.submitButtonText}>{t.auth.signIn}</Text>
                 )}
               </Pressable>
 
@@ -328,7 +330,7 @@ export function AuthModal({ visible, onClose }: Props) {
                   }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
                 >
-                  <Text style={styles.linkText}>Creeaza un cont</Text>
+                  <Text style={styles.linkText}>{t.auth.createAccount}</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => {
@@ -337,7 +339,7 @@ export function AuthModal({ visible, onClose }: Props) {
                   }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
                 >
-                  <Text style={styles.linkText}>Ai uitat parola</Text>
+                  <Text style={styles.linkText}>{t.auth.forgotPassword}</Text>
                 </Pressable>
               </View>
             </>
@@ -350,7 +352,7 @@ export function AuthModal({ visible, onClose }: Props) {
               <View style={styles.inputRow}>
                 <TextInput
                   style={styles.inputField}
-                  placeholder="Prenume *"
+                  placeholder={t.auth.firstName}
                   placeholderTextColor="#999"
                   autoCapitalize="words"
                   value={firstName}
@@ -361,7 +363,7 @@ export function AuthModal({ visible, onClose }: Props) {
               <View style={styles.inputRow}>
                 <TextInput
                   style={styles.inputField}
-                  placeholder="Nume *"
+                  placeholder={t.auth.lastName}
                   placeholderTextColor="#999"
                   autoCapitalize="words"
                   value={lastName}
@@ -372,7 +374,7 @@ export function AuthModal({ visible, onClose }: Props) {
               <View style={styles.inputRow}>
                 <TextInput
                   style={styles.inputField}
-                  placeholder="E-mail *"
+                  placeholder={t.auth.email}
                   placeholderTextColor="#999"
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -385,7 +387,7 @@ export function AuthModal({ visible, onClose }: Props) {
               <View style={styles.inputRow}>
                 <TextInput
                   style={styles.inputField}
-                  placeholder="Parola *"
+                  placeholder={t.auth.password}
                   placeholderTextColor="#999"
                   secureTextEntry={!showPassword}
                   value={password}
@@ -405,19 +407,19 @@ export function AuthModal({ visible, onClose }: Props) {
               </View>
 
               <Text style={styles.termsSmall}>
-                Prin semnare, esti de acord cu{" "}
+                {t.auth.termsConsent}{" "}
                 <Text
                   style={styles.link}
                   onPress={() => Linking.openURL("https://hope.study/privacy")}
                 >
-                  Politica de confidentialitate
+                  {t.auth.privacyPolicy}
                 </Text>{" "}
-                si{" "}
+                {t.auth.and}{" "}
                 <Text
                   style={styles.link}
                   onPress={() => Linking.openURL("https://hope.study/terms")}
                 >
-                  Termeni de utilizare
+                  {t.auth.termsOfUse}
                 </Text>
               </Text>
 
@@ -429,17 +431,20 @@ export function AuthModal({ visible, onClose }: Props) {
                     !email.trim() ||
                     !password.trim()
                   ) {
-                    setError("Completeaza toate campurile.");
+                    setError(t.auth.fillAllFields);
                     return;
                   }
                   setLoading(true);
                   setError(null);
-                  const result = await registerWithEmail({
-                    firstName: firstName.trim(),
-                    lastName: lastName.trim(),
-                    email: email.trim(),
-                    password: password.trim(),
-                  });
+                  const result = await registerWithEmail(
+                    {
+                      firstName: firstName.trim(),
+                      lastName: lastName.trim(),
+                      email: email.trim(),
+                      password: password.trim(),
+                    },
+                    lang,
+                  );
                   setLoading(false);
                   if ("error" in result) {
                     setError(result.error);
@@ -457,12 +462,12 @@ export function AuthModal({ visible, onClose }: Props) {
                 {loading ? (
                   <ActivityIndicator color="#2f2482" size="small" />
                 ) : (
-                  <Text style={styles.submitButtonText}>Creeaza un cont</Text>
+                  <Text style={styles.submitButtonText}>{t.auth.createAccount}</Text>
                 )}
               </Pressable>
 
               <View style={styles.bottomLinkRow}>
-                <Text style={styles.bottomLinkLabel}>Ai un cont? </Text>
+                <Text style={styles.bottomLinkLabel}>{t.auth.haveAccount}</Text>
                 <Pressable
                   onPress={() => {
                     setError(null);
@@ -470,7 +475,7 @@ export function AuthModal({ visible, onClose }: Props) {
                   }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
                 >
-                  <Text style={styles.linkText}>Autentificare</Text>
+                  <Text style={styles.linkText}>{t.auth.signIn}</Text>
                 </Pressable>
               </View>
             </>
@@ -483,7 +488,7 @@ export function AuthModal({ visible, onClose }: Props) {
               <View style={styles.inputRow}>
                 <TextInput
                   style={styles.inputField}
-                  placeholder="E-mail *"
+                  placeholder={t.auth.email}
                   placeholderTextColor="#999"
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -500,7 +505,7 @@ export function AuthModal({ visible, onClose }: Props) {
               <Pressable
                 onPress={() => {
                   // TODO: integrate with backend password reset endpoint
-                  setError("Resetarea parolei nu este disponibila momentan.");
+                  setError(t.auth.passwordResetUnavailable);
                 }}
                 disabled={loading}
                 style={({ pressed }) => [
@@ -511,7 +516,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 {loading ? (
                   <ActivityIndicator color="#2f2482" size="small" />
                 ) : (
-                  <Text style={styles.submitButtonText}>Trimite cererea</Text>
+                  <Text style={styles.submitButtonText}>{t.auth.sendRequest}</Text>
                 )}
               </Pressable>
 
@@ -523,7 +528,7 @@ export function AuthModal({ visible, onClose }: Props) {
                   }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
                 >
-                  <Text style={styles.linkText}>Autentificare</Text>
+                  <Text style={styles.linkText}>{t.auth.signIn}</Text>
                 </Pressable>
               </View>
             </>

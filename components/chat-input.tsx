@@ -6,6 +6,7 @@ import {
   Pressable,
   Platform,
 } from 'react-native';
+import { useI18n } from '@/hooks/use-i18n';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 
@@ -16,6 +17,7 @@ interface Props {
 
 export function ChatInput({ onSend, disabled }: Props) {
   const [text, setText] = useState('');
+  const { t } = useI18n();
   const bg = useThemeColor({ light: '#e8e9e4', dark: '#2A2A2A' }, 'background');
   const textColor = useThemeColor({}, 'text');
   const placeholderColor = useThemeColor({ light: '#999', dark: '#666' }, 'icon');
@@ -32,7 +34,7 @@ export function ChatInput({ onSend, disabled }: Props) {
     <View style={[styles.container, { backgroundColor: bg }]}>
       <TextInput
         style={[styles.input, { color: textColor }]}
-        placeholder="Pune o intrebare biblica..."
+        placeholder={t.chat.inputPlaceholder}
         placeholderTextColor={placeholderColor}
         value={text}
         onChangeText={setText}
