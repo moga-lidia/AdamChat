@@ -1,4 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useAuth } from "@/hooks/use-auth";
+import { useI18n } from "@/hooks/use-i18n";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
@@ -7,27 +11,32 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { useAuth } from '@/hooks/use-auth';
-import { useI18n } from '@/hooks/use-i18n';
-import { useThemeColor } from '@/hooks/use-theme-color';
+} from "react-native";
 
 interface HeaderMenuProps {
   onAccount: () => void;
   onSettings: () => void;
+  onCourses: () => void;
   onNewChat?: () => void;
 }
 
-export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps) {
+export function HeaderMenu({
+  onAccount,
+  onSettings,
+  onCourses,
+  onNewChat,
+}: HeaderMenuProps) {
   const { user, signOut } = useAuth();
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const menuBg = useThemeColor({ light: '#FFFFFF', dark: '#2A2A2A' }, 'background');
-  const textColor = useThemeColor({}, 'text');
-  const borderColor = useThemeColor({ light: '#E0E0E0', dark: '#444' }, 'icon');
+  const menuBg = useThemeColor(
+    { light: "#FFFFFF", dark: "#2A2A2A" },
+    "background",
+  );
+  const textColor = useThemeColor({}, "text");
+  const borderColor = useThemeColor({ light: "#E0E0E0", dark: "#444" }, "icon");
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -49,7 +58,7 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
         style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
       >
         <IconSymbol
-          name={open ? 'xmark' : 'line.3.horizontal'}
+          name={open ? "xmark" : "line.3.horizontal"}
           size={24}
           color="#2f2482"
         />
@@ -88,49 +97,94 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
                     t.menu.signOutConfirmTitle,
                     t.menu.signOutConfirmMessage,
                     [
-                      { text: t.menu.cancel, style: 'cancel' },
+                      { text: t.menu.cancel, style: "cancel" },
                       {
                         text: t.menu.signOut,
-                        style: 'destructive',
+                        style: "destructive",
                         onPress: () => signOut(),
                       },
                     ],
                   );
                 }}
-                style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
               >
-                <IconSymbol name="rectangle.portrait.and.arrow.right" size={20} color="#D32F2F" />
-                <Text style={[styles.menuLabel, { color: '#D32F2F' }]}>{t.menu.signOut}</Text>
+                <IconSymbol
+                  name="rectangle.portrait.and.arrow.right"
+                  size={20}
+                  color="#D32F2F"
+                />
+                <Text style={[styles.menuLabel, { color: "#D32F2F" }]}>
+                  {t.menu.signOut}
+                </Text>
               </Pressable>
             ) : (
               <Pressable
                 onPress={() => handleItem(onAccount)}
-                style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
               >
                 <IconSymbol name="person.fill" size={20} color="#2f2482" />
-                <Text style={[styles.menuLabel, { color: textColor }]}>{t.menu.signIn}</Text>
+                <Text style={[styles.menuLabel, { color: textColor }]}>
+                  {t.menu.signIn}
+                </Text>
               </Pressable>
             )}
 
-            <View style={[styles.separator, { backgroundColor: borderColor }]} />
+            <View
+              style={[styles.separator, { backgroundColor: borderColor }]}
+            />
 
             <Pressable
               onPress={() => handleItem(onSettings)}
-              style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
+              style={({ pressed }) => [
+                styles.menuItem,
+                { opacity: pressed ? 0.6 : 1 },
+              ]}
             >
               <IconSymbol name="gearshape.fill" size={20} color="#2f2482" />
-              <Text style={[styles.menuLabel, { color: textColor }]}>{t.menu.settings}</Text>
+              <Text style={[styles.menuLabel, { color: textColor }]}>
+                {t.menu.settings}
+              </Text>
+            </Pressable>
+
+            <View
+              style={[styles.separator, { backgroundColor: borderColor }]}
+            />
+
+            <Pressable
+              onPress={() => handleItem(onCourses)}
+              style={({ pressed }) => [
+                styles.menuItem,
+                { opacity: pressed ? 0.6 : 1 },
+              ]}
+            >
+              <IconSymbol name="book.fill" size={20} color="#2f2482" />
+              <Text style={[styles.menuLabel, { color: textColor }]}>
+                {t.menu.courses}
+              </Text>
             </Pressable>
 
             {onNewChat && (
               <>
-                <View style={[styles.separator, { backgroundColor: borderColor }]} />
+                <View
+                  style={[styles.separator, { backgroundColor: borderColor }]}
+                />
                 <Pressable
                   onPress={() => handleItem(onNewChat)}
-                  style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
+                  style={({ pressed }) => [
+                    styles.menuItem,
+                    { opacity: pressed ? 0.6 : 1 },
+                  ]}
                 >
                   <IconSymbol name="plus" size={20} color="#2f2482" />
-                  <Text style={[styles.menuLabel, { color: textColor }]}>{t.menu.newChat}</Text>
+                  <Text style={[styles.menuLabel, { color: textColor }]}>
+                    {t.menu.newChat}
+                  </Text>
                 </Pressable>
               </>
             )}
@@ -144,7 +198,7 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     paddingTop: 56,
     paddingRight: 16,
   },
@@ -153,19 +207,19 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
     paddingVertical: 6,
-    boxShadow: '0px 4px 12px rgba(0,0,0,0.15)',
+    boxShadow: "0px 4px 12px rgba(0,0,0,0.15)",
     elevation: 8,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 12,
   },
   menuLabel: {
     fontSize: 15,
-    fontFamily: 'Poppins_500Medium',
+    fontFamily: "Poppins_500Medium",
   },
   separator: {
     height: StyleSheet.hairlineWidth,

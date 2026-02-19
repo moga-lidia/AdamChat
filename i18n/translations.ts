@@ -29,6 +29,7 @@ export interface TranslationKeys {
     signOut: string;
     signIn: string;
     settings: string;
+    courses: string;
     newChat: string;
     signOutConfirmTitle: string;
     signOutConfirmMessage: string;
@@ -43,6 +44,13 @@ export interface TranslationKeys {
     contrast: string;
     brightness: string;
     language: string;
+  };
+  courses: {
+    title: string;
+    lessons: string;
+    minutes: string;
+    free: string;
+    categories: string[];
   };
   auth: {
     welcomeTitle: string;
@@ -111,6 +119,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       signOut: "Deconectează-te",
       signIn: "Autentifică-te",
       settings: "Setări",
+      courses: "Cursuri",
       newChat: "Conversație nouă",
       signOutConfirmTitle: "Deconectare",
       signOutConfirmMessage: "Ești sigur că vrei să te deconectezi?",
@@ -125,6 +134,21 @@ export const translations: Record<Lang, TranslationKeys> = {
       contrast: "Contrast",
       brightness: "Luminozitate",
       language: "Limbă",
+    },
+    courses: {
+      title: "Cursuri",
+      lessons: "lecții",
+      minutes: "min",
+      free: "GRATUIT",
+      categories: [
+        "Toate",
+        "Biblie",
+        "Arheologie",
+        "Credință",
+        "Dezvoltare Personală",
+        "Sănătate",
+        "Profeție",
+      ],
     },
     auth: {
       welcomeTitle: "Bine ai venit!",
@@ -192,6 +216,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       signOut: "Sign out",
       signIn: "Sign in",
       settings: "Settings",
+      courses: "Courses",
       newChat: "New conversation",
       signOutConfirmTitle: "Sign out",
       signOutConfirmMessage: "Are you sure you want to sign out?",
@@ -207,6 +232,21 @@ export const translations: Record<Lang, TranslationKeys> = {
       contrast: "Contrast",
       brightness: "Brightness",
       language: "Language",
+    },
+    courses: {
+      title: "Courses",
+      lessons: "lessons",
+      minutes: "min",
+      free: "FREE",
+      categories: [
+        "All",
+        "Bible",
+        "Archaeology",
+        "Faith",
+        "Personal Development",
+        "Health",
+        "Prophecy",
+      ],
     },
     auth: {
       welcomeTitle: "Welcome!",
@@ -273,6 +313,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       signOut: "Kijelentkezés",
       signIn: "Bejelentkezés",
       settings: "Beállítások",
+      courses: "Kurzusok",
       newChat: "Új beszélgetés",
       signOutConfirmTitle: "Kijelentkezés",
       signOutConfirmMessage: "Biztosan ki szeretnél jelentkezni?",
@@ -288,6 +329,21 @@ export const translations: Record<Lang, TranslationKeys> = {
       contrast: "Kontraszt",
       brightness: "Fényerő",
       language: "Nyelv",
+    },
+    courses: {
+      title: "Kurzusok",
+      lessons: "lecke",
+      minutes: "perc",
+      free: "INGYENES",
+      categories: [
+        "Összes",
+        "Biblia",
+        "Régészet",
+        "Hit",
+        "Személyes fejlődés",
+        "Egészség",
+        "Prófécia",
+      ],
     },
     auth: {
       welcomeTitle: "Isten hozott!",

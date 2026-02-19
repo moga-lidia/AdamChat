@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AuthModal } from "@/components/auth-modal";
 import { ChatInput } from "@/components/chat-input";
 import { ChatMessage } from "@/components/chat-message";
+import { CoursesScreen } from "@/components/courses-screen";
 import { HeaderMenu } from "@/components/header-menu";
 import { SettingsPanel } from "@/components/settings-panel";
 import { SseWebView } from "@/components/sse-webview";
@@ -310,7 +311,7 @@ export default function MainScreen() {
   // 5 elements: logo, title+subtitle, features title+cards, start button, language selector
   const entryAnims = useStaggeredEntry(5);
 
-  type Screen = "welcome" | "chat";
+  type Screen = "welcome" | "chat" | "courses";
   const [screen, setScreen] = useState<Screen>("welcome");
   const [session, setSession] = useState<ChatSession | null>(null);
   const [streamingText, setStreamingText] = useState("");
@@ -474,6 +475,8 @@ export default function MainScreen() {
     },
     [session, isStreaming],
   );
+
+  const showCourses = useCallback(() => setScreen("courses"), []);
 
   const handleNewChat = useCallback(() => {
     Alert.alert(t.menu.newChatConfirmTitle, t.menu.newChatConfirmMessage, [
@@ -684,6 +687,28 @@ export default function MainScreen() {
     );
   }
 
+  // ── Courses Screen ──
+  if (screen === "courses") {
+    return (
+      <View style={[styles.container, { backgroundColor: bg }]}>
+        <Header
+          insets={insets}
+          headerBg={headerBg}
+          borderColor={borderColor}
+          rightAction={
+            <Pressable
+              onPress={() => setScreen(session?.lang ? "chat" : "welcome")}
+              style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+            >
+              <IconSymbol name="chevron.left" size={24} color="#2f2482" />
+            </Pressable>
+          }
+        />
+        <CoursesScreen />
+      </View>
+    );
+  }
+
   // ── Chat Screen ──
   // Show quick actions after welcome message (1 initial message) or after an error
   const lastMessage = session?.messages[session.messages.length - 1];
@@ -718,6 +743,7 @@ export default function MainScreen() {
           <HeaderMenu
             onAccount={() => setAuthModalVisible(true)}
             onSettings={() => setShowSettings((v) => !v)}
+            onCourses={showCourses}
             onNewChat={handleNewChat}
           />
         }
