@@ -83,6 +83,23 @@ export interface TranslationKeys {
     termsConsent: string;
     passwordResetUnavailable: string;
   };
+  mentor: {
+    buttonLabel: string;
+    closeConversation: string;
+    conversationClosed: string;
+    dialogTitle: string;
+    dialogDescription: string;
+    name: string;
+    namePlaceholder: string;
+    contact: string;
+    contactPlaceholder: string;
+    county: string;
+    countyPlaceholder: string;
+    cancel: string;
+    submit: string;
+    connectedMessage: string;
+    fillAllFields: string;
+  };
   errors: {
     registration: string;
     connection: string;
@@ -188,6 +205,25 @@ export const translations: Record<Lang, TranslationKeys> = {
       passwordResetUnavailable:
         "Resetarea parolei nu este disponibilă momentan.",
     },
+    mentor: {
+      buttonLabel: "Mentor live",
+      closeConversation: "Închide conversația",
+      conversationClosed: "Conversația cu mentorul a fost închisă.",
+      dialogTitle: "Conectează-te cu un operator",
+      dialogDescription:
+        "Un mentor îți va răspunde la toate întrebările direct în acest chat. Completează datele de mai jos pentru a începe conversația.",
+      name: "Nume",
+      namePlaceholder: "Nume și prenume",
+      contact: "Date de contact",
+      contactPlaceholder: "Email sau telefon",
+      county: "Județ",
+      countyPlaceholder: "Selectează județ",
+      cancel: "Anulează",
+      submit: "Continuă către operator",
+      connectedMessage:
+        "Urmează să fii preluat de un mentor în cel mai scurt timp posibil.",
+      fillAllFields: "Completează toate câmpurile.",
+    },
     errors: {
       registration: "Eroare la înregistrare",
       connection: "Eroare de conexiune. Încearcă din nou.",
@@ -291,6 +327,25 @@ export const translations: Record<Lang, TranslationKeys> = {
       passwordResetUnavailable:
         "Password reset is not available at the moment.",
     },
+    mentor: {
+      buttonLabel: "Mentor live",
+      closeConversation: "Close conversation",
+      conversationClosed: "The conversation with the mentor has been closed.",
+      dialogTitle: "Connect with an operator",
+      dialogDescription:
+        "A mentor will answer all your questions directly in this chat. Fill in your details below to start the conversation.",
+      name: "Name",
+      namePlaceholder: "Full name",
+      contact: "Contact details",
+      contactPlaceholder: "Email or phone",
+      county: "County",
+      countyPlaceholder: "Select county",
+      cancel: "Cancel",
+      submit: "Continue to operator",
+      connectedMessage:
+        "You will be connected with a mentor as soon as possible.",
+      fillAllFields: "Please fill in all fields.",
+    },
     errors: {
       registration: "Registration error",
       connection: "Connection error. Please try again.",
@@ -392,6 +447,24 @@ export const translations: Record<Lang, TranslationKeys> = {
       googleVerifyError: "Nem sikerült ellenőrizni a Google fiókodat.",
       termsConsent: "A regisztrációval elfogadod a",
       passwordResetUnavailable: "A jelszó visszaállítás jelenleg nem elérhető.",
+    },
+    mentor: {
+      buttonLabel: "Mentor live",
+      closeConversation: "Beszélgetés bezárása",
+      conversationClosed: "A mentorral folytatott beszélgetés lezárult.",
+      dialogTitle: "Kapcsolódj egy operátorhoz",
+      dialogDescription:
+        "Egy mentor válaszol minden kérdésedre közvetlenül ebben a chatben. Töltsd ki az adataidat a beszélgetés elindításához.",
+      name: "Név",
+      namePlaceholder: "Teljes név",
+      contact: "Elérhetőség",
+      contactPlaceholder: "E-mail vagy telefon",
+      county: "Megye",
+      countyPlaceholder: "Válassz megyét",
+      cancel: "Mégsem",
+      submit: "Tovább az operátorhoz",
+      connectedMessage: "Hamarosan egy mentor fog foglalkozni veled.",
+      fillAllFields: "Kérjük, tölts ki minden mezőt.",
     },
     errors: {
       registration: "Regisztrációs hiba",

@@ -37,6 +37,10 @@ const MAPPING = {
   'chevron.up': 'keyboard-arrow-up',
   'play.circle.fill': 'play-circle-filled',
   'video.fill': 'videocam',
+  'bubble.left.fill': 'chat',
+  'bubble.left.and.bubble.right.fill': 'forum',
+  'arrow.right': 'arrow-forward',
+  'xmark.circle.fill': 'cancel',
 } as IconMapping;
 
 /**

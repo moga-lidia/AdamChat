@@ -1,5 +1,6 @@
+import * as Crypto from "expo-crypto";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
@@ -16,6 +17,11 @@ import { ChatInput } from "@/components/chat-input";
 import { ChatMessage } from "@/components/chat-message";
 import { Header } from "@/components/header";
 import { HeaderMenu } from "@/components/header-menu";
+import {
+  MentorLiveModal,
+  loadMentorData,
+  type MentorData,
+} from "@/components/mentor-live-modal";
 import { SettingsPanel } from "@/components/settings-panel";
 import { SseWebView } from "@/components/sse-webview";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -26,12 +32,14 @@ import { useChatSession } from "@/hooks/use-chat-session";
 import { useI18n } from "@/hooks/use-i18n";
 import { useKeyboardPadding } from "@/hooks/use-keyboard-padding";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { StompClient } from "@/services/stomp-client";
+import type { ChatMessage as ChatMessageType } from "@/types/chat";
 
 export default function ChatScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { lang, t } = useI18n();
-  const { session, resetSession } = useChatSessionContext();
+  const { session, resetSession, addMessage } = useChatSessionContext();
   const {
     fontSize,
     setFontSize,
@@ -79,6 +87,182 @@ export default function ChatScreen() {
 
   const [authModalVisible, setAuthModalVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [mentorModalVisible, setMentorModalVisible] = useState(false);
+  const [mentorConnected, setMentorConnected] = useState(false);
+  const stompRef = useRef<StompClient | null>(null);
+
+  // Cleanup STOMP on unmount
+  useEffect(() => {
+    return () => {
+      stompRef.current?.disconnect();
+    };
+  }, []);
+
+  const connectStomp = useCallback(
+    (data: MentorData) => {
+      if (!session) return;
+
+      const stomp = new StompClient();
+      stompRef.current = stomp;
+
+      stomp.connect(
+        () => {
+          // Subscribe to chat topic for this session
+          stomp.subscribe(
+            `/topic/chat/${session.id}`,
+            (body) => {
+              try {
+                const msg = JSON.parse(body);
+                // Skip echoed user messages
+                if (msg.sender === "user") return;
+
+                if (
+                  msg.type === "SEND_MESSAGE" &&
+                  msg.payload?.message
+                ) {
+                  // Regular operator message
+                  addMessage({
+                    id: Crypto.randomUUID(),
+                    role: "assistant",
+                    content: msg.payload.message,
+                    timestamp: Date.now(),
+                  });
+                } else if (
+                  msg.type === "OPERATOR_ASSIGNED" &&
+                  msg.payload?.message
+                ) {
+                  // Operator assignment notification
+                  addMessage({
+                    id: Crypto.randomUUID(),
+                    role: "assistant",
+                    content: msg.payload.message,
+                    timestamp: Date.now(),
+                  });
+                } else if (msg.type === "CLOSE_CONVERSATION") {
+                  // Operator closed the conversation
+                  addMessage({
+                    id: Crypto.randomUUID(),
+                    role: "assistant",
+                    content: t.mentor.conversationClosed,
+                    timestamp: Date.now(),
+                  });
+                  stomp.disconnect();
+                  stompRef.current = null;
+                  setMentorConnected(false);
+                }
+              } catch {
+                // ignore unparseable frames
+              }
+            },
+          );
+
+          // Send REQUEST_HANDOVER
+          const handoverPayload = JSON.stringify({
+            id: "wss://ai.chatbot.zaha.tech/chatbot-ai/ws",
+            type: "REQUEST_HANDOVER",
+            payload: {
+              username: data.name,
+              contact: data.contact,
+              department: data.countyCode,
+              language: lang,
+            },
+            timestamp: new Date().toISOString(),
+            sender: "user",
+            sessionId: session.id,
+          });
+          stomp.send("/app/chat.userMessage", handoverPayload);
+        },
+        () => {
+          // On disconnect
+          setMentorConnected(false);
+        },
+      );
+    },
+    [session, lang, t.mentor.conversationClosed, addMessage],
+  );
+
+  // Send a user message to the operator via STOMP
+  const sendMentorMessage = useCallback(
+    (text: string) => {
+      if (!session || !stompRef.current?.isConnected()) return;
+
+      // Add user message to chat locally
+      const userMsg: ChatMessageType = {
+        id: Crypto.randomUUID(),
+        role: "user",
+        content: text,
+        timestamp: Date.now(),
+      };
+      addMessage(userMsg);
+
+      // Send via STOMP
+      const payload = JSON.stringify({
+        id: "wss://ai.chatbot.zaha.tech/chatbot-ai/ws",
+        type: "SEND_MESSAGE",
+        payload: { message: text },
+        timestamp: new Date().toISOString(),
+        sender: "user",
+        sessionId: session.id,
+      });
+      stompRef.current.send("/app/chat.userMessage", payload);
+    },
+    [session, addMessage],
+  );
+
+  const handleMentorPress = async () => {
+    if (mentorConnected) {
+      // Already connected — re-send handover through existing STOMP
+      const saved = await loadMentorData();
+      if (saved) {
+        connectStomp(saved);
+      }
+      const mentorMessage: ChatMessageType = {
+        id: Crypto.randomUUID(),
+        role: "assistant",
+        content: t.mentor.connectedMessage,
+        timestamp: Date.now(),
+      };
+      addMessage(mentorMessage);
+    } else {
+      setMentorModalVisible(true);
+    }
+  };
+
+  const handleMentorConnect = (data: MentorData) => {
+    setMentorModalVisible(false);
+    setMentorConnected(true);
+    const mentorMessage: ChatMessageType = {
+      id: Crypto.randomUUID(),
+      role: "assistant",
+      content: t.mentor.connectedMessage,
+      timestamp: Date.now(),
+    };
+    addMessage(mentorMessage);
+    connectStomp(data);
+  };
+
+  const handleMentorClose = () => {
+    // Send CLOSE_CONVERSATION to backend before disconnecting
+    if (session && stompRef.current?.isConnected()) {
+      const payload = JSON.stringify({
+        id: "wss://ai.chatbot.zaha.tech/chatbot-ai/ws",
+        type: "CLOSE_CONVERSATION",
+        timestamp: new Date().toISOString(),
+        sender: "user",
+        sessionId: session.id,
+      });
+      stompRef.current.send("/app/chat.userMessage", payload);
+    }
+    stompRef.current?.disconnect();
+    stompRef.current = null;
+    setMentorConnected(false);
+    addMessage({
+      id: Crypto.randomUUID(),
+      role: "assistant",
+      content: t.mentor.conversationClosed,
+      timestamp: Date.now(),
+    });
+  };
 
   // Routing guard: redirect to welcome if no lang set
   useEffect(() => {
@@ -116,12 +300,57 @@ export default function ChatScreen() {
         headerBg={headerBg}
         borderColor={borderColor}
         rightAction={
-          <HeaderMenu
-            onAccount={() => setAuthModalVisible(true)}
-            onSettings={() => setShowSettings((v) => !v)}
-            onCourses={handleCourses}
-            onNewChat={handleNewChat}
-          />
+          <View style={styles.headerRight}>
+            {mentorConnected ? (
+              <Pressable
+                onPress={handleMentorClose}
+                style={({ pressed }) => [
+                  styles.mentorButton,
+                  styles.mentorButtonActive,
+                  {
+                    opacity: pressed ? 0.85 : 1,
+                    transform: [{ scale: pressed ? 0.96 : 1 }],
+                  },
+                ]}
+              >
+                <View style={styles.liveDot} />
+                <IconSymbol
+                  name="bubble.left.fill"
+                  size={14}
+                  color="#2f2482"
+                />
+                <Text style={styles.mentorButtonText}>
+                  {t.mentor.closeConversation}
+                </Text>
+              </Pressable>
+            ) : (
+              <Pressable
+                onPress={handleMentorPress}
+                style={({ pressed }) => [
+                  styles.mentorButton,
+                  {
+                    opacity: pressed ? 0.85 : 1,
+                    transform: [{ scale: pressed ? 0.96 : 1 }],
+                  },
+                ]}
+              >
+                <IconSymbol
+                  name="bubble.left.fill"
+                  size={14}
+                  color="#2f2482"
+                />
+                <Text style={styles.mentorButtonText}>
+                  {t.mentor.buttonLabel}
+                </Text>
+              </Pressable>
+            )}
+            <HeaderMenu
+              onAccount={() => setAuthModalVisible(true)}
+              onSettings={() => setShowSettings((v) => !v)}
+              onCourses={handleCourses}
+              onNewChat={handleNewChat}
+            />
+          </View>
         }
       />
 
@@ -211,7 +440,11 @@ export default function ChatScreen() {
         style={{ paddingBottom: Animated.add(keyboardPadding, insets.bottom) }}
       >
         <ChatInput
-          onSend={sendMessage}
+          onSend={
+            mentorConnected && stompRef.current?.isConnected()
+              ? sendMentorMessage
+              : sendMessage
+          }
           onCourses={handleCourses}
           disabled={isStreaming}
         />
@@ -240,6 +473,12 @@ export default function ChatScreen() {
       <AuthModal
         visible={authModalVisible}
         onClose={() => setAuthModalVisible(false)}
+      />
+
+      <MentorLiveModal
+        visible={mentorModalVisible}
+        onClose={() => setMentorModalVisible(false)}
+        onConnect={handleMentorConnect}
       />
 
       <View style={styles.sseContainer} pointerEvents="none">
@@ -298,5 +537,40 @@ const styles = StyleSheet.create({
   studyVideoText: {
     fontSize: 14,
     fontFamily: "Poppins_500Medium",
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  mentorButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#F5E6A0",
+    borderRadius: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    shadowColor: "#2f2482",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  mentorButtonActive: {
+    backgroundColor: "#F5E6A0",
+    borderWidth: 1.5,
+    borderColor: "#2f2482",
+  },
+  liveDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: "#22c55e",
+  },
+  mentorButtonText: {
+    color: "#2f2482",
+    fontSize: 13,
+    fontFamily: "Poppins_700Bold",
   },
 });
