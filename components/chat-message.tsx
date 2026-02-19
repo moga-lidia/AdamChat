@@ -1,5 +1,5 @@
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { TypingIndicator } from "@/components/typing-indicator";
+import { useThemeColor } from "@/hooks/use-theme-color";
 import type { ChatMessage as ChatMessageType } from "@/types/chat";
 import { Image, StyleSheet, Text, View } from "react-native";
 
@@ -40,7 +40,10 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
             styles.bubble,
             isUser
               ? [styles.bubbleUser, { backgroundColor: userBubbleBg }]
-              : [styles.bubbleAssistant, { backgroundColor: assistantBubbleBg }],
+              : [
+                  styles.bubbleAssistant,
+                  { backgroundColor: assistantBubbleBg },
+                ],
           ]}
         >
           {isTyping ? (

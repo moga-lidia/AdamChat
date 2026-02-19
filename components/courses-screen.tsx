@@ -89,9 +89,7 @@ export function CoursesScreen() {
       ? []
       : activeCategory === 0
         ? courses
-        : courses.filter(
-            (c) => CATEGORY_INDEX[c.category] === activeCategory,
-          );
+        : courses.filter((c) => CATEGORY_INDEX[c.category] === activeCategory);
 
   const getCategoryLabel = (roCategory: string) => {
     const idx = CATEGORY_INDEX[roCategory];
