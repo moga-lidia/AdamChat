@@ -18,7 +18,7 @@ interface Props {
 export function ChatInput({ onSend, disabled }: Props) {
   const [text, setText] = useState('');
   const { t } = useI18n();
-  const bg = useThemeColor({ light: '#e8e9e4', dark: '#2A2A2A' }, 'background');
+  const bg = useThemeColor({ light: '#EEECEC', dark: '#2A2A2A' }, 'background');
   const textColor = useThemeColor({}, 'text');
   const placeholderColor = useThemeColor({ light: '#999', dark: '#666' }, 'icon');
   const accentColor = useThemeColor({ light: '#2f2482', dark: '#c1c1e3' }, 'tint');

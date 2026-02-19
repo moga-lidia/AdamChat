@@ -323,6 +323,7 @@ export default function MainScreen() {
   const [brightness, setBrightness] = useState(100);
   const flatListRef = useRef<FlatList>(null);
   const keyboardPadding = useRef(new Animated.Value(0)).current;
+  const screenFade = useRef(new Animated.Value(1)).current;
 
   // Keyboard handling
   useEffect(() => {
@@ -384,16 +385,27 @@ export default function MainScreen() {
 
   const handleStart = () => {
     if (!session) return;
-    const withLang = setSessionLang(session, lang);
-    const welcomeMsg: ChatMessageType = {
-      id: Crypto.randomUUID(),
-      role: "assistant",
-      content: t.chat.welcomeMessage,
-      timestamp: Date.now(),
-    };
-    const withWelcome = appendMessage(withLang, welcomeMsg);
-    setSession(withWelcome);
-    setScreen("chat");
+    Animated.timing(screenFade, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      const withLang = setSessionLang(session, lang);
+      const welcomeMsg: ChatMessageType = {
+        id: Crypto.randomUUID(),
+        role: "assistant",
+        content: t.chat.welcomeMessage,
+        timestamp: Date.now(),
+      };
+      const withWelcome = appendMessage(withLang, welcomeMsg);
+      setSession(withWelcome);
+      setScreen("chat");
+      Animated.timing(screenFade, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    });
   };
 
   const accumulatedRef = useRef("");
@@ -530,7 +542,9 @@ export default function MainScreen() {
   // ── Welcome Screen ──
   if (screen === "welcome") {
     return (
-      <View style={[styles.container, { backgroundColor: bg }]}>
+      <Animated.View
+        style={[styles.container, { backgroundColor: bg, opacity: screenFade }]}
+      >
         <View style={[styles.welcomeBody, { paddingTop: insets.top + 16 }]}>
           {/* Option A: Circle + arched text */}
           {/* <Animated.View style={[styles.logoContainer, entryAnims[0]]}>
@@ -664,7 +678,7 @@ export default function MainScreen() {
         >
           <LanguageDropdown value={lang} onChange={setLang} />
         </Animated.View>
-      </View>
+      </Animated.View>
     );
   }
 
@@ -691,7 +705,9 @@ export default function MainScreen() {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: bg }]}>
+    <Animated.View
+      style={[styles.container, { backgroundColor: bg, opacity: screenFade }]}
+    >
       <Header
         insets={insets}
         headerBg={headerBg}
@@ -711,7 +727,11 @@ export default function MainScreen() {
         data={displayMessages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <ChatMessage message={item} fontSize={fontSize} />
+          <ChatMessage
+            message={item}
+            fontSize={fontSize}
+            isTyping={item.id === "_streaming" && !streamingText}
+          />
         )}
         contentContainerStyle={styles.messageList}
         keyboardDismissMode="interactive"
@@ -725,10 +745,19 @@ export default function MainScreen() {
                   onPress={() => sendMessage(action.prompt, action.label)}
                   style={({ pressed }) => [
                     styles.quickActionButton,
-                    { opacity: pressed ? 0.7 : 1 },
+                    {
+                      backgroundColor: featureCardBg,
+                      borderColor: accentColor,
+                      opacity: pressed ? 0.85 : 1,
+                      transform: [{ scale: pressed ? 0.97 : 1 }],
+                    },
                   ]}
                 >
-                  <Text style={styles.quickActionText}>{action.label}</Text>
+                  <Text
+                    style={[styles.quickActionText, { color: accentColor }]}
+                  >
+                    {action.label}
+                  </Text>
                 </Pressable>
               ))}
             </View>
@@ -754,7 +783,7 @@ export default function MainScreen() {
           onError={handleSseError}
         />
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -938,15 +967,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   quickActionButton: {
-    borderWidth: 1.5,
-    borderColor: "#2f2482",
+    borderWidth: 1,
     borderRadius: 22,
     paddingHorizontal: 22,
     paddingVertical: 10,
   },
   quickActionText: {
-    color: "#2f2482",
-    fontSize: 15,
-    fontFamily: "Poppins_600SemiBold",
+    fontSize: 14,
+    fontFamily: "Poppins_500Medium",
   },
 });
