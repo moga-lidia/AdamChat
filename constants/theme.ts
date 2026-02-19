@@ -27,6 +27,28 @@ export const Colors = {
   },
 };
 
+/**
+ * Semantic color tokens used throughout the app.
+ * Single source of truth — avoids scattering raw hex values.
+ */
+export const AppColors = {
+  primary: '#2f2482',
+  primaryLight: 'rgba(47,36,130,0.06)',
+  primaryBorder: 'rgba(47,36,130,0.15)',
+  subtitle: '#7B7799',
+  subtitleDark: '#9B99B0',
+  accent: '#B5B7DD',
+  accentBg: 'rgba(181,183,221,0.1)',
+  background: '#f7f7f5',
+  backgroundDark: '#111',
+  headerBg: '#f7f7f5',
+  headerBgDark: '#1A1A1A',
+  border: '#E0E0E0',
+  borderDark: '#333',
+  white: '#FFFFFF',
+  darkText: '#1A1A2E',
+} as const;
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */

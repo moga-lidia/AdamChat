@@ -4,7 +4,7 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
 module.exports = {
   expo: {
-    name: "AdamChat",
+    name: "ADAM | Bible AI",
     slug: "AdamChat",
     version: "1.0.0",
     orientation: "portrait",

@@ -11,7 +11,7 @@ import type {
 import type { Lang } from "@/types/chat";
 
 const API_BASE = "https://backoffice-v2-api.hope.study";
-const ORIGIN = "https://academiasperanta.ro";
+const ORIGIN = "dezvoltare noua";
 const ENVIRONMENT_ID = "DnPBv0mKWa";
 const WEBSITE = "https://academiasperanta.ro/ro/";
 
