@@ -452,10 +452,18 @@ export default function MainScreen() {
   }, [t]);
 
   const sendMessage = useCallback(
-    (prompt: string, displayText?: string) => {
+    async (prompt: string, displayText?: string) => {
       if (!session || isStreaming || !session.lang) return;
 
       Keyboard.dismiss();
+
+      // Check connectivity before sending
+      try {
+        await fetch("https://academiasperanta.ro", { method: "HEAD" });
+      } catch {
+        Alert.alert("", t.chat.noConnection);
+        return;
+      }
 
       const userMessage: ChatMessageType = {
         id: Crypto.randomUUID(),
@@ -473,7 +481,7 @@ export default function MainScreen() {
       const url = buildStreamUrl(prompt, session.id, session.lang);
       setSseUrl(url);
     },
-    [session, isStreaming],
+    [session, isStreaming, t],
   );
 
   const showCourses = useCallback(() => setScreen("courses"), []);

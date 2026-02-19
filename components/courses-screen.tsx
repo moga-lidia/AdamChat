@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -159,21 +159,26 @@ const CATEGORY_COLORS: Record<string, string> = {
 export function CoursesScreen() {
   const { t } = useI18n();
   const [activeCategory, setActiveCategory] = useState(0);
-  const [imagesReady, setImagesReady] = useState(false);
+  const [isOnline, setIsOnline] = useState<boolean | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
+    setIsOnline(null);
     let cancelled = false;
-    Promise.all(COURSES.map((c) => Image.prefetch(c.imageUrl)))
+    fetch("https://academiasperanta.ro", { method: "HEAD" })
       .then(() => {
-        if (!cancelled) setImagesReady(true);
+        if (!cancelled) setIsOnline(true);
       })
       .catch(() => {
-        // Show courses even if some images fail
-        if (!cancelled) setImagesReady(true);
+        if (!cancelled) setIsOnline(false);
       });
     return () => {
       cancelled = true;
     };
+  }, [retryKey]);
+
+  const handleRetry = useCallback(() => {
+    setRetryKey((k) => k + 1);
   }, []);
 
   const cardBg = useThemeColor(
@@ -256,7 +261,7 @@ export function CoursesScreen() {
     </Pressable>
   );
 
-  if (!imagesReady) {
+  if (isOnline === null) {
     return (
       <View
         style={[
@@ -266,6 +271,31 @@ export function CoursesScreen() {
         ]}
       >
         <ActivityIndicator size="large" color="#2f2482" />
+      </View>
+    );
+  }
+
+  if (!isOnline) {
+    return (
+      <View
+        style={[
+          styles.container,
+          styles.loadingContainer,
+          { backgroundColor: screenBg },
+        ]}
+      >
+        <Text style={[styles.offlineText, { color: subtitleColor }]}>
+          {t.courses.noConnection}
+        </Text>
+        <Pressable
+          onPress={handleRetry}
+          style={({ pressed }) => [
+            styles.retryButton,
+            { opacity: pressed ? 0.8 : 1 },
+          ]}
+        >
+          <Text style={styles.retryButtonText}>{t.courses.retry}</Text>
+        </Pressable>
       </View>
     );
   }
@@ -324,6 +354,25 @@ const styles = StyleSheet.create({
   loadingContainer: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  offlineText: {
+    fontSize: 15,
+    fontFamily: "Poppins_500Medium",
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: 20,
+    paddingHorizontal: 32,
+  },
+  retryButton: {
+    backgroundColor: "#2f2482",
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 22,
+  },
+  retryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontFamily: "Poppins_600SemiBold",
   },
   chipScroll: {
     flexGrow: 0,

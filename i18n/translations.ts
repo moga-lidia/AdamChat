@@ -23,6 +23,7 @@ export interface TranslationKeys {
     inputPlaceholder: string;
     streamingPlaceholder: string;
     errorMessage: string;
+    noConnection: string;
   };
   quickActions: QuickAction[];
   menu: {
@@ -50,6 +51,8 @@ export interface TranslationKeys {
     lessons: string;
     minutes: string;
     free: string;
+    noConnection: string;
+    retry: string;
     categories: string[];
   };
   auth: {
@@ -109,6 +112,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       inputPlaceholder: "Pune o întrebare biblică...",
       streamingPlaceholder: "Se generează răspunsul, te rog să aștepți...",
       errorMessage: "Ne pare rău, a apărut o eroare. Încearcă din nou.",
+      noConnection: "Nu există conexiune la internet. Verifică rețeaua și încearcă din nou.",
     },
     quickActions: [
       { label: "Motivează-mă", prompt: "MOTIVATION" },
@@ -140,6 +144,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       lessons: "lecții",
       minutes: "min",
       free: "GRATUIT",
+      noConnection: "Nu există conexiune la internet.\nVerifică rețeaua și încearcă din nou.",
+      retry: "Reîncearcă",
       categories: [
         "Toate",
         "Biblie",
@@ -206,6 +212,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       inputPlaceholder: "Ask a biblical question...",
       streamingPlaceholder: "Generating response, please wait...",
       errorMessage: "Sorry, an error occurred. Please try again.",
+      noConnection: "No internet connection. Check your network and try again.",
     },
     quickActions: [
       { label: "Motivate me", prompt: "MOTIVATION" },
@@ -238,6 +245,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       lessons: "lessons",
       minutes: "min",
       free: "FREE",
+      noConnection: "No internet connection.\nCheck your network and try again.",
+      retry: "Retry",
       categories: [
         "All",
         "Bible",
@@ -303,6 +312,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       inputPlaceholder: "Tegyél fel egy bibliai kérdést...",
       streamingPlaceholder: "Válasz generálása, kérlek várj...",
       errorMessage: "Sajnáljuk, hiba történt. Kérlek, próbáld újra.",
+      noConnection: "Nincs internetkapcsolat. Ellenőrizd a hálózatot, és próbáld újra.",
     },
     quickActions: [
       { label: "Motiválj", prompt: "MOTIVATION" },
@@ -335,6 +345,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       lessons: "lecke",
       minutes: "perc",
       free: "INGYENES",
+      noConnection: "Nincs internetkapcsolat.\nEllenőrizd a hálózatot, és próbáld újra.",
+      retry: "Újra",
       categories: [
         "Összes",
         "Biblia",
