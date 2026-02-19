@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useAuth } from '@/hooks/use-auth';
+import { useI18n } from '@/hooks/use-i18n';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface HeaderMenuProps {
@@ -20,6 +21,7 @@ interface HeaderMenuProps {
 
 export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps) {
   const { user, signOut } = useAuth();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -83,12 +85,12 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
                 onPress={() => {
                   setOpen(false);
                   Alert.alert(
-                    'Deconectare',
-                    'Esti sigur ca vrei sa te deconectezi?',
+                    t.menu.signOutConfirmTitle,
+                    t.menu.signOutConfirmMessage,
                     [
-                      { text: 'Anuleaza', style: 'cancel' },
+                      { text: t.menu.cancel, style: 'cancel' },
                       {
-                        text: 'Deconecteaza-te',
+                        text: t.menu.signOut,
                         style: 'destructive',
                         onPress: () => signOut(),
                       },
@@ -98,7 +100,7 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
                 style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
               >
                 <IconSymbol name="rectangle.portrait.and.arrow.right" size={20} color="#D32F2F" />
-                <Text style={[styles.menuLabel, { color: '#D32F2F' }]}>Deconecteaza-te</Text>
+                <Text style={[styles.menuLabel, { color: '#D32F2F' }]}>{t.menu.signOut}</Text>
               </Pressable>
             ) : (
               <Pressable
@@ -106,7 +108,7 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
                 style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
               >
                 <IconSymbol name="person.fill" size={20} color="#2f2482" />
-                <Text style={[styles.menuLabel, { color: textColor }]}>Autentifica-te</Text>
+                <Text style={[styles.menuLabel, { color: textColor }]}>{t.menu.signIn}</Text>
               </Pressable>
             )}
 
@@ -117,7 +119,7 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
               style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
             >
               <IconSymbol name="gearshape.fill" size={20} color="#2f2482" />
-              <Text style={[styles.menuLabel, { color: textColor }]}>Setari</Text>
+              <Text style={[styles.menuLabel, { color: textColor }]}>{t.menu.settings}</Text>
             </Pressable>
 
             {onNewChat && (
@@ -128,7 +130,7 @@ export function HeaderMenu({ onAccount, onSettings, onNewChat }: HeaderMenuProps
                   style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.6 : 1 }]}
                 >
                   <IconSymbol name="plus" size={20} color="#2f2482" />
-                  <Text style={[styles.menuLabel, { color: textColor }]}>Conversatie noua</Text>
+                  <Text style={[styles.menuLabel, { color: textColor }]}>{t.menu.newChat}</Text>
                 </Pressable>
               </>
             )}

@@ -1,3 +1,4 @@
+import { getTranslation } from "@/i18n";
 import { saveAuthTokens } from "@/services/auth-storage";
 import type {
   AdvantagesResponse,
@@ -7,6 +8,7 @@ import type {
   TokenResponse,
   UserSelfResponse,
 } from "@/types/auth";
+import type { Lang } from "@/types/chat";
 
 const API_BASE = "https://backoffice-v2-api.hope.study";
 const ORIGIN = "https://academiasperanta.ro";
@@ -52,7 +54,9 @@ export function verifyGoogleToken(idToken: string): AuthUser | null {
 /** Register a new user with email/password. */
 export async function registerWithEmail(
   data: RegisterRequest,
+  lang: Lang = "ro",
 ): Promise<{ user: AuthUser; tokens: AuthTokens } | { error: string }> {
+  const t = getTranslation(lang);
   try {
     const url = `${API_BASE}/users/register/disciple?website=${encodeURIComponent(WEBSITE)}&environmentId=${ENVIRONMENT_ID}`;
     const res = await fetch(url, {
@@ -67,7 +71,7 @@ export async function registerWithEmail(
     if (!res.ok) {
       const body = await res.json().catch(() => null);
       return {
-        error: body?.message ?? `Eroare la inregistrare (${res.status})`,
+        error: body?.message ?? `${t.errors.registration} (${res.status})`,
       };
     }
 
@@ -89,7 +93,7 @@ export async function registerWithEmail(
 
     return { user, tokens };
   } catch {
-    return { error: "Eroare de conexiune. Incearca din nou." };
+    return { error: t.errors.connection };
   }
 }
 
@@ -97,7 +101,9 @@ export async function registerWithEmail(
 export async function signInWithEmail(
   email: string,
   password: string,
+  lang: Lang = "ro",
 ): Promise<{ user: AuthUser; tokens: AuthTokens } | { error: string }> {
+  const t = getTranslation(lang);
   try {
     const res = await fetch(`${API_BASE}/token`, {
       method: "POST",
@@ -111,7 +117,7 @@ export async function signInWithEmail(
     if (!res.ok) {
       const body = await res.json().catch(() => null);
       return {
-        error: body?.message ?? `Email sau parola incorecta. (${res.status})`,
+        error: body?.message ?? `${t.errors.wrongCredentials} (${res.status})`,
       };
     }
 
@@ -126,12 +132,12 @@ export async function signInWithEmail(
     // Fetch user profile with the access token
     const user = await fetchUserSelf(tokens.accessToken);
     if (!user) {
-      return { error: "Nu am putut incarca profilul utilizatorului." };
+      return { error: t.errors.profileLoad };
     }
 
     return { user, tokens };
   } catch {
-    return { error: "Eroare de conexiune. Incearca din nou." };
+    return { error: t.errors.connection };
   }
 }
 

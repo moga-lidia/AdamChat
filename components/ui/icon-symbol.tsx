@@ -27,6 +27,14 @@ const MAPPING = {
   'xmark': 'close',
   'lock.fill': 'lock',
   'chevron.left': 'chevron-left',
+  'chevron.down': 'keyboard-arrow-down',
+  'book.fill': 'menu-book',
+  'lightbulb.fill': 'lightbulb',
+  'textformat.size': 'format-size',
+  'circle.lefthalf.filled': 'contrast',
+  'sun.max.fill': 'light-mode',
+  'globe': 'language',
+  'chevron.up': 'keyboard-arrow-up',
 } as IconMapping;
 
 /**
