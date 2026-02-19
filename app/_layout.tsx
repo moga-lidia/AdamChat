@@ -14,6 +14,8 @@ import 'react-native-reanimated';
 
 import { AuthProvider } from '@/hooks/use-auth';
 import { I18nProvider } from '@/hooks/use-i18n';
+import { ChatSessionProvider } from '@/contexts/chat-session-context';
+import { SettingsProvider } from '@/contexts/settings-context';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -36,12 +38,18 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <I18nProvider>
-        <ThemeProvider value={DefaultTheme}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-          </Stack>
-          <StatusBar style="dark" />
-        </ThemeProvider>
+        <ChatSessionProvider>
+          <SettingsProvider>
+            <ThemeProvider value={DefaultTheme}>
+              <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="chat" />
+                <Stack.Screen name="courses" />
+              </Stack>
+              <StatusBar style="dark" />
+            </ThemeProvider>
+          </SettingsProvider>
+        </ChatSessionProvider>
       </I18nProvider>
     </AuthProvider>
   );
