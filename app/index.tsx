@@ -38,6 +38,37 @@ import type {
   Lang,
 } from "@/types/chat";
 
+// ── Staggered fade-in + slide-up helper ──
+function useStaggeredEntry(count: number, baseDelay = 120) {
+  const anims = useRef(
+    Array.from({ length: count }, () => new Animated.Value(0)),
+  ).current;
+
+  useEffect(() => {
+    const animations = anims.map((anim, i) =>
+      Animated.timing(anim, {
+        toValue: 1,
+        duration: 400,
+        delay: i * baseDelay,
+        useNativeDriver: true,
+      }),
+    );
+    Animated.stagger(baseDelay, animations).start();
+  }, [anims, baseDelay]);
+
+  return anims.map((anim) => ({
+    opacity: anim,
+    transform: [
+      {
+        translateY: anim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [18, 0],
+        }),
+      },
+    ],
+  }));
+}
+
 const LANG_OPTIONS: { label: string; flag: string; value: Lang }[] = [
   { label: "Română", flag: "🇷🇴", value: "ro" },
   { label: "English", flag: "🇬🇧", value: "en" },
@@ -250,12 +281,34 @@ function Header({
 export default function MainScreen() {
   const insets = useSafeAreaInsets();
   const { lang, t, setLang } = useI18n();
-  const bg = useThemeColor({ light: "#f4f5f0", dark: "#111" }, "background");
+  const bg = useThemeColor({ light: "#f7f7f5", dark: "#111" }, "background");
   const headerBg = useThemeColor(
-    { light: "#f4f5f0", dark: "#1A1A1A" },
+    { light: "#f7f7f5", dark: "#1A1A1A" },
     "background",
   );
   const borderColor = useThemeColor({ light: "#E0E0E0", dark: "#333" }, "icon");
+  const accentColor = useThemeColor(
+    { light: "#2f2482", dark: "#B5B7DD" },
+    "tint",
+  );
+  const subtitleColor = useThemeColor(
+    { light: "#7B7799", dark: "#9B99B0" },
+    "icon",
+  );
+  const featureCardBg = useThemeColor(
+    { light: "rgba(47,36,130,0.06)", dark: "rgba(181,183,221,0.1)" },
+    "background",
+  );
+  const startButtonBg = useThemeColor(
+    { light: "#2F2482", dark: "#B5B7DD" },
+    "tint",
+  );
+  const startButtonTextColor = useThemeColor(
+    { light: "#FFFFFF", dark: "#1A1A2E" },
+    "text",
+  );
+  // 5 elements: logo, title+subtitle, features title+cards, start button, language selector
+  const entryAnims = useStaggeredEntry(5);
 
   type Screen = "welcome" | "chat";
   const [screen, setScreen] = useState<Screen>("welcome");
@@ -478,53 +531,139 @@ export default function MainScreen() {
   if (screen === "welcome") {
     return (
       <View style={[styles.container, { backgroundColor: bg }]}>
-        <Header
-          insets={insets}
-          headerBg={headerBg}
-          borderColor={borderColor}
-          rightAction={
-            <HeaderMenu
-              onAccount={() => setAuthModalVisible(true)}
-              onSettings={() => setShowSettings((v) => !v)}
-            />
-          }
-        />
-        {settingsOverlay}
-        <View style={styles.welcomeBody}>
-          <Image
-            source={require("@/assets/images/logo.jpg")}
-            style={styles.welcomeLogo}
-          />
-          <Text style={[styles.welcomeTitle, { color: "#2f2482" }]}>
-            {t.welcome.title}
-          </Text>
-          <Text style={[styles.welcomeText, { color: "#7B7799" }]}>
-            {t.welcome.description}
-          </Text>
+        <View style={[styles.welcomeBody, { paddingTop: insets.top + 16 }]}>
+          {/* Option A: Circle + arched text */}
+          {/* <Animated.View style={[styles.logoContainer, entryAnims[0]]}>
+            <View style={styles.arcTextWrapper}>
+              {"ADAM".split("").map((letter, i) => {
+                const angles = [-22, -7, 7, 22];
+                const radius = 72;
+                const angle = angles[i];
+                const rad = (angle * Math.PI) / 180;
+                const x = radius * Math.sin(rad);
+                const y = -radius * Math.cos(rad) + radius - 6;
+                return (
+                  <Text
+                    key={i}
+                    style={[
+                      styles.arcLetter,
+                      {
+                        color: accentColor,
+                        transform: [
+                          { translateX: x },
+                          { translateY: y },
+                          { rotate: `${angle}deg` },
+                        ],
+                      },
+                    ]}
+                  >
+                    {letter}
+                  </Text>
+                );
+              })}
+            </View>
+            <View style={styles.logoWrapper}>
+              <Image
+                source={require("@/assets/images/logo.jpg")}
+                style={styles.welcomeLogo}
+              />
+            </View>
+          </Animated.View> */}
 
-          <Pressable
-            onPress={handleStart}
-            style={({ pressed }) => [
-              styles.startButton,
-              { opacity: pressed ? 0.8 : 1 },
-            ]}
+          {/* Option B: No circle, just logo */}
+          <Animated.View style={[styles.logoContainerAlt, entryAnims[0]]}>
+            <Image
+              source={require("@/assets/images/logo.jpg")}
+              style={styles.welcomeLogoAlt}
+            />
+          </Animated.View>
+
+          <Animated.View style={entryAnims[1]}>
+            <Text style={[styles.welcomeTitle, { color: accentColor }]}>
+              {t.welcome.title}
+            </Text>
+            <Text style={[styles.welcomeSubtitle, { color: subtitleColor }]}>
+              {t.welcome.subtitle.split("Adam").map((part, i, arr) => (
+                <Text key={i}>
+                  {part}
+                  {i < arr.length - 1 && (
+                    <Text
+                      style={[
+                        styles.welcomeSubtitleBold,
+                        { color: accentColor },
+                      ]}
+                    >
+                      Adam
+                    </Text>
+                  )}
+                </Text>
+              ))}
+            </Text>
+          </Animated.View>
+
+          <Animated.View
+            style={[{ width: "100%", alignItems: "center" }, entryAnims[2]]}
           >
-            <Text style={styles.startButtonText}>{t.welcome.start}</Text>
-          </Pressable>
+            <Text style={[styles.featuresTitle, { color: subtitleColor }]}>
+              {t.welcome.featuresTitle}
+            </Text>
+            <View style={styles.featureCards}>
+              {t.welcome.features.map((feature, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.featureCard,
+                    { backgroundColor: featureCardBg },
+                  ]}
+                >
+                  <IconSymbol
+                    name={feature.icon as any}
+                    size={22}
+                    color={accentColor}
+                    style={styles.featureIcon}
+                  />
+                  <Text style={[styles.featureText, { color: accentColor }]}>
+                    {feature.text}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </Animated.View>
+
+          <Animated.View style={entryAnims[3]}>
+            <Pressable
+              onPress={handleStart}
+              style={({ pressed }) => [
+                styles.startButton,
+                {
+                  backgroundColor: startButtonBg,
+                  opacity: pressed ? 0.9 : 1,
+                  transform: [{ scale: pressed ? 0.97 : 1 }],
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.startButtonText,
+                  { color: startButtonTextColor },
+                ]}
+              >
+                {t.welcome.start}
+              </Text>
+            </Pressable>
+          </Animated.View>
         </View>
 
         {/* Language selector pinned to bottom */}
-        <View
-          style={[styles.welcomeFooter, { paddingBottom: insets.bottom + 16 }]}
+        <Animated.View
+          style={[
+            styles.welcomeFooter,
+            { paddingBottom: insets.bottom + 16 },
+            entryAnims[4],
+          ]}
         >
           <LanguageDropdown value={lang} onChange={setLang} />
-        </View>
-
-        {visualOverlays}
-        <AuthModal
-          visible={authModalVisible}
-          onClose={() => setAuthModalVisible(false)}
-        />
+        </Animated.View>
       </View>
     );
   }
@@ -661,30 +800,114 @@ const styles = StyleSheet.create({
   },
 
   // Welcome
+  logoContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 160,
+    height: 160,
+    marginBottom: 12,
+  },
+  logoWrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#FFFFFF",
+    shadowColor: "rgba(47,36,130,0.3)",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 22,
+    elevation: 12,
+  },
   welcomeBody: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 36,
+    paddingBottom: 50,
   },
   welcomeLogo: {
     width: 80,
     height: 80,
-    borderRadius: 20,
-    marginBottom: 20,
+    borderRadius: 40,
+    marginTop: 15,
+  },
+  logoContainerAlt: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 160,
+    height: 140,
+    marginBottom: 12,
+  },
+  welcomeLogoAlt: {
+    width: 90,
+    height: 90,
+    borderRadius: 22,
+    marginTop: 40,
+  },
+  arcTextWrapper: {
+    position: "absolute",
+    top: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 200,
+    height: 90,
+    zIndex: 1,
+  },
+  arcLetter: {
+    position: "absolute",
+    fontSize: 16,
+    fontFamily: "Poppins_700Bold",
+    letterSpacing: 2,
   },
   welcomeTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontFamily: "Poppins_600SemiBold",
+    // fontFamily: "Poppins_700Bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  welcomeSubtitle: {
+    fontSize: 14,
+    fontFamily: "Poppins_400Regular",
+    lineHeight: 22,
+    textAlign: "center",
+    marginBottom: 28,
+  },
+  welcomeSubtitleBold: {
+    fontFamily: "Poppins_700Bold",
+    textShadowColor: "rgba(255,255,255,0.9)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
+  },
+  featuresTitle: {
+    fontSize: 14,
+    fontFamily: "Poppins_500Medium",
     marginBottom: 12,
     textAlign: "center",
   },
-  welcomeText: {
-    fontSize: 15,
-    fontFamily: "Poppins_400Regular",
-    lineHeight: 24,
-    textAlign: "center",
+  featureCards: {
+    width: "100%",
+    gap: 10,
     marginBottom: 36,
+  },
+  featureCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 12,
+  },
+  featureIcon: {
+    flexShrink: 0,
+  },
+  featureText: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: "Poppins_500Medium",
+    lineHeight: 20,
   },
   welcomeFooter: {
     alignItems: "center",
@@ -692,13 +915,11 @@ const styles = StyleSheet.create({
   },
 
   startButton: {
-    backgroundColor: "#B5B7DD",
     borderRadius: 28,
     paddingHorizontal: 56,
     paddingVertical: 16,
   },
   startButtonText: {
-    color: "#2F2482",
     fontSize: 16,
     fontFamily: "Poppins_700Bold",
     letterSpacing: 1.5,

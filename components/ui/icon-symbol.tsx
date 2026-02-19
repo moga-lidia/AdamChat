@@ -28,6 +28,8 @@ const MAPPING = {
   'lock.fill': 'lock',
   'chevron.left': 'chevron-left',
   'chevron.down': 'keyboard-arrow-down',
+  'book.fill': 'menu-book',
+  'lightbulb.fill': 'lightbulb',
 } as IconMapping;
 
 /**

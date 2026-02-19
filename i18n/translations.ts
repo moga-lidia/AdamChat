@@ -5,10 +5,17 @@ export interface QuickAction {
   prompt: string;
 }
 
+export interface WelcomeFeature {
+  icon: string;
+  text: string;
+}
+
 export interface TranslationKeys {
   welcome: {
     title: string;
-    description: string;
+    subtitle: string;
+    featuresTitle: string;
+    features: WelcomeFeature[];
     start: string;
   };
   chat: {
@@ -75,8 +82,16 @@ export const translations: Record<Lang, TranslationKeys> = {
   ro: {
     welcome: {
       title: "Bine ai venit!",
-      description:
-        "Conectează-te în portal și bucură-te de toate avantajele: păstrezi automat răspunsurile, poți relua oricând discuțiile anterioare și ai totul sincronizat pe orice dispozitiv.",
+      subtitle:
+        "Sunt Adam, asistentul biblic AI dezvoltat de Academia Speranța.",
+      featuresTitle: "Sunt aici să te ajut cu:",
+      features: [
+        { icon: "book.fill", text: "Explicații biblice clare" },
+        {
+          icon: "lightbulb.fill",
+          text: "Răspunsuri argumentate la întrebări despre credință, morală și sens",
+        },
+      ],
       start: "START",
     },
     chat: {
@@ -147,8 +162,16 @@ export const translations: Record<Lang, TranslationKeys> = {
   en: {
     welcome: {
       title: "Welcome!",
-      description:
-        "Sign in to the portal and enjoy all the benefits: automatically save your answers, resume previous conversations anytime, and keep everything synced across all your devices.",
+      subtitle:
+        "I'm Adam, the AI Bible assistant developed by Academia Speranța.",
+      featuresTitle: "I'm here to help you with:",
+      features: [
+        { icon: "book.fill", text: "Clear biblical explanations" },
+        {
+          icon: "lightbulb.fill",
+          text: "Well-reasoned answers to questions about faith, morality and meaning",
+        },
+      ],
       start: "START",
     },
     chat: {
@@ -207,7 +230,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       fillAllFields: "Please fill in all fields.",
       googleVerifyError: "Could not verify your Google account.",
       termsConsent: "By signing up, you agree to the",
-      passwordResetUnavailable: "Password reset is not available at the moment.",
+      passwordResetUnavailable:
+        "Password reset is not available at the moment.",
     },
     errors: {
       registration: "Registration error",
@@ -219,8 +243,15 @@ export const translations: Record<Lang, TranslationKeys> = {
   hu: {
     welcome: {
       title: "Isten hozott!",
-      description:
-        "Jelentkezz be a portálra, és élvezd az összes előnyt: automatikusan mentsd a válaszaidat, bármikor folytasd a korábbi beszélgetéseket, és szinkronizálj mindent az összes eszközödön.",
+      subtitle: "Adam vagyok, az Academia Speranța AI bibliai asszisztense.",
+      featuresTitle: "Azért vagyok itt, hogy segítsek:",
+      features: [
+        { icon: "book.fill", text: "Világos bibliai magyarázatok" },
+        {
+          icon: "lightbulb.fill",
+          text: "Megalapozott válaszok a hitről, erkölcsről és életértelemről szóló kérdésekre",
+        },
+      ],
       start: "START",
     },
     chat: {
@@ -279,8 +310,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       fillAllFields: "Kérjük, tölts ki minden mezőt.",
       googleVerifyError: "Nem sikerült ellenőrizni a Google fiókodat.",
       termsConsent: "A regisztrációval elfogadod a",
-      passwordResetUnavailable:
-        "A jelszó visszaállítás jelenleg nem elérhető.",
+      passwordResetUnavailable: "A jelszó visszaállítás jelenleg nem elérhető.",
     },
     errors: {
       registration: "Regisztrációs hiba",
