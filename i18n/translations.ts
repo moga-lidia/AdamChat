@@ -42,6 +42,7 @@ export interface TranslationKeys {
     fontSize: string;
     contrast: string;
     brightness: string;
+    language: string;
   };
   auth: {
     welcomeTitle: string;
@@ -123,6 +124,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       fontSize: "Mărime Font",
       contrast: "Contrast",
       brightness: "Luminozitate",
+      language: "Limbă",
     },
     auth: {
       welcomeTitle: "Bine ai venit!",
@@ -204,6 +206,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       fontSize: "Font Size",
       contrast: "Contrast",
       brightness: "Brightness",
+      language: "Language",
     },
     auth: {
       welcomeTitle: "Welcome!",
@@ -284,6 +287,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       fontSize: "Betűméret",
       contrast: "Kontraszt",
       brightness: "Fényerő",
+      language: "Nyelv",
     },
     auth: {
       welcomeTitle: "Isten hozott!",

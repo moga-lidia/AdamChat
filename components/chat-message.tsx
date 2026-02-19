@@ -9,6 +9,11 @@ interface Props {
   isTyping?: boolean;
 }
 
+function formatTime(timestamp: number): string {
+  const date = new Date(timestamp);
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 export function ChatMessage({ message, fontSize, isTyping }: Props) {
   const isUser = message.role === "user";
   const textColor = useThemeColor({}, "text");
@@ -29,25 +34,37 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
           style={styles.avatar}
         />
       )}
-      <View
-        style={[
-          styles.bubble,
-          isUser
-            ? [styles.bubbleUser, { backgroundColor: userBubbleBg }]
-            : [styles.bubbleAssistant, { backgroundColor: assistantBubbleBg }],
-        ]}
-      >
-        {isTyping ? (
-          <TypingIndicator />
-        ) : (
+      <View style={styles.bubbleColumn}>
+        <View
+          style={[
+            styles.bubble,
+            isUser
+              ? [styles.bubbleUser, { backgroundColor: userBubbleBg }]
+              : [styles.bubbleAssistant, { backgroundColor: assistantBubbleBg }],
+          ]}
+        >
+          {isTyping ? (
+            <TypingIndicator />
+          ) : (
+            <Text
+              style={[
+                styles.text,
+                { color: isUser ? "#FFFFFF" : textColor },
+                fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
+              ]}
+            >
+              {message.content}
+            </Text>
+          )}
+        </View>
+        {!isTyping && message.id !== "_streaming" && (
           <Text
             style={[
-              styles.text,
-              { color: isUser ? "#FFFFFF" : textColor },
-              fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
+              styles.timestamp,
+              isUser ? styles.timestampUser : styles.timestampAssistant,
             ]}
           >
-            {message.content}
+            {formatTime(message.timestamp)}
           </Text>
         )}
       </View>
@@ -75,7 +92,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   bubble: {
-    maxWidth: "78%",
     borderRadius: 18,
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -95,5 +111,21 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Poppins_400Regular",
     lineHeight: 22,
+  },
+  bubbleColumn: {
+    maxWidth: "78%",
+  },
+  timestamp: {
+    fontSize: 11,
+    fontFamily: "Poppins_400Regular",
+    color: "#999",
+    marginTop: 3,
+    marginHorizontal: 4,
+  },
+  timestampUser: {
+    textAlign: "right",
+  },
+  timestampAssistant: {
+    textAlign: "left",
   },
 });

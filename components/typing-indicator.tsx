@@ -1,12 +1,9 @@
+import { useThemeColor } from "@/hooks/use-theme-color";
 import { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
-import { useThemeColor } from "@/hooks/use-theme-color";
 
 export function TypingIndicator() {
-  const dotColor = useThemeColor(
-    { light: "#2f2482", dark: "#B5B7DD" },
-    "tint",
-  );
+  const dotColor = useThemeColor({ light: "#2f2482", dark: "#B5B7DD" }, "tint");
 
   const dots = [
     useRef(new Animated.Value(0)).current,
@@ -36,6 +33,7 @@ export function TypingIndicator() {
 
     animations.forEach((a) => a.start());
     return () => animations.forEach((a) => a.stop());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

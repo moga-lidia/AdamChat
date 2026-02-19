@@ -505,6 +505,8 @@ export default function MainScreen() {
       onContrastChange={setContrast}
       brightness={brightness}
       onBrightnessChange={setBrightness}
+      lang={lang}
+      onLangChange={setLang}
     />
   );
 
