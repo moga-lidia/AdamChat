@@ -57,8 +57,8 @@ export interface TranslationKeys {
     categories: string[];
   };
   auth: {
+    welcome: string;
     welcomeTitle: string;
-    welcomeSubtitle: string;
     continueWithGoogle: string;
     continueWithEmail: string;
     termsText: string;
@@ -178,8 +178,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       ],
     },
     auth: {
-      welcomeTitle: "Bine ai venit!",
-      welcomeSubtitle: "Conectează-te pentru a descoperi mai multe",
+      welcome: "Autentifică-te",
+      welcomeTitle: "Conectează-te pentru a descoperi mai multe!",
       continueWithGoogle: "Continuă cu Google",
       continueWithEmail: "Continuă cu Email",
       termsText: "Prin conectare, ești de acord cu",
@@ -300,8 +300,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       ],
     },
     auth: {
-      welcomeTitle: "Welcome!",
-      welcomeSubtitle: "Sign in to discover more",
+      welcome: "Sign in",
+      welcomeTitle: "Sign in to discover more!",
       continueWithGoogle: "Continue with Google",
       continueWithEmail: "Continue with Email",
       termsText: "By signing in, you agree to the",
@@ -422,8 +422,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       ],
     },
     auth: {
-      welcomeTitle: "Isten hozott!",
-      welcomeSubtitle: "Jelentkezz be, hogy többet felfedezz",
+      welcome: "Jelentkezz be",
+      welcomeTitle: "Jelentkezz be, hogy többet felfedezz!",
       continueWithGoogle: "Folytatás Google-lal",
       continueWithEmail: "Folytatás e-maillel",
       termsText: "A bejelentkezéssel elfogadod a",

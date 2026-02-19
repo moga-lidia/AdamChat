@@ -108,53 +108,47 @@ export default function ChatScreen() {
       stomp.connect(
         () => {
           // Subscribe to chat topic for this session
-          stomp.subscribe(
-            `/topic/chat/${session.id}`,
-            (body) => {
-              try {
-                const msg = JSON.parse(body);
-                // Skip echoed user messages
-                if (msg.sender === "user") return;
+          stomp.subscribe(`/topic/chat/${session.id}`, (body) => {
+            try {
+              const msg = JSON.parse(body);
+              // Skip echoed user messages
+              if (msg.sender === "user") return;
 
-                if (
-                  msg.type === "SEND_MESSAGE" &&
-                  msg.payload?.message
-                ) {
-                  // Regular operator message
-                  addMessage({
-                    id: Crypto.randomUUID(),
-                    role: "assistant",
-                    content: msg.payload.message,
-                    timestamp: Date.now(),
-                  });
-                } else if (
-                  msg.type === "OPERATOR_ASSIGNED" &&
-                  msg.payload?.message
-                ) {
-                  // Operator assignment notification
-                  addMessage({
-                    id: Crypto.randomUUID(),
-                    role: "assistant",
-                    content: msg.payload.message,
-                    timestamp: Date.now(),
-                  });
-                } else if (msg.type === "CLOSE_CONVERSATION") {
-                  // Operator closed the conversation
-                  addMessage({
-                    id: Crypto.randomUUID(),
-                    role: "assistant",
-                    content: t.mentor.conversationClosed,
-                    timestamp: Date.now(),
-                  });
-                  stomp.disconnect();
-                  stompRef.current = null;
-                  setMentorConnected(false);
-                }
-              } catch {
-                // ignore unparseable frames
+              if (msg.type === "SEND_MESSAGE" && msg.payload?.message) {
+                // Regular operator message
+                addMessage({
+                  id: Crypto.randomUUID(),
+                  role: "assistant",
+                  content: msg.payload.message,
+                  timestamp: Date.now(),
+                });
+              } else if (
+                msg.type === "OPERATOR_ASSIGNED" &&
+                msg.payload?.message
+              ) {
+                // Operator assignment notification
+                addMessage({
+                  id: Crypto.randomUUID(),
+                  role: "assistant",
+                  content: msg.payload.message,
+                  timestamp: Date.now(),
+                });
+              } else if (msg.type === "CLOSE_CONVERSATION") {
+                // Operator closed the conversation
+                addMessage({
+                  id: Crypto.randomUUID(),
+                  role: "assistant",
+                  content: t.mentor.conversationClosed,
+                  timestamp: Date.now(),
+                });
+                stomp.disconnect();
+                stompRef.current = null;
+                setMentorConnected(false);
               }
-            },
-          );
+            } catch {
+              // ignore unparseable frames
+            }
+          });
 
           // Send REQUEST_HANDOVER
           const handoverPayload = JSON.stringify({
@@ -314,11 +308,7 @@ export default function ChatScreen() {
                 ]}
               >
                 <View style={styles.liveDot} />
-                <IconSymbol
-                  name="bubble.left.fill"
-                  size={14}
-                  color="#2f2482"
-                />
+                <IconSymbol name="bubble.left.fill" size={14} color="#1A7D42" />
                 <Text style={styles.mentorButtonText}>
                   {t.mentor.closeConversation}
                 </Text>
@@ -334,11 +324,7 @@ export default function ChatScreen() {
                   },
                 ]}
               >
-                <IconSymbol
-                  name="bubble.left.fill"
-                  size={14}
-                  color="#2f2482"
-                />
+                <IconSymbol name="bubble.left.fill" size={14} color="#1A7D42" />
                 <Text style={styles.mentorButtonText}>
                   {t.mentor.buttonLabel}
                 </Text>
@@ -405,14 +391,16 @@ export default function ChatScreen() {
                   </Text>
                 </Pressable>
               ))}
+
+              {/* WHITE + PURPLE */}
               <Pressable
                 onPress={() => router.push("/courses")}
                 style={({ pressed }) => [
                   styles.quickActionButton,
                   styles.studyVideoButton,
                   {
-                    backgroundColor: featureCardBg,
-                    borderColor: accentColor,
+                    backgroundColor: "#FFFFFF",
+                    borderColor: "#2f2482",
                     opacity: pressed ? 0.85 : 1,
                     transform: [{ scale: pressed ? 0.97 : 1 }],
                   },
@@ -421,11 +409,11 @@ export default function ChatScreen() {
                 <IconSymbol
                   name="play.circle.fill"
                   size={15}
-                  color={accentColor as string}
+                  color="#2f2482"
                   style={styles.studyVideoIcon}
                 />
                 <Text
-                  style={[styles.quickActionText, { color: accentColor }]}
+                  style={[styles.quickActionText, { color: "#2f2482" }]}
                   numberOfLines={1}
                 >
                   {t.studyVideo}
@@ -547,20 +535,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#F5E6A0",
+    backgroundColor: "#E6F7ED",
     borderRadius: 22,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    shadowColor: "#2f2482",
+    shadowColor: "#1A7D42",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   mentorButtonActive: {
-    backgroundColor: "#F5E6A0",
+    backgroundColor: "#E6F7ED",
     borderWidth: 1.5,
-    borderColor: "#2f2482",
+    borderColor: "#1A7D42",
   },
   liveDot: {
     width: 7,
@@ -569,7 +557,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#22c55e",
   },
   mentorButtonText: {
-    color: "#2f2482",
+    color: "#1A7D42",
     fontSize: 13,
     fontFamily: "Poppins_700Bold",
   },

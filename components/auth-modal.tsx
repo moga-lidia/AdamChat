@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
-  Linking,
   Modal,
   Pressable,
   StyleSheet,
@@ -13,7 +12,10 @@ import {
   TextInput,
   View,
 } from "react-native";
+import Svg, { Path } from "react-native-svg";
 
+import { PrivacyPolicyModal } from "@/components/privacy-policy-modal";
+import { TermsModal } from "@/components/terms-modal";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";
@@ -53,6 +55,8 @@ export function AuthModal({ visible, onClose }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [privacyVisible, setPrivacyVisible] = useState(false);
+  const [termsVisible, setTermsVisible] = useState(false);
 
   const discovery = AuthSession.useAutoDiscovery("https://accounts.google.com");
   const redirectUri = AuthSession.makeRedirectUri();
@@ -210,10 +214,8 @@ export function AuthModal({ visible, onClose }: Props) {
                 source={require("@/assets/images/logo-speranta.jpg")}
                 style={styles.logo}
               />
-              <Text style={styles.title}>{t.auth.welcomeTitle}</Text>
-              <Text style={styles.subtitle}>
-                {t.auth.welcomeSubtitle}
-              </Text>
+              <Text style={styles.title}>{t.auth.welcome}</Text>
+              <Text style={styles.subtitle}>{t.auth.welcomeTitle}</Text>
 
               {error && <Text style={styles.error}>{error}</Text>}
 
@@ -226,8 +228,27 @@ export function AuthModal({ visible, onClose }: Props) {
                   { opacity: pressed ? 0.8 : 1 },
                 ]}
               >
-                <Text style={styles.googleG}>G</Text>
-                <Text style={styles.googleButtonText}>{t.auth.continueWithGoogle}</Text>
+                <Svg width={20} height={20} viewBox="0 0 48 48">
+                  <Path
+                    fill="#EA4335"
+                    d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                  />
+                  <Path
+                    fill="#4285F4"
+                    d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                  />
+                  <Path
+                    fill="#FBBC05"
+                    d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.0 24.0 0 0 0 0 21.56l7.98-6.19z"
+                  />
+                  <Path
+                    fill="#34A853"
+                    d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                  />
+                </Svg>
+                <Text style={styles.googleButtonText}>
+                  {t.auth.continueWithGoogle}
+                </Text>
               </Pressable>
 
               <Pressable
@@ -241,23 +262,22 @@ export function AuthModal({ visible, onClose }: Props) {
                   { opacity: pressed ? 0.8 : 1 },
                 ]}
               >
-                <IconSymbol name="envelope.fill" size={18} color="#2f2482" />
-                <Text style={styles.emailButtonText}>{t.auth.continueWithEmail}</Text>
+                <IconSymbol name="envelope.fill" size={20} color="#FFFFFF" />
+                <Text style={styles.emailButtonText}>
+                  {t.auth.continueWithEmail}
+                </Text>
               </Pressable>
 
               <Text style={styles.terms}>
                 {t.auth.termsText}{" "}
                 <Text
                   style={styles.link}
-                  onPress={() => Linking.openURL("https://hope.study/privacy")}
+                  onPress={() => setPrivacyVisible(true)}
                 >
                   {t.auth.privacyPolicy}
                 </Text>{" "}
                 {t.auth.and}{" "}
-                <Text
-                  style={styles.link}
-                  onPress={() => Linking.openURL("https://hope.study/terms")}
-                >
+                <Text style={styles.link} onPress={() => setTermsVisible(true)}>
                   {t.auth.termsOfUse}
                 </Text>
               </Text>
@@ -410,15 +430,12 @@ export function AuthModal({ visible, onClose }: Props) {
                 {t.auth.termsConsent}{" "}
                 <Text
                   style={styles.link}
-                  onPress={() => Linking.openURL("https://hope.study/privacy")}
+                  onPress={() => setPrivacyVisible(true)}
                 >
                   {t.auth.privacyPolicy}
                 </Text>{" "}
                 {t.auth.and}{" "}
-                <Text
-                  style={styles.link}
-                  onPress={() => Linking.openURL("https://hope.study/terms")}
-                >
+                <Text style={styles.link} onPress={() => setTermsVisible(true)}>
                   {t.auth.termsOfUse}
                 </Text>
               </Text>
@@ -462,7 +479,9 @@ export function AuthModal({ visible, onClose }: Props) {
                 {loading ? (
                   <ActivityIndicator color="#2f2482" size="small" />
                 ) : (
-                  <Text style={styles.submitButtonText}>{t.auth.createAccount}</Text>
+                  <Text style={styles.submitButtonText}>
+                    {t.auth.createAccount}
+                  </Text>
                 )}
               </Pressable>
 
@@ -516,7 +535,9 @@ export function AuthModal({ visible, onClose }: Props) {
                 {loading ? (
                   <ActivityIndicator color="#2f2482" size="small" />
                 ) : (
-                  <Text style={styles.submitButtonText}>{t.auth.sendRequest}</Text>
+                  <Text style={styles.submitButtonText}>
+                    {t.auth.sendRequest}
+                  </Text>
                 )}
               </Pressable>
 
@@ -535,6 +556,14 @@ export function AuthModal({ visible, onClose }: Props) {
           )}
         </View>
       </Pressable>
+      <PrivacyPolicyModal
+        visible={privacyVisible}
+        onClose={() => setPrivacyVisible(false)}
+      />
+      <TermsModal
+        visible={termsVisible}
+        onClose={() => setTermsVisible(false)}
+      />
     </Modal>
   );
 }
@@ -577,7 +606,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#1A1A1A",
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: "Poppins_700Bold",
     textAlign: "center",
     marginBottom: 6,
@@ -613,7 +642,9 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   googleButton: {
-    backgroundColor: "#2f2482",
+    backgroundColor: "#F5F5F5",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
   },
   googleG: {
     color: "#FFFFFF",
@@ -621,17 +652,15 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   googleButtonText: {
-    color: "#FFFFFF",
+    color: "#2f2482",
     fontSize: 15,
     fontFamily: "Poppins_600SemiBold",
   },
   emailButton: {
-    backgroundColor: "#F5F5F5",
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
+    backgroundColor: "#2f2482",
   },
   emailButtonText: {
-    color: "#2f2482",
+    color: "#FFFFFF",
     fontSize: 15,
     fontFamily: "Poppins_600SemiBold",
   },
