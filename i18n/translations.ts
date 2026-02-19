@@ -26,6 +26,7 @@ export interface TranslationKeys {
     noConnection: string;
   };
   quickActions: QuickAction[];
+  studyVideo: string;
   menu: {
     signOut: string;
     signIn: string;
@@ -109,16 +110,18 @@ export const translations: Record<Lang, TranslationKeys> = {
     chat: {
       welcomeMessage:
         "Bună! Sunt aici să te ajut cu răspunsuri la întrebări despre Biblie și viața spirituală. Spune-mi, te rog, cu ce pot începe?",
-      inputPlaceholder: "Pune o întrebare biblică...",
+      inputPlaceholder: "Pune-mi o întrebare...",
       streamingPlaceholder: "Se generează răspunsul, te rog să aștepți...",
       errorMessage: "Ne pare rău, a apărut o eroare. Încearcă din nou.",
-      noConnection: "Nu există conexiune la internet. Verifică rețeaua și încearcă din nou.",
+      noConnection:
+        "Nu există conexiune la internet. Verifică rețeaua și încearcă din nou.",
     },
     quickActions: [
       { label: "Motivează-mă", prompt: "MOTIVATION" },
       { label: "Spune-mi ceva ce nu știu", prompt: "TELL_ME_SOMETHING" },
       { label: "Meditația zilei", prompt: "DAILY_MEDITATION" },
     ],
+    studyVideo: "Vreau să studiez video",
     menu: {
       signOut: "Deconectează-te",
       signIn: "Autentifică-te",
@@ -144,7 +147,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       lessons: "lecții",
       minutes: "min",
       free: "GRATUIT",
-      noConnection: "Nu există conexiune la internet.\nVerifică rețeaua și încearcă din nou.",
+      noConnection:
+        "Nu există conexiune la internet.\nVerifică rețeaua și încearcă din nou.",
       retry: "Reîncearcă",
       categories: [
         "Toate",
@@ -209,7 +213,7 @@ export const translations: Record<Lang, TranslationKeys> = {
     chat: {
       welcomeMessage:
         "Hello! I am here to help you with answers to questions about the Bible and spiritual life. Please tell me, how can I help?",
-      inputPlaceholder: "Ask a biblical question...",
+      inputPlaceholder: "Ask me a question...",
       streamingPlaceholder: "Generating response, please wait...",
       errorMessage: "Sorry, an error occurred. Please try again.",
       noConnection: "No internet connection. Check your network and try again.",
@@ -219,6 +223,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       { label: "Tell me something I don't know", prompt: "TELL_ME_SOMETHING" },
       { label: "Daily meditation", prompt: "DAILY_MEDITATION" },
     ],
+    studyVideo: "I want to study video",
     menu: {
       signOut: "Sign out",
       signIn: "Sign in",
@@ -245,7 +250,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       lessons: "lessons",
       minutes: "min",
       free: "FREE",
-      noConnection: "No internet connection.\nCheck your network and try again.",
+      noConnection:
+        "No internet connection.\nCheck your network and try again.",
       retry: "Retry",
       categories: [
         "All",
@@ -309,16 +315,18 @@ export const translations: Record<Lang, TranslationKeys> = {
     chat: {
       welcomeMessage:
         "Szia! Azért vagyok itt, hogy segítsek a Bibliával és a lelki élettel kapcsolatos kérdéseidben. Kérlek, mondd el, miben segíthetek?",
-      inputPlaceholder: "Tegyél fel egy bibliai kérdést...",
+      inputPlaceholder: "Tegyél fel egy kérdést...",
       streamingPlaceholder: "Válasz generálása, kérlek várj...",
       errorMessage: "Sajnáljuk, hiba történt. Kérlek, próbáld újra.",
-      noConnection: "Nincs internetkapcsolat. Ellenőrizd a hálózatot, és próbáld újra.",
+      noConnection:
+        "Nincs internetkapcsolat. Ellenőrizd a hálózatot, és próbáld újra.",
     },
     quickActions: [
       { label: "Motiválj", prompt: "MOTIVATION" },
       { label: "Mondj valamit, amit nem tudok", prompt: "TELL_ME_SOMETHING" },
       { label: "A nap meditációja", prompt: "DAILY_MEDITATION" },
     ],
+    studyVideo: "Videót szeretnék tanulni",
     menu: {
       signOut: "Kijelentkezés",
       signIn: "Bejelentkezés",
@@ -345,7 +353,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       lessons: "lecke",
       minutes: "perc",
       free: "INGYENES",
-      noConnection: "Nincs internetkapcsolat.\nEllenőrizd a hálózatot, és próbáld újra.",
+      noConnection:
+        "Nincs internetkapcsolat.\nEllenőrizd a hálózatot, és próbáld újra.",
       retry: "Újra",
       categories: [
         "Összes",

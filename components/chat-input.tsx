@@ -13,10 +13,11 @@ import {
 
 interface Props {
   onSend: (text: string) => void;
+  onCourses?: () => void;
   disabled?: boolean;
 }
 
-export function ChatInput({ onSend, disabled }: Props) {
+export function ChatInput({ onSend, onCourses, disabled }: Props) {
   const [text, setText] = useState("");
   const inputRef = useRef<TextInput>(null);
   const sendAnim = useRef(new Animated.Value(1)).current;
@@ -54,6 +55,17 @@ export function ChatInput({ onSend, disabled }: Props) {
 
   return (
     <View style={[styles.container, { backgroundColor: bg }]}>
+      {onCourses && (
+        <Pressable
+          onPress={onCourses}
+          style={({ pressed }) => [
+            styles.coursesButton,
+            { backgroundColor: accentColor, opacity: pressed ? 0.7 : 1 },
+          ]}
+        >
+          <IconSymbol name="video.fill" size={18} color="#FFFFFF" />
+        </Pressable>
+      )}
       <TextInput
         ref={inputRef}
         style={[styles.input, { color: textColor }]}
@@ -108,6 +120,15 @@ const styles = StyleSheet.create({
     maxHeight: 120,
     paddingHorizontal: 8,
     paddingVertical: Platform.OS === "ios" ? 8 : 4,
+  },
+  coursesButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 2,
+    marginBottom: Platform.OS === "ios" ? 4 : 0,
   },
   sendButton: {
     width: 34,

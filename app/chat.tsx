@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -8,7 +9,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AuthModal } from "@/components/auth-modal";
@@ -18,26 +18,45 @@ import { Header } from "@/components/header";
 import { HeaderMenu } from "@/components/header-menu";
 import { SettingsPanel } from "@/components/settings-panel";
 import { SseWebView } from "@/components/sse-webview";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { AppColors } from "@/constants/theme";
 import { useChatSessionContext } from "@/contexts/chat-session-context";
 import { useSettings } from "@/contexts/settings-context";
 import { useChatSession } from "@/hooks/use-chat-session";
 import { useI18n } from "@/hooks/use-i18n";
 import { useKeyboardPadding } from "@/hooks/use-keyboard-padding";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { AppColors } from "@/constants/theme";
 
 export default function ChatScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { lang, t } = useI18n();
   const { session, resetSession } = useChatSessionContext();
-  const { fontSize, setFontSize, contrast, setContrast, brightness, setBrightness } =
-    useSettings();
+  const {
+    fontSize,
+    setFontSize,
+    contrast,
+    setContrast,
+    brightness,
+    setBrightness,
+  } = useSettings();
 
-  const bg = useThemeColor({ light: AppColors.background, dark: AppColors.backgroundDark }, "background");
-  const headerBg = useThemeColor({ light: AppColors.headerBg, dark: AppColors.headerBgDark }, "background");
-  const borderColor = useThemeColor({ light: AppColors.border, dark: AppColors.borderDark }, "icon");
-  const accentColor = useThemeColor({ light: AppColors.primary, dark: AppColors.accent }, "tint");
+  const bg = useThemeColor(
+    { light: AppColors.background, dark: AppColors.backgroundDark },
+    "background",
+  );
+  const headerBg = useThemeColor(
+    { light: AppColors.headerBg, dark: AppColors.headerBgDark },
+    "background",
+  );
+  const borderColor = useThemeColor(
+    { light: AppColors.border, dark: AppColors.borderDark },
+    "icon",
+  );
+  const accentColor = useThemeColor(
+    { light: AppColors.primary, dark: AppColors.accent },
+    "tint",
+  );
   const featureCardBg = useThemeColor(
     { light: AppColors.primaryLight, dark: AppColors.accentBg },
     "background",
@@ -150,11 +169,39 @@ export default function ChatScreen() {
                     },
                   ]}
                 >
-                  <Text style={[styles.quickActionText, { color: accentColor }]}>
+                  <Text
+                    style={[styles.quickActionText, { color: accentColor }]}
+                  >
                     {action.label}
                   </Text>
                 </Pressable>
               ))}
+              <Pressable
+                onPress={() => router.push("/courses")}
+                style={({ pressed }) => [
+                  styles.quickActionButton,
+                  styles.studyVideoButton,
+                  {
+                    backgroundColor: featureCardBg,
+                    borderColor: accentColor,
+                    opacity: pressed ? 0.85 : 1,
+                    transform: [{ scale: pressed ? 0.97 : 1 }],
+                  },
+                ]}
+              >
+                <IconSymbol
+                  name="play.circle.fill"
+                  size={15}
+                  color={accentColor as string}
+                  style={styles.studyVideoIcon}
+                />
+                <Text
+                  style={[styles.quickActionText, { color: accentColor }]}
+                  numberOfLines={1}
+                >
+                  {t.studyVideo}
+                </Text>
+              </Pressable>
             </View>
           ) : null
         }
@@ -163,7 +210,11 @@ export default function ChatScreen() {
       <Animated.View
         style={{ paddingBottom: Animated.add(keyboardPadding, insets.bottom) }}
       >
-        <ChatInput onSend={sendMessage} disabled={isStreaming} />
+        <ChatInput
+          onSend={sendMessage}
+          onCourses={handleCourses}
+          disabled={isStreaming}
+        />
       </Animated.View>
 
       {/* Visual overlays for brightness/contrast */}
@@ -233,6 +284,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   quickActionText: {
+    fontSize: 14,
+    fontFamily: "Poppins_500Medium",
+  },
+  studyVideoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 7,
+  },
+  studyVideoIcon: {
+    marginTop: 1,
+  },
+  studyVideoText: {
     fontSize: 14,
     fontFamily: "Poppins_500Medium",
   },

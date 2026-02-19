@@ -35,6 +35,8 @@ const MAPPING = {
   'sun.max.fill': 'light-mode',
   'globe': 'language',
   'chevron.up': 'keyboard-arrow-up',
+  'play.circle.fill': 'play-circle-filled',
+  'video.fill': 'videocam',
 } as IconMapping;
 
 /**
