@@ -12,18 +12,18 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { AuthModal } from "@/components/auth-modal";
-import { ChatInput } from "@/components/chat-input";
-import { ChatMessage } from "@/components/chat-message";
-import { Header } from "@/components/header";
-import { HeaderMenu } from "@/components/header-menu";
+import { AuthModal } from "@/components/auth/auth-modal";
+import { ChatInput } from "@/components/chat/chat-input";
+import { ChatMessage } from "@/components/chat/chat-message";
+import { Header } from "@/components/layout/header";
+import { HeaderMenu } from "@/components/layout/header-menu";
 import {
   MentorLiveModal,
   loadMentorData,
   type MentorData,
-} from "@/components/mentor-live-modal";
-import { SettingsPanel } from "@/components/settings-panel";
-import { SseWebView } from "@/components/sse-webview";
+} from "@/components/mentor/mentor-live-modal";
+import { SettingsPanel } from "@/components/settings/settings-panel";
+import { SseWebView } from "@/components/chat/sse-webview";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { AppColors } from "@/constants/theme";
 import { useChatSessionContext } from "@/contexts/chat-session-context";

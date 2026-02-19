@@ -14,8 +14,8 @@ import {
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
-import { PrivacyPolicyModal } from "@/components/privacy-policy-modal";
-import { TermsModal } from "@/components/terms-modal";
+import { PrivacyPolicyModal } from "@/components/auth/privacy-policy-modal";
+import { TermsModal } from "@/components/auth/terms-modal";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";

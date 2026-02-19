@@ -2,8 +2,8 @@ import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CoursesScreen } from "@/components/courses-screen";
-import { Header } from "@/components/header";
+import { CoursesScreen } from "@/components/courses/courses-screen";
+import { Header } from "@/components/layout/header";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { AppColors } from "@/constants/theme";

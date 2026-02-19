@@ -10,7 +10,7 @@ import {
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { LanguageDropdown } from "@/components/language-dropdown";
+import { LanguageDropdown } from "@/components/layout/language-dropdown";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { AppColors } from "@/constants/theme";
 import { useChatSessionContext } from "@/contexts/chat-session-context";

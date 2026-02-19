@@ -1,4 +1,4 @@
-import { TypingIndicator } from "@/components/typing-indicator";
+import { TypingIndicator } from "@/components/chat/typing-indicator";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import type { ChatMessage as ChatMessageType } from "@/types/chat";
 import { Image, StyleSheet, Text, View } from "react-native";
