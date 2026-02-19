@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -13,129 +13,11 @@ import {
 
 import { useI18n } from "@/hooks/use-i18n";
 import { useThemeColor } from "@/hooks/use-theme-color";
-
-const BASE_URL = "https://academiasperanta.ro/ro";
-
-interface Course {
-  id: string;
-  title: string;
-  category: string;
-  lessons: number;
-  duration: number;
-  imageUrl: string;
-  courseUrl: string;
-}
-
-const COURSES: Course[] = [
-  {
-    id: "1",
-    title: "Isus ne-a învățat",
-    category: "Biblie",
-    lessons: 9,
-    duration: 270,
-    imageUrl: "https://assets.hope.study/images/HsSqEhR1N.png",
-    courseUrl: `${BASE_URL}/courses/Isus-ne-a-invatat/`,
-  },
-  {
-    id: "2",
-    title: "Biblia – mit, manipulare sau mesaj divin?",
-    category: "Biblie",
-    lessons: 4,
-    duration: 34,
-    imageUrl: "https://assets.hope.study/images/M8fU7dnOj.jpg",
-    courseUrl: `${BASE_URL}/courses/Biblia-mit-manipulare-sau-mesaj-divin/`,
-  },
-  {
-    id: "3",
-    title: "Conflictul Cosmic. Te include și pe TINE",
-    category: "Credință",
-    lessons: 8,
-    duration: 240,
-    imageUrl: "https://assets.hope.study/images/pkV-MruaF.png",
-    courseUrl: `${BASE_URL}/courses/conflictul/`,
-  },
-  {
-    id: "4",
-    title: "Credință și dovezi: confirmări arheologice ale Bibliei",
-    category: "Arheologie",
-    lessons: 8,
-    duration: 240,
-    imageUrl: "https://assets.hope.study/images/eMigtomPR.png",
-    courseUrl: `${BASE_URL}/courses/credinta-si-dovezi/`,
-  },
-  {
-    id: "5",
-    title: "Cu Dumnezeu în suferință",
-    category: "Credință",
-    lessons: 8,
-    duration: 235,
-    imageUrl: "https://assets.hope.study/images/Xz3qrQcrH.png",
-    courseUrl: `${BASE_URL}/courses/Cu-Dumnezeu-in-suferinta/`,
-  },
-  {
-    id: "6",
-    title: "Când viața doare: 7 adevăruri biblice despre suferință",
-    category: "Credință",
-    lessons: 7,
-    duration: 37,
-    imageUrl: "https://assets.hope.study/images/CODBb1ei6.jpg",
-    courseUrl: `${BASE_URL}/courses/cand-viata-doare-7-adevaruri-biblice-despre-suferinta/`,
-  },
-  {
-    id: "7",
-    title: "Isus printre noi: revoluția relațiilor umane",
-    category: "Biblie",
-    lessons: 8,
-    duration: 360,
-    imageUrl: "https://assets.hope.study/images/jF1hsLrvP.png",
-    courseUrl: `${BASE_URL}/courses/Isus-printre-noi-revolutia-relatiilor-umane/`,
-  },
-  {
-    id: "8",
-    title: "Masterclass de comunicare. Autenticitate, empatie, succes.",
-    category: "Dezvoltare Personală",
-    lessons: 8,
-    duration: 240,
-    imageUrl: "https://assets.hope.study/images/T8_K0WAIK.png",
-    courseUrl: `${BASE_URL}/courses/masterclass-de-comunicare-autenticitate-empatie-succes/`,
-  },
-  {
-    id: "9",
-    title: "Masterclass microbiom",
-    category: "Sănătate",
-    lessons: 7,
-    duration: 315,
-    imageUrl: "https://assets.hope.study/images/fQuZ_cTKP.jpg",
-    courseUrl: `${BASE_URL}/courses/masterclass-microbiom/`,
-  },
-  {
-    id: "10",
-    title: "Prima ta întâlnire cu Biblia - ce trebuie să știi",
-    category: "Biblie",
-    lessons: 5,
-    duration: 38,
-    imageUrl: "https://assets.hope.study/images/hWc7mkyuz.png",
-    courseUrl: `${BASE_URL}/courses/prima-ta-intalnire-cu-Biblia-ce-trebuie-sa-stii/`,
-  },
-  {
-    id: "11",
-    title: "Un vis străvechi arată viitorul",
-    category: "Profeție",
-    lessons: 3,
-    duration: 15,
-    imageUrl: "https://assets.hope.study/images/QxdQNr53k.png",
-    courseUrl: `${BASE_URL}/courses/un-vis-stravechi/`,
-  },
-  {
-    id: "12",
-    title: "Unicitatea uitată a creștinismului",
-    category: "Credință",
-    lessons: 8,
-    duration: 240,
-    imageUrl: "https://assets.hope.study/images/addEWkAX.jpg",
-    courseUrl: `${BASE_URL}/courses/unicitatea-uitata-a-crestinismului/`,
-  },
-];
+import {
+  type Course,
+  FALLBACK_COURSES,
+  fetchCourses,
+} from "@/services/courses-api";
 
 // Maps Romanian category names to the translation index
 const CATEGORY_INDEX: Record<string, number> = {
@@ -159,26 +41,19 @@ const CATEGORY_COLORS: Record<string, string> = {
 export function CoursesScreen() {
   const { t } = useI18n();
   const [activeCategory, setActiveCategory] = useState(0);
-  const [isOnline, setIsOnline] = useState<boolean | null>(null);
-  const [retryKey, setRetryKey] = useState(0);
-
+  const [courses, setCourses] = useState<Course[] | null>(null);
   useEffect(() => {
-    setIsOnline(null);
     let cancelled = false;
-    fetch("https://academiasperanta.ro", { method: "HEAD" })
-      .then(() => {
-        if (!cancelled) setIsOnline(true);
+    fetchCourses()
+      .then((data) => {
+        if (!cancelled) setCourses(data);
       })
       .catch(() => {
-        if (!cancelled) setIsOnline(false);
+        if (!cancelled) setCourses(FALLBACK_COURSES);
       });
     return () => {
       cancelled = true;
     };
-  }, [retryKey]);
-
-  const handleRetry = useCallback(() => {
-    setRetryKey((k) => k + 1);
   }, []);
 
   const cardBg = useThemeColor(
@@ -210,9 +85,13 @@ export function CoursesScreen() {
   const categories = t.courses.categories;
 
   const filteredCourses =
-    activeCategory === 0
-      ? COURSES
-      : COURSES.filter((c) => CATEGORY_INDEX[c.category] === activeCategory);
+    courses === null
+      ? []
+      : activeCategory === 0
+        ? courses
+        : courses.filter(
+            (c) => CATEGORY_INDEX[c.category] === activeCategory,
+          );
 
   const getCategoryLabel = (roCategory: string) => {
     const idx = CATEGORY_INDEX[roCategory];
@@ -261,7 +140,7 @@ export function CoursesScreen() {
     </Pressable>
   );
 
-  if (isOnline === null) {
+  if (courses === null) {
     return (
       <View
         style={[
@@ -275,33 +154,11 @@ export function CoursesScreen() {
     );
   }
 
-  if (!isOnline) {
-    return (
-      <View
-        style={[
-          styles.container,
-          styles.loadingContainer,
-          { backgroundColor: screenBg },
-        ]}
-      >
-        <Text style={[styles.offlineText, { color: subtitleColor }]}>
-          {t.courses.noConnection}
-        </Text>
-        <Pressable
-          onPress={handleRetry}
-          style={({ pressed }) => [
-            styles.retryButton,
-            { opacity: pressed ? 0.8 : 1 },
-          ]}
-        >
-          <Text style={styles.retryButtonText}>{t.courses.retry}</Text>
-        </Pressable>
-      </View>
-    );
-  }
-
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
+      <Text style={[styles.screenTitle, { color: textColor }]}>
+        {t.courses.title}
+      </Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -351,31 +208,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  screenTitle: {
+    fontSize: 22,
+    fontFamily: "Poppins_700Bold",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
   loadingContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
-  offlineText: {
-    fontSize: 15,
-    fontFamily: "Poppins_500Medium",
-    textAlign: "center",
-    lineHeight: 22,
-    marginBottom: 20,
-    paddingHorizontal: 32,
-  },
-  retryButton: {
-    backgroundColor: "#2f2482",
-    paddingHorizontal: 28,
-    paddingVertical: 12,
-    borderRadius: 22,
-  },
-  retryButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontFamily: "Poppins_600SemiBold",
-  },
   chipScroll: {
     flexGrow: 0,
+    flexShrink: 0,
   },
   chipRow: {
     paddingHorizontal: 16,
