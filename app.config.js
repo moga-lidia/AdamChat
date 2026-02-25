@@ -15,10 +15,11 @@ module.exports = {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "com.lidiaszm.adamchat",
+      bundleIdentifier: "com.mediasperanta.adam",
+      usesAppleSignIn: true,
     },
     android: {
-      package: "com.lidiaszm.adamchat",
+      package: "com.mediasperanta.adam",
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
         foregroundImage: "./assets/AppIcons/playstore.png",
@@ -32,6 +33,7 @@ module.exports = {
     },
     plugins: [
       "expo-router",
+      "expo-apple-authentication",
       [
         "expo-splash-screen",
         {

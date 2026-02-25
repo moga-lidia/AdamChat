@@ -60,6 +60,7 @@ export interface TranslationKeys {
     welcome: string;
     welcomeTitle: string;
     continueWithGoogle: string;
+    continueWithApple: string;
     continueWithEmail: string;
     termsText: string;
     privacyPolicy: string;
@@ -181,6 +182,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       welcome: "Autentifică-te",
       welcomeTitle: "Conectează-te pentru a descoperi mai multe!",
       continueWithGoogle: "Continuă cu Google",
+      continueWithApple: "Continuă cu Apple",
       continueWithEmail: "Continuă cu Email",
       termsText: "Prin conectare, ești de acord cu",
       privacyPolicy: "Politica de confidențialitate",
@@ -303,6 +305,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       welcome: "Sign in",
       welcomeTitle: "Sign in to discover more!",
       continueWithGoogle: "Continue with Google",
+      continueWithApple: "Continue with Apple",
       continueWithEmail: "Continue with Email",
       termsText: "By signing in, you agree to the",
       privacyPolicy: "Privacy Policy",
@@ -425,6 +428,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       welcome: "Jelentkezz be",
       welcomeTitle: "Jelentkezz be, hogy többet felfedezz!",
       continueWithGoogle: "Folytatás Google-lal",
+      continueWithApple: "Folytatás Apple-lel",
       continueWithEmail: "Folytatás e-maillel",
       termsText: "A bejelentkezéssel elfogadod a",
       privacyPolicy: "Adatvédelmi irányelvek",

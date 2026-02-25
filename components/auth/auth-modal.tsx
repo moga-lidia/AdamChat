@@ -1,3 +1,4 @@
+import * as AppleAuthentication from "expo-apple-authentication";
 import * as AuthSession from "expo-auth-session";
 import Constants from "expo-constants";
 import * as WebBrowser from "expo-web-browser";
@@ -12,7 +13,6 @@ import {
   TextInput,
   View,
 } from "react-native";
-import Svg, { Path } from "react-native-svg";
 
 import { PrivacyPolicyModal } from "@/components/auth/privacy-policy-modal";
 import { TermsModal } from "@/components/auth/terms-modal";
@@ -22,6 +22,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import {
   registerWithEmail,
   signInWithEmail,
+  verifyAppleToken,
   verifyGoogleToken,
 } from "@/services/auth-api";
 
@@ -99,6 +100,34 @@ export function AuthModal({ visible, onClose }: Props) {
   const handleGoogleSignIn = () => {
     setError(null);
     promptAsync();
+  };
+
+  const handleAppleSignIn = async () => {
+    setError(null);
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      if (credential.identityToken) {
+        const authUser = verifyAppleToken(
+          credential.identityToken,
+          credential.fullName,
+        );
+        if (authUser) {
+          signIn(authUser);
+          onClose();
+        } else {
+          setError(t.auth.googleVerifyError);
+        }
+      }
+    } catch (e: unknown) {
+      if ((e as { code?: string }).code !== "ERR_REQUEST_CANCELED") {
+        setError(t.auth.googleVerifyError);
+      }
+    }
   };
 
   const handleEmailSignIn = async () => {
@@ -219,6 +248,7 @@ export function AuthModal({ visible, onClose }: Props) {
 
               {error && <Text style={styles.error}>{error}</Text>}
 
+              {/* TODO: Re-enable Google and Apple sign-in buttons
               <Pressable
                 onPress={handleGoogleSignIn}
                 disabled={!request}
@@ -250,6 +280,28 @@ export function AuthModal({ visible, onClose }: Props) {
                   {t.auth.continueWithGoogle}
                 </Text>
               </Pressable>
+
+              {Platform.OS === "ios" && (
+                <Pressable
+                  onPress={handleAppleSignIn}
+                  style={({ pressed }) => [
+                    styles.authButton,
+                    styles.appleButton,
+                    { opacity: pressed ? 0.8 : 1 },
+                  ]}
+                >
+                  <Svg width={20} height={20} viewBox="0 0 17 20" fill="none">
+                    <Path
+                      d="M8.5 4.7c1.2 0 2.7-.8 3.6-1.9.8-1 1.4-2.3 1.4-3.7 0-.2 0-.3-.1-.4-1.3.1-2.9.9-3.8 2-.7.8-1.4 2.1-1.4 3.5 0 .2 0 .3.1.4l.2.1zm-2 1.3C4.9 6 3.7 7.9 3.7 10.6c0 3.5 2.6 7.2 4.7 7.2.4 0 1.1-.2 1.8-.5.9-.4 1.5-.5 2-.5s1 .1 1.8.5c.8.3 1.4.5 1.9.5 2.4 0 5.1-4 5.1-7.5 0-.2-2.1-1.1-3.9-1.1-1.1 0-2 .3-2.8.7-.6.3-1.2.5-1.8.5-.5 0-1-.2-1.7-.5C9.9 6.3 9 6 8.1 6h-.2l-1.4.0z"
+                      fill="#FFFFFF"
+                    />
+                  </Svg>
+                  <Text style={styles.appleButtonText}>
+                    {t.auth.continueWithApple}
+                  </Text>
+                </Pressable>
+              )}
+              */}
 
               <Pressable
                 onPress={() => {
@@ -653,6 +705,14 @@ const styles = StyleSheet.create({
   },
   googleButtonText: {
     color: "#2f2482",
+    fontSize: 15,
+    fontFamily: "Poppins_600SemiBold",
+  },
+  appleButton: {
+    backgroundColor: "#000000",
+  },
+  appleButtonText: {
+    color: "#FFFFFF",
     fontSize: 15,
     fontFamily: "Poppins_600SemiBold",
   },

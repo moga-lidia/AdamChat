@@ -51,6 +51,35 @@ export function verifyGoogleToken(idToken: string): AuthUser | null {
   }
 }
 
+/** Decode an Apple identity token (JWT) to extract user info. */
+export function verifyAppleToken(
+  identityToken: string,
+  fullName?: { givenName?: string | null; familyName?: string | null } | null,
+): AuthUser | null {
+  try {
+    const parts = identityToken.split(".");
+    if (parts.length !== 3) return null;
+
+    let payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    while (payload.length % 4 !== 0) payload += "=";
+
+    const decoded = JSON.parse(atob(payload));
+    const name =
+      [fullName?.givenName, fullName?.familyName].filter(Boolean).join(" ") ||
+      null;
+
+    return {
+      id: decoded.sub,
+      email: decoded.email,
+      name,
+      picture: null,
+      provider: "apple",
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** Register a new user with email/password. */
 export async function registerWithEmail(
   data: RegisterRequest,

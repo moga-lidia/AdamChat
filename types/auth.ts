@@ -3,7 +3,7 @@ export interface AuthUser {
   email: string;
   name: string | null;
   picture: string | null;
-  provider: 'google' | 'email';
+  provider: 'google' | 'email' | 'apple';
 }
 
 export interface AuthTokens {
