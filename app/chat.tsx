@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AuthModal } from "@/components/auth/auth-modal";
 import { ChatInput } from "@/components/chat/chat-input";
 import { ChatMessage } from "@/components/chat/chat-message";
+import { SseWebView } from "@/components/chat/sse-webview";
 import { Header } from "@/components/layout/header";
 import { HeaderMenu } from "@/components/layout/header-menu";
 import {
@@ -23,7 +24,6 @@ import {
   type MentorData,
 } from "@/components/mentor/mentor-live-modal";
 import { SettingsPanel } from "@/components/settings/settings-panel";
-import { SseWebView } from "@/components/chat/sse-webview";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { AppColors } from "@/constants/theme";
 import { useChatSessionContext } from "@/contexts/chat-session-context";
@@ -70,7 +70,6 @@ export default function ChatScreen() {
     "background",
   );
 
-  const keyboardPadding = useKeyboardPadding(insets.bottom);
   const {
     displayMessages,
     isStreaming,
@@ -90,6 +89,7 @@ export default function ChatScreen() {
   const [mentorModalVisible, setMentorModalVisible] = useState(false);
   const [mentorConnected, setMentorConnected] = useState(false);
   const stompRef = useRef<StompClient | null>(null);
+  const keyboardPadding = useKeyboardPadding(insets.bottom);
 
   // Cleanup STOMP on unmount
   useEffect(() => {
@@ -308,7 +308,7 @@ export default function ChatScreen() {
                 ]}
               >
                 <View style={styles.liveDot} />
-                <IconSymbol name="bubble.left.fill" size={14} color="#1A7D42" />
+                <IconSymbol name="bubble.left.fill" size={14} color="#2f2482" />
                 <Text style={styles.mentorButtonText}>
                   {t.mentor.closeConversation}
                 </Text>
@@ -324,7 +324,7 @@ export default function ChatScreen() {
                   },
                 ]}
               >
-                <IconSymbol name="bubble.left.fill" size={14} color="#1A7D42" />
+                <IconSymbol name="bubble.left.fill" size={14} color="#2f2482" />
                 <Text style={styles.mentorButtonText}>
                   {t.mentor.buttonLabel}
                 </Text>
@@ -535,29 +535,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#E6F7ED",
+    backgroundColor: "#FEF3C7",
     borderRadius: 22,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    shadowColor: "#1A7D42",
+    shadowColor: "#2f2482",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   mentorButtonActive: {
-    backgroundColor: "#E6F7ED",
+    backgroundColor: "#FEF3C7",
     borderWidth: 1.5,
-    borderColor: "#1A7D42",
+    borderColor: "#2f2482",
   },
   liveDot: {
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: "#22c55e",
+    backgroundColor: "#F59E0B",
   },
   mentorButtonText: {
-    color: "#1A7D42",
+    color: "#2f2482",
     fontSize: 13,
     fontFamily: "Poppins_700Bold",
   },
