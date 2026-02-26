@@ -108,7 +108,7 @@ export function SseWebView({ url, onToken, onDone, onError }: Props) {
   return (
     <WebView
       ref={webViewRef}
-      source={{ uri: "https://ai.chatbot.zaha.tech/" }}
+      source={{ uri: "https://academiasperanta.ro/" }}
       onLoadEnd={handleLoadEnd}
       onMessage={handleMessage}
       style={styles.hidden}

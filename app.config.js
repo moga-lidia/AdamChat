@@ -17,6 +17,10 @@ module.exports = {
       supportsTablet: true,
       bundleIdentifier: "com.mediasperanta.adam",
       usesAppleSignIn: true,
+      appleTeamId: "22F7AN6GC6",
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
     },
     android: {
       package: "com.mediasperanta.adam",

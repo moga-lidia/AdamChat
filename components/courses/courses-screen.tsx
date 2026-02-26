@@ -44,13 +44,25 @@ export function CoursesScreen() {
   const [courses, setCourses] = useState<Course[] | null>(null);
   useEffect(() => {
     let cancelled = false;
-    fetchCourses()
-      .then((data) => {
-        if (!cancelled) setCourses(data);
-      })
-      .catch(() => {
-        if (!cancelled) setCourses(FALLBACK_COURSES);
-      });
+
+    async function loadCourses() {
+      let data: Course[];
+      try {
+        data = await fetchCourses();
+      } catch {
+        data = FALLBACK_COURSES;
+      }
+
+      // Prefetch all images so they render instantly
+      const prefetchPromises = data
+        .filter((c) => c.imageUrl)
+        .map((c) => Image.prefetch(c.imageUrl).catch(() => false));
+      await Promise.all(prefetchPromises);
+
+      if (!cancelled) setCourses(data);
+    }
+
+    loadCourses();
     return () => {
       cancelled = true;
     };
