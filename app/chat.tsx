@@ -32,14 +32,15 @@ import { useChatSession } from "@/hooks/use-chat-session";
 import { useI18n } from "@/hooks/use-i18n";
 import { useKeyboardPadding } from "@/hooks/use-keyboard-padding";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { StompClient } from "@/services/stomp-client";
+import { StompClient, WS_URL } from "@/services/stomp-client";
 import type { ChatMessage as ChatMessageType } from "@/types/chat";
 
 export default function ChatScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { lang, t } = useI18n();
-  const { session, resetSession, addMessage } = useChatSessionContext();
+  const { lang, t, setLang } = useI18n();
+  const { session, setSession, resetSession, addMessage } =
+    useChatSessionContext();
   const {
     fontSize,
     setFontSize,
@@ -152,7 +153,7 @@ export default function ChatScreen() {
 
           // Send REQUEST_HANDOVER
           const handoverPayload = JSON.stringify({
-            id: "wss://ai.chatbot.zaha.tech/chatbot-ai/ws",
+            id: WS_URL,
             type: "REQUEST_HANDOVER",
             payload: {
               username: data.name,
@@ -191,7 +192,7 @@ export default function ChatScreen() {
 
       // Send via STOMP
       const payload = JSON.stringify({
-        id: "wss://ai.chatbot.zaha.tech/chatbot-ai/ws",
+        id: WS_URL,
         type: "SEND_MESSAGE",
         payload: { message: text },
         timestamp: new Date().toISOString(),
@@ -239,7 +240,7 @@ export default function ChatScreen() {
     // Send CLOSE_CONVERSATION to backend before disconnecting
     if (session && stompRef.current?.isConnected()) {
       const payload = JSON.stringify({
-        id: "wss://ai.chatbot.zaha.tech/chatbot-ai/ws",
+        id: WS_URL,
         type: "CLOSE_CONVERSATION",
         timestamp: new Date().toISOString(),
         sender: "user",
@@ -350,7 +351,10 @@ export default function ChatScreen() {
         brightness={brightness}
         onBrightnessChange={setBrightness}
         lang={lang}
-        onLangChange={() => {}}
+        onLangChange={(newLang) => {
+          setLang(newLang);
+          setSession((prev) => (prev ? { ...prev, lang: newLang } : prev));
+        }}
       />
 
       <FlatList
@@ -368,7 +372,7 @@ export default function ChatScreen() {
         keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
         ListFooterComponent={
-          showQuickActions ? (
+          showQuickActions && !mentorConnected ? (
             <View style={styles.quickActions}>
               {t.quickActions.map((action) => (
                 <Pressable

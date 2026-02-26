@@ -4,7 +4,8 @@
  * just enough for the mentor handover flow.
  */
 
-const WS_URL = "wss://ai.chatbot.zaha.tech/chatbot-ai/ws";
+export const WS_URL =
+  process.env.EXPO_PUBLIC_WS_URL ?? "wss://ai.chatbot.zaha.tech/chatbot-ai/ws";
 const HEARTBEAT = "4000,4000";
 
 type MessageHandler = (body: string, headers: Record<string, string>) => void;

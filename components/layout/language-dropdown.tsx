@@ -1,8 +1,7 @@
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import type { Lang } from "@/types/chat";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { AppColors } from "@/constants/theme";
-import type { Lang } from "@/types/chat";
 
 const LANG_OPTIONS: { label: string; flag: string; value: Lang }[] = [
   { label: "Română", flag: "🇷🇴", value: "ro" },
@@ -65,7 +64,11 @@ export function LanguageDropdown({ value, onChange }: LanguageDropdownProps) {
         <Text style={styles.flag}>{selected.flag}</Text>
         <Text style={styles.triggerLabel}>{selected.label}</Text>
         <Animated.View style={{ transform: [{ rotate: chevronRotation }] }}>
-          <IconSymbol name="chevron.down" size={16} color={AppColors.subtitle} />
+          <IconSymbol
+            name="chevron.down"
+            size={16}
+            color="rgba(255,255,255,0.6)"
+          />
         </Animated.View>
       </Pressable>
 
@@ -117,9 +120,9 @@ const styles = StyleSheet.create({
   trigger: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.55)",
+    backgroundColor: "rgba(255,255,255,0.12)",
     borderWidth: 1,
-    borderColor: AppColors.primaryBorder,
+    borderColor: "rgba(255,255,255,0.25)",
     borderRadius: 22,
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -128,21 +131,21 @@ const styles = StyleSheet.create({
   triggerOpen: {
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
-    borderBottomColor: "rgba(47,36,130,0.08)",
+    borderBottomColor: "rgba(255,255,255,0.1)",
   },
   flag: {
     fontSize: 17,
   },
   triggerLabel: {
     flex: 1,
-    color: AppColors.subtitle,
+    color: "rgba(255,255,255,0.85)",
     fontSize: 14,
     fontFamily: "Poppins_500Medium",
   },
   menu: {
     overflow: "hidden",
-    backgroundColor: "rgba(255,255,255,0.65)",
-    borderColor: AppColors.primaryBorder,
+    backgroundColor: "rgba(255,255,255,0.12)",
+    borderColor: "rgba(255,255,255,0.25)",
     borderTopWidth: 0,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
@@ -156,22 +159,22 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionActive: {
-    backgroundColor: AppColors.primaryLight,
+    backgroundColor: "rgba(255,255,255,0.1)",
   },
   optionLabel: {
     flex: 1,
-    color: "#999",
+    color: "rgba(255,255,255,0.5)",
     fontSize: 14,
     fontFamily: "Poppins_400Regular",
   },
   optionLabelActive: {
-    color: AppColors.primary,
+    color: "#FFFFFF",
     fontFamily: "Poppins_500Medium",
   },
   checkDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: AppColors.primary,
+    backgroundColor: "#FFFFFF",
   },
 });

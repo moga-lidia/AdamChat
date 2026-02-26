@@ -603,7 +603,6 @@ const styles = StyleSheet.create({
   },
   submitIcon: {
     marginTop: 1,
-    transform: [{ rotate: "45deg" }],
   },
   submitText: {
     color: "#FFFFFF",

@@ -1,21 +1,23 @@
 import {
   Poppins_400Regular,
   Poppins_500Medium,
+  Poppins_500Medium_Italic,
   Poppins_600SemiBold,
+  Poppins_600SemiBold_Italic,
   Poppins_700Bold,
   useFonts,
-} from '@expo-google-fonts/poppins';
-import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import * as SplashScreen from 'expo-splash-screen';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+} from "@expo-google-fonts/poppins";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import "react-native-reanimated";
 
-import { AuthProvider } from '@/hooks/use-auth';
-import { I18nProvider } from '@/hooks/use-i18n';
-import { ChatSessionProvider } from '@/contexts/chat-session-context';
-import { SettingsProvider } from '@/contexts/settings-context';
+import { ChatSessionProvider } from "@/contexts/chat-session-context";
+import { SettingsProvider } from "@/contexts/settings-context";
+import { AuthProvider } from "@/hooks/use-auth";
+import { I18nProvider } from "@/hooks/use-i18n";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,6 +26,8 @@ export default function RootLayout() {
     Poppins_400Regular,
     Poppins_500Medium,
     Poppins_600SemiBold,
+    Poppins_600SemiBold_Italic,
+    Poppins_500Medium_Italic,
     Poppins_700Bold,
   });
 
@@ -41,7 +45,7 @@ export default function RootLayout() {
         <ChatSessionProvider>
           <SettingsProvider>
             <ThemeProvider value={DefaultTheme}>
-              <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
+              <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
                 <Stack.Screen name="index" />
                 <Stack.Screen name="chat" />
                 <Stack.Screen name="courses" />

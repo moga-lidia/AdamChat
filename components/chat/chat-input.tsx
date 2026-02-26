@@ -48,8 +48,8 @@ export function ChatInput({ onSend, onCourses, disabled }: Props) {
         useNativeDriver: true,
       }),
     ]).start();
-    setText("");
     inputRef.current?.clear();
+    setText("");
     onSend(trimmed);
   };
 

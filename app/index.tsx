@@ -1,22 +1,20 @@
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import {
-  Animated,
   Image,
+  Linking,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { LanguageDropdown } from "@/components/layout/language-dropdown";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { AppColors } from "@/constants/theme";
 import { useChatSessionContext } from "@/contexts/chat-session-context";
 import { useI18n } from "@/hooks/use-i18n";
-import { useStaggeredEntry } from "@/hooks/use-staggered-entry";
-import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -24,18 +22,11 @@ export default function WelcomeScreen() {
   const { lang, t, setLang } = useI18n();
   const { session, initSession } = useChatSessionContext();
 
-  const bg = useThemeColor({ light: AppColors.background, dark: AppColors.backgroundDark }, "background");
-  const accentColor = useThemeColor({ light: AppColors.primary, dark: AppColors.accent }, "tint");
-  const subtitleColor = useThemeColor({ light: AppColors.subtitle, dark: AppColors.subtitleDark }, "icon");
-  const featureCardBg = useThemeColor(
-    { light: AppColors.primaryLight, dark: AppColors.accentBg },
-    "background",
-  );
-  const startButtonBg = useThemeColor({ light: AppColors.primary, dark: AppColors.accent }, "tint");
-  const startButtonTextColor = useThemeColor({ light: AppColors.white, dark: AppColors.darkText }, "text");
-
-  // 5 elements: logo, title+subtitle, features title+cards, start button, language selector
-  const entryAnims = useStaggeredEntry(5);
+  const accentColor = "#FFFFFF";
+  const subtitleColor = "rgba(255,255,255,0.7)";
+  const featureCardBg = "rgba(255,255,255,0.1)";
+  const startButtonBg = "#FFFFFF";
+  const startButtonTextColor = "#000000";
 
   // If session already has a language, go straight to chat
   useEffect(() => {
@@ -55,90 +46,107 @@ export default function WelcomeScreen() {
   if (session?.lang) return null;
 
   return (
-    <View style={[styles.container, { backgroundColor: bg }]}>
-      <View style={[styles.welcomeBody, { paddingTop: insets.top + 16 }]}>
-        <Animated.View style={[styles.logoContainerAlt, entryAnims[0]]}>
-          <Image
-            source={require("@/assets/images/logo.jpg")}
-            style={styles.welcomeLogoAlt}
-          />
-        </Animated.View>
+    <View style={styles.container}>
+      {/* Hero image + ADAM logo — bleeds into status bar */}
+      <View style={styles.heroWrapper}>
+        <Image
+          source={require("@/assets/images/welcome-hero.jpg")}
+          style={styles.heroBg}
+          resizeMode="cover"
+        />
+        <LinearGradient
+          colors={["transparent", "#000"]}
+          style={styles.heroGradient}
+        />
+        <Text style={styles.adamLogoText}>ADAM</Text>
+      </View>
 
-        <Animated.View style={entryAnims[1]}>
-          <Text style={[styles.welcomeTitle, { color: accentColor }]}>
-            {t.welcome.title}
-          </Text>
-          <Text style={[styles.welcomeSubtitle, { color: subtitleColor }]}>
-            {t.welcome.subtitle.split("Adam").map((part, i, arr) => (
-              <Text key={i}>
-                {part}
-                {i < arr.length - 1 && (
+      {/* Content */}
+      <View style={styles.welcomeBody}>
+        <Text style={[styles.welcomeTitle, { color: accentColor }]}>
+          {t.welcome.title}
+        </Text>
+        <Text style={[styles.welcomeSubtitle, { color: subtitleColor }]}>
+          {t.welcome.subtitle
+            .split(/(Adam|Academia Speranța)/)
+            .map((part, i) => {
+              if (part === "Adam") {
+                return (
                   <Text
-                    style={[styles.welcomeSubtitleBold, { color: accentColor }]}
+                    key={i}
+                    style={[
+                      styles.welcomeSubtitleBold,
+                      { color: accentColor },
+                    ]}
                   >
                     Adam
                   </Text>
-                )}
+                );
+              }
+              if (part === "Academia Speranța") {
+                return (
+                  <Text
+                    key={i}
+                    style={[styles.welcomeSubtitleBold, styles.academiaLink]}
+                    onPress={() =>
+                      Linking.openURL("https://academiasperanta.ro/")
+                    }
+                  >
+                    Academia Speranța
+                  </Text>
+                );
+              }
+              return <Text key={i}>{part}</Text>;
+            })}
+        </Text>
+
+        <Text style={[styles.featuresTitle, { color: subtitleColor }]}>
+          {t.welcome.featuresTitle}
+        </Text>
+        <View style={styles.featureCards}>
+          {t.welcome.features.map((feature, index) => (
+            <View
+              key={index}
+              style={[styles.featureCard, { backgroundColor: featureCardBg }]}
+            >
+              <IconSymbol
+                name={feature.icon as any}
+                size={22}
+                color={accentColor}
+                style={styles.featureIcon}
+              />
+              <Text style={[styles.featureText, { color: accentColor }]}>
+                {feature.text}
               </Text>
-            ))}
-          </Text>
-        </Animated.View>
+            </View>
+          ))}
+        </View>
 
-        <Animated.View
-          style={[{ width: "100%", alignItems: "center" }, entryAnims[2]]}
+        <Pressable
+          onPress={handleStart}
+          style={({ pressed }) => [
+            styles.startButton,
+            {
+              backgroundColor: startButtonBg,
+              opacity: pressed ? 0.9 : 1,
+              transform: [{ scale: pressed ? 0.97 : 1 }],
+            },
+          ]}
         >
-          <Text style={[styles.featuresTitle, { color: subtitleColor }]}>
-            {t.welcome.featuresTitle}
-          </Text>
-          <View style={styles.featureCards}>
-            {t.welcome.features.map((feature, index) => (
-              <View
-                key={index}
-                style={[styles.featureCard, { backgroundColor: featureCardBg }]}
-              >
-                <IconSymbol
-                  name={feature.icon as any}
-                  size={22}
-                  color={accentColor}
-                  style={styles.featureIcon}
-                />
-                <Text style={[styles.featureText, { color: accentColor }]}>
-                  {feature.text}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </Animated.View>
-
-        <Animated.View style={entryAnims[3]}>
-          <Pressable
-            onPress={handleStart}
-            style={({ pressed }) => [
-              styles.startButton,
-              {
-                backgroundColor: startButtonBg,
-                opacity: pressed ? 0.9 : 1,
-                transform: [{ scale: pressed ? 0.97 : 1 }],
-              },
-            ]}
+          <Text
+            style={[styles.startButtonText, { color: startButtonTextColor }]}
           >
-            <Text style={[styles.startButtonText, { color: startButtonTextColor }]}>
-              {t.welcome.start}
-            </Text>
-          </Pressable>
-        </Animated.View>
+            {t.welcome.start}
+          </Text>
+        </Pressable>
       </View>
 
       {/* Language selector pinned to bottom */}
-      <Animated.View
-        style={[
-          styles.welcomeFooter,
-          { paddingBottom: insets.bottom + 16 },
-          entryAnims[4],
-        ]}
+      <View
+        style={[styles.welcomeFooter, { paddingBottom: insets.bottom + 16 }]}
       >
         <LanguageDropdown value={lang} onChange={setLang} />
-      </Animated.View>
+      </View>
     </View>
   );
 }
@@ -146,64 +154,76 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#000",
+  },
+  heroWrapper: {
+    alignItems: "center",
+  },
+  heroBg: {
+    width: "100%",
+    height: 280,
+  },
+  heroGradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+  },
+  adamLogoText: {
+    marginTop: -85,
+    fontSize: 70,
+    fontFamily: "Poppins_500Medium_Italic",
+    color: "#FFFFFF",
+    letterSpacing: 12,
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.7)",
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 20,
   },
   welcomeBody: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
     paddingHorizontal: 36,
-    paddingBottom: 50,
-  },
-  logoContainerAlt: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: 160,
-    height: 140,
-    marginBottom: 12,
-  },
-  welcomeLogoAlt: {
-    width: 90,
-    height: 90,
-    borderRadius: 22,
-    marginTop: 40,
+    paddingTop: 50,
   },
   welcomeTitle: {
-    fontSize: 28,
+    fontSize: 22,
     fontFamily: "Poppins_600SemiBold",
-    marginBottom: 10,
+    marginBottom: 6,
     textAlign: "center",
   },
   welcomeSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins_400Regular",
-    lineHeight: 22,
+    lineHeight: 20,
     textAlign: "center",
-    marginBottom: 28,
+    marginBottom: 20,
+  },
+  academiaLink: {
+    textDecorationLine: "underline",
   },
   welcomeSubtitleBold: {
     fontFamily: "Poppins_700Bold",
-    textShadowColor: "rgba(255,255,255,0.9)",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 8,
   },
   featuresTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Poppins_500Medium",
-    marginBottom: 12,
+    marginBottom: 8,
     textAlign: "center",
   },
   featureCards: {
     width: "100%",
-    gap: 10,
-    marginBottom: 36,
+    gap: 8,
+    marginBottom: 24,
   },
   featureCard: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 10,
   },
   featureIcon: {
     flexShrink: 0,
@@ -220,12 +240,12 @@ const styles = StyleSheet.create({
   },
   startButton: {
     borderRadius: 28,
-    paddingHorizontal: 56,
-    paddingVertical: 16,
+    paddingHorizontal: 50,
+    paddingVertical: 12,
   },
   startButtonText: {
-    fontSize: 16,
+    fontSize: 20,
     fontFamily: "Poppins_700Bold",
-    letterSpacing: 1.5,
+    letterSpacing: 4,
   },
 });
