@@ -1,0 +1,10 @@
+.git
+node_modules
+.expo
+dist
+web-build
+.kotlin
+.vscode
+.idea
+.DS_Store
+v2

@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   trigger: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.12)",
+    backgroundColor: "rgba(40,40,40,1)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.25)",
     borderRadius: 22,
@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
   },
   menu: {
     overflow: "hidden",
-    backgroundColor: "rgba(255,255,255,0.12)",
-    borderColor: "rgba(255,255,255,0.25)",
+    backgroundColor: "rgba(40,40,40,1)",
+    borderColor: "rgba(255,255,255,0.3)",
     borderTopWidth: 0,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,

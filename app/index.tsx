@@ -2,6 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import {
+  Dimensions,
   Image,
   Linking,
   Pressable,
@@ -15,6 +16,10 @@ import { LanguageDropdown } from "@/components/layout/language-dropdown";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useChatSessionContext } from "@/contexts/chat-session-context";
 import { useI18n } from "@/hooks/use-i18n";
+
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
+// Scale factor relative to Pixel 8 height (~851dp)
+const SCALE = SCREEN_HEIGHT / 851;
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -74,10 +79,7 @@ export default function WelcomeScreen() {
                 return (
                   <Text
                     key={i}
-                    style={[
-                      styles.welcomeSubtitleBold,
-                      { color: accentColor },
-                    ]}
+                    style={[styles.welcomeSubtitleBold, { color: accentColor }]}
                   >
                     Adam
                   </Text>
@@ -160,8 +162,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   heroBg: {
-    width: "100%",
-    height: 280,
+    width: SCREEN_WIDTH,
+    height: Math.round(270 * SCALE),
   },
   heroGradient: {
     position: "absolute",
@@ -171,8 +173,8 @@ const styles = StyleSheet.create({
     height: 80,
   },
   adamLogoText: {
-    marginTop: -85,
-    fontSize: 70,
+    marginTop: Math.round(-85 * SCALE),
+    fontSize: Math.round(70 * SCALE),
     fontFamily: "Poppins_500Medium_Italic",
     color: "#FFFFFF",
     letterSpacing: 12,
@@ -185,20 +187,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 36,
-    paddingTop: 50,
+    paddingTop: Math.round(30 * SCALE),
   },
   welcomeTitle: {
-    fontSize: 22,
+    fontSize: Math.round(22 * SCALE),
     fontFamily: "Poppins_600SemiBold",
-    marginBottom: 6,
+    marginBottom: Math.round(6 * SCALE),
     textAlign: "center",
   },
   welcomeSubtitle: {
-    fontSize: 13,
+    fontSize: Math.round(13 * SCALE),
     fontFamily: "Poppins_400Regular",
-    lineHeight: 20,
+    lineHeight: Math.round(20 * SCALE),
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: Math.round(22 * SCALE),
   },
   academiaLink: {
     textDecorationLine: "underline",
@@ -207,22 +209,22 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_700Bold",
   },
   featuresTitle: {
-    fontSize: 13,
+    fontSize: Math.round(13 * SCALE),
     fontFamily: "Poppins_500Medium",
-    marginBottom: 8,
+    marginBottom: Math.round(8 * SCALE),
     textAlign: "center",
   },
   featureCards: {
     width: "100%",
-    gap: 8,
-    marginBottom: 24,
+    gap: Math.round(8 * SCALE),
+    marginBottom: Math.round(28 * SCALE),
   },
   featureCard: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 14,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: Math.round(10 * SCALE),
     gap: 10,
   },
   featureIcon: {
@@ -230,21 +232,21 @@ const styles = StyleSheet.create({
   },
   featureText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: Math.round(14 * SCALE),
     fontFamily: "Poppins_500Medium",
-    lineHeight: 20,
+    lineHeight: Math.round(20 * SCALE),
   },
   welcomeFooter: {
     alignItems: "center",
-    paddingTop: 8,
+    paddingTop: Math.round(8 * SCALE),
   },
   startButton: {
     borderRadius: 28,
     paddingHorizontal: 50,
-    paddingVertical: 12,
+    paddingVertical: Math.round(12 * SCALE),
   },
   startButtonText: {
-    fontSize: 20,
+    fontSize: Math.round(20 * SCALE),
     fontFamily: "Poppins_700Bold",
     letterSpacing: 4,
   },

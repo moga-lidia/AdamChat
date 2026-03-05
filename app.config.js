@@ -58,7 +58,7 @@ module.exports = {
     extra: {
       googleClientId: GOOGLE_CLIENT_ID,
       eas: {
-        projectId: "a5eeec83-811f-4e49-851a-cdbd288b205f",
+        projectId: "e6799d0a-bdf1-49ce-9685-7ee1f5e1c4e3",
       },
     },
   },
