@@ -1,6 +1,7 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useI18n } from "@/hooks/use-i18n";
 import type { Lang } from "@/types/chat";
+import { BlurView } from "expo-blur";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -91,7 +92,7 @@ function CustomSlider({
     <View style={sliderStyles.container}>
       <View style={sliderStyles.labelRow}>
         <View style={sliderStyles.labelWithIcon}>
-          <IconSymbol name={icon} size={16} color="#2f2482" />
+          <IconSymbol name={icon} size={16} color="#FFFFFF" />
           <Text style={sliderStyles.label}>{label}</Text>
         </View>
         <Text style={sliderStyles.value}>{displayValue}</Text>
@@ -136,7 +137,7 @@ const sliderStyles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    color: "#333",
+    color: "#FFFFFF",
     fontSize: 15,
     fontWeight: "600",
   },
@@ -151,7 +152,7 @@ const sliderStyles = StyleSheet.create({
   },
   track: {
     height: 6,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 3,
   },
   trackFill: {
@@ -237,6 +238,7 @@ export function SettingsPanel({
       onRequestClose={onClose}
     >
       <Pressable style={panelStyles.backdrop} onPress={onClose}>
+        <BlurView intensity={15} tint="dark" style={StyleSheet.absoluteFill} />
         <View style={panelStyles.dialog} onStartShouldSetResponder={() => true}>
           <View style={panelStyles.header}>
             <Text style={panelStyles.title}>{t.settings.title}</Text>
@@ -287,7 +289,7 @@ export function SettingsPanel({
               ]}
             >
               <View style={sliderStyles.labelWithIcon}>
-                <IconSymbol name="globe" size={16} color="#2f2482" />
+                <IconSymbol name="globe" size={16} color="#FFFFFF" />
                 <Text style={sliderStyles.label}>{t.settings.language}</Text>
               </View>
               <View style={langStyles.selectedRow}>
@@ -358,7 +360,7 @@ export function SettingsPanel({
 const panelStyles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
@@ -366,13 +368,13 @@ const panelStyles = StyleSheet.create({
   dialog: {
     width: "100%",
     maxWidth: 360,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "rgba(20,20,20,0.92)",
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
     paddingHorizontal: 28,
     paddingTop: 34,
     paddingBottom: 18,
-    boxShadow: "0px 8px 24px rgba(0,0,0,0.15)",
-    elevation: 12,
   },
   header: {
     flexDirection: "row",
@@ -383,7 +385,7 @@ const panelStyles = StyleSheet.create({
     marginRight: -16,
   },
   title: {
-    color: "#2f2482",
+    color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "700",
     marginTop: 14,
@@ -413,7 +415,7 @@ const langStyles = StyleSheet.create({
   selectedLabel: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#2f2482",
+    color: "#B5B7DD",
     marginRight: 6,
   },
   options: {
@@ -424,7 +426,7 @@ const langStyles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 11,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: "rgba(255,255,255,0.12)",
   },
   optionActive: {
     backgroundColor: "transparent",
@@ -432,16 +434,16 @@ const langStyles = StyleSheet.create({
   optionLabel: {
     flex: 1,
     fontSize: 14,
-    color: "#999",
+    color: "rgba(255,255,255,0.5)",
   },
   optionLabelActive: {
-    color: "#2f2482",
+    color: "#B5B7DD",
     fontWeight: "600",
   },
   checkDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#2f2482",
+    backgroundColor: "#B5B7DD",
   },
 });

@@ -1,5 +1,5 @@
-import * as AppleAuthentication from "expo-apple-authentication";
 import * as AuthSession from "expo-auth-session";
+import { BlurView } from "expo-blur";
 import Constants from "expo-constants";
 import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from "react";
@@ -22,7 +22,6 @@ import { useI18n } from "@/hooks/use-i18n";
 import {
   registerWithEmail,
   signInWithEmail,
-  verifyAppleToken,
   verifyGoogleToken,
 } from "@/services/auth-api";
 
@@ -97,38 +96,38 @@ export function AuthModal({ visible, onClose }: Props) {
     }
   }, [visible]);
 
-  const handleGoogleSignIn = () => {
-    setError(null);
-    promptAsync();
-  };
+  // const handleGoogleSignIn = () => {
+  //   setError(null);
+  //   promptAsync();
+  // };
 
-  const handleAppleSignIn = async () => {
-    setError(null);
-    try {
-      const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-      });
-      if (credential.identityToken) {
-        const authUser = verifyAppleToken(
-          credential.identityToken,
-          credential.fullName,
-        );
-        if (authUser) {
-          signIn(authUser);
-          onClose();
-        } else {
-          setError(t.auth.googleVerifyError);
-        }
-      }
-    } catch (e: unknown) {
-      if ((e as { code?: string }).code !== "ERR_REQUEST_CANCELED") {
-        setError(t.auth.googleVerifyError);
-      }
-    }
-  };
+  // const handleAppleSignIn = async () => {
+  //   setError(null);
+  //   try {
+  //     const credential = await AppleAuthentication.signInAsync({
+  //       requestedScopes: [
+  //         AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+  //         AppleAuthentication.AppleAuthenticationScope.EMAIL,
+  //       ],
+  //     });
+  //     if (credential.identityToken) {
+  //       const authUser = verifyAppleToken(
+  //         credential.identityToken,
+  //         credential.fullName,
+  //       );
+  //       if (authUser) {
+  //         signIn(authUser);
+  //         onClose();
+  //       } else {
+  //         setError(t.auth.googleVerifyError);
+  //       }
+  //     }
+  //   } catch (e: unknown) {
+  //     if ((e as { code?: string }).code !== "ERR_REQUEST_CANCELED") {
+  //       setError(t.auth.googleVerifyError);
+  //     }
+  //   }
+  // };
 
   const handleEmailSignIn = async () => {
     if (!email.trim() || !password.trim()) {
@@ -164,6 +163,11 @@ export function AuthModal({ visible, onClose }: Props) {
         onRequestClose={onClose}
       >
         <Pressable style={styles.backdrop} onPress={onClose}>
+          <BlurView
+            intensity={10}
+            tint="dark"
+            style={StyleSheet.absoluteFill}
+          />
           <View style={styles.dialog} onStartShouldSetResponder={() => true}>
             <View style={styles.dialogHeader}>
               <View />
@@ -174,7 +178,11 @@ export function AuthModal({ visible, onClose }: Props) {
                   { opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <IconSymbol name="xmark" size={18} color="#666" />
+                <IconSymbol
+                  name="xmark"
+                  size={18}
+                  color="rgba(255,255,255,0.6)"
+                />
               </Pressable>
             </View>
 
@@ -207,6 +215,7 @@ export function AuthModal({ visible, onClose }: Props) {
       onRequestClose={onClose}
     >
       <Pressable style={styles.backdrop} onPress={onClose}>
+        <BlurView intensity={10} tint="dark" style={StyleSheet.absoluteFill} />
         <View style={styles.dialog} onStartShouldSetResponder={() => true}>
           <View style={styles.dialogHeader}>
             {view !== "main" ? (
@@ -240,7 +249,7 @@ export function AuthModal({ visible, onClose }: Props) {
           {view === "main" && (
             <>
               <Image
-                source={require("@/assets/images/logo-speranta.jpg")}
+                source={require("@/assets/images/logo-white-with-title.jpeg")}
                 style={styles.logo}
               />
               <Text style={styles.title}>{t.auth.welcome}</Text>
@@ -623,7 +632,7 @@ export function AuthModal({ visible, onClose }: Props) {
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
@@ -631,13 +640,13 @@ const styles = StyleSheet.create({
   dialog: {
     width: "100%",
     maxWidth: 360,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "rgba(20,20,20,0.92)",
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 24,
-    boxShadow: "0px 8px 24px rgba(0,0,0,0.15)",
-    elevation: 12,
     alignItems: "center",
   },
   dialogHeader: {
@@ -651,20 +660,20 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   logo: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 70,
+    height: 70,
+    borderRadius: 16,
     marginBottom: 16,
   },
   title: {
-    color: "#1A1A1A",
+    color: "#FFFFFF",
     fontSize: 18,
     fontFamily: "Poppins_700Bold",
     textAlign: "center",
     marginBottom: 6,
   },
   subtitle: {
-    color: "#777",
+    color: "rgba(255,255,255,0.6)",
     fontSize: 14,
     fontFamily: "Poppins_400Regular",
     textAlign: "center",
@@ -676,7 +685,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_400Regular",
     textAlign: "center",
     marginBottom: 12,
-    backgroundColor: "#FDECEA",
+    backgroundColor: "rgba(211,47,47,0.15)",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -725,7 +734,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_600SemiBold",
   },
   terms: {
-    color: "#999",
+    color: "rgba(255,255,255,0.5)",
     fontSize: 11,
     fontFamily: "Poppins_400Regular",
     textAlign: "center",
@@ -734,7 +743,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   link: {
-    color: "#2f2482",
+    color: "#B5B7DD",
     textDecorationLine: "underline",
   },
   // Email view
@@ -744,7 +753,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   backText: {
-    color: "#2f2482",
+    color: "#B5B7DD",
     fontSize: 14,
     fontFamily: "Poppins_600SemiBold",
   },
@@ -752,10 +761,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "stretch",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "rgba(255,255,255,0.08)",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "rgba(255,255,255,0.15)",
     marginBottom: 14,
     overflow: "hidden",
   },
@@ -763,14 +772,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    color: "#1A1A1A",
+    color: "#FFFFFF",
     fontSize: 15,
     fontFamily: "Poppins_400Regular",
   },
   inputIconDivider: {
     width: 1,
     height: 28,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "rgba(255,255,255,0.15)",
   },
   inputIconWrap: {
     paddingHorizontal: 14,
@@ -778,7 +787,7 @@ const styles = StyleSheet.create({
   submitButton: {
     alignSelf: "stretch",
     borderWidth: 2,
-    borderColor: "#2f2482",
+    borderColor: "rgba(255,255,255,0.3)",
     borderRadius: 28,
     paddingVertical: 14,
     alignItems: "center",
@@ -787,7 +796,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   submitButtonText: {
-    color: "#2f2482",
+    color: "#FFFFFF",
     fontSize: 16,
     fontFamily: "Poppins_600SemiBold",
   },
@@ -798,12 +807,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   linkText: {
-    color: "#2f2482",
+    color: "#B5B7DD",
     fontSize: 13,
     fontFamily: "Poppins_500Medium",
   },
   termsSmall: {
-    color: "#777",
+    color: "rgba(255,255,255,0.5)",
     fontSize: 12,
     fontFamily: "Poppins_400Regular",
     textAlign: "center",
@@ -817,7 +826,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bottomLinkLabel: {
-    color: "#777",
+    color: "rgba(255,255,255,0.5)",
     fontSize: 13,
     fontFamily: "Poppins_400Regular",
   },
@@ -837,19 +846,19 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_700Bold",
   },
   userName: {
-    color: "#1A1A1A",
+    color: "#FFFFFF",
     fontSize: 18,
     fontFamily: "Poppins_700Bold",
     marginBottom: 4,
   },
   userEmail: {
-    color: "#777",
+    color: "rgba(255,255,255,0.6)",
     fontSize: 14,
     fontFamily: "Poppins_400Regular",
     marginBottom: 24,
   },
   signOutButton: {
-    backgroundColor: "#FFF0F0",
+    backgroundColor: "rgba(211,47,47,0.15)",
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",

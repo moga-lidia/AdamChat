@@ -69,28 +69,25 @@ export function CoursesScreen() {
   }, []);
 
   const cardBg = useThemeColor(
-    { light: "#FFFFFF", dark: "#2A2A2A" },
+    { light: "#1A1A1A", dark: "#1A1A1A" },
     "background",
   );
-  const textColor = useThemeColor({}, "text");
-  const subtitleColor = useThemeColor(
-    { light: "#7B7799", dark: "#9B99B0" },
-    "icon",
-  );
+  const textColor = "#FFFFFF";
+  const subtitleColor = "rgba(255,255,255,0.5)";
   const chipBg = useThemeColor(
-    { light: "rgba(47,36,130,0.08)", dark: "rgba(181,183,221,0.12)" },
+    { light: "rgba(255,255,255,0.1)", dark: "rgba(255,255,255,0.1)" },
     "background",
   );
   const chipActiveBg = useThemeColor(
-    { light: "#2f2482", dark: "#B5B7DD" },
+    { light: "#B5B7DD", dark: "#B5B7DD" },
     "tint",
   );
   const chipActiveText = useThemeColor(
-    { light: "#FFFFFF", dark: "#1A1A2E" },
+    { light: "#000000", dark: "#000000" },
     "text",
   );
   const screenBg = useThemeColor(
-    { light: "#f7f7f5", dark: "#111" },
+    { light: "#000000", dark: "#000000" },
     "background",
   );
 
@@ -159,7 +156,7 @@ export function CoursesScreen() {
           { backgroundColor: screenBg },
         ]}
       >
-        <ActivityIndicator size="large" color="#2f2482" />
+        <ActivityIndicator size="large" color="#B5B7DD" />
       </View>
     );
   }

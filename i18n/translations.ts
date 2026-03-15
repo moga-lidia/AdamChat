@@ -136,7 +136,7 @@ export const translations: Record<Lang, TranslationKeys> = {
     },
     quickActions: [
       { label: "Motivează-mă", prompt: "MOTIVATION" },
-      { label: "Spune-mi ceva ce nu știu", prompt: "TELL_ME_SOMETHING" },
+      { label: "Spune-mi ceva ce nu știu", prompt: "UNKNOWN_FACT" },
       { label: "Meditația zilei", prompt: "DAILY_MEDITATION" },
     ],
     studyVideo: "Vreau să studiez video",
@@ -258,7 +258,7 @@ export const translations: Record<Lang, TranslationKeys> = {
     },
     quickActions: [
       { label: "Motivate me", prompt: "MOTIVATION" },
-      { label: "Tell me something I don't know", prompt: "TELL_ME_SOMETHING" },
+      { label: "Tell me something I don't know", prompt: "UNKNOWN_FACT" },
       { label: "Daily meditation", prompt: "DAILY_MEDITATION" },
     ],
     studyVideo: "I want to study video",
@@ -381,7 +381,7 @@ export const translations: Record<Lang, TranslationKeys> = {
     },
     quickActions: [
       { label: "Motiválj", prompt: "MOTIVATION" },
-      { label: "Mondj valamit, amit nem tudok", prompt: "TELL_ME_SOMETHING" },
+      { label: "Mondj valamit, amit nem tudok", prompt: "UNKNOWN_FACT" },
       { label: "A nap meditációja", prompt: "DAILY_MEDITATION" },
     ],
     studyVideo: "Videót szeretnék tanulni",

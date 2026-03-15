@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BlurView } from "expo-blur";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -190,6 +191,7 @@ export function MentorLiveModal({ visible, onClose, onConnect }: Props) {
             onClose();
           }}
         >
+          <BlurView intensity={15} tint="dark" style={StyleSheet.absoluteFill} />
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View onStartShouldSetResponder={() => true}>
               <Animated.View
@@ -420,7 +422,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(15,10,40,0.5)",
+    backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
@@ -428,23 +430,15 @@ const styles = StyleSheet.create({
   dialog: {
     width: "100%",
     maxWidth: 360,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "rgba(20,20,20,0.92)",
     borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
     overflow: "hidden",
-    ...Platform.select({
-      ios: {
-        shadowColor: "#2f2482",
-        shadowOffset: { width: 0, height: 12 },
-        shadowOpacity: 0.15,
-        shadowRadius: 32,
-      },
-      android: { elevation: 16 },
-      default: { boxShadow: "0px 12px 48px rgba(47,36,130,0.2)" },
-    }),
   },
   accentBar: {
     height: 5,
-    backgroundColor: "#2f2482",
+    backgroundColor: "#B5B7DD",
   },
   dialogContent: {
     paddingHorizontal: 24,
@@ -459,19 +453,19 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#2f2482",
+    backgroundColor: "#B5B7DD",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
   },
   title: {
-    color: "#1A1A2E",
+    color: "#FFFFFF",
     fontSize: 18,
     fontFamily: "Poppins_700Bold",
     textAlign: "center",
   },
   dialogDescription: {
-    color: "#6B7280",
+    color: "rgba(255,255,255,0.6)",
     fontSize: 13,
     fontFamily: "Poppins_400Regular",
     lineHeight: 19,
@@ -501,7 +495,7 @@ const styles = StyleSheet.create({
 
   /* Fields */
   fieldLabel: {
-    color: "#1A1A2E",
+    color: "#FFFFFF",
     fontSize: 13,
     fontFamily: "Poppins_600SemiBold",
     marginBottom: 7,
@@ -510,15 +504,15 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f9f9fc",
+    backgroundColor: "rgba(255,255,255,0.08)",
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: "#ededf0",
+    borderColor: "rgba(255,255,255,0.15)",
     marginBottom: 16,
   },
   inputRowFocused: {
-    borderColor: "#b0aed0",
-    backgroundColor: "#FFFFFF",
+    borderColor: "rgba(255,255,255,0.3)",
+    backgroundColor: "rgba(255,255,255,0.12)",
   },
   inputIconLeft: {
     paddingLeft: 14,
@@ -527,7 +521,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    color: "#1A1A2E",
+    color: "#FFFFFF",
     fontSize: 15,
     fontFamily: "Poppins_400Regular",
   },
@@ -544,11 +538,11 @@ const styles = StyleSheet.create({
   /* County dropdown */
   countyDropdown: {
     borderWidth: 1.5,
-    borderColor: "#ededf0",
+    borderColor: "rgba(255,255,255,0.15)",
     borderRadius: 14,
     marginTop: -8,
     marginBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "rgba(30,30,30,0.9)",
     overflow: "hidden",
   },
   countyScroll: {
@@ -561,7 +555,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#f3f3f6",
+    borderBottomColor: "rgba(255,255,255,0.1)",
   },
   countyItemLast: {
     borderBottomWidth: 0,
@@ -575,10 +569,10 @@ const styles = StyleSheet.create({
   countyText: {
     fontSize: 14,
     fontFamily: "Poppins_400Regular",
-    color: "#444",
+    color: "rgba(255,255,255,0.7)",
   },
   countyTextSelected: {
-    color: "#2f2482",
+    color: "#B5B7DD",
     fontFamily: "Poppins_600SemiBold",
   },
 
