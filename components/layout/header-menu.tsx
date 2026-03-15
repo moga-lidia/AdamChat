@@ -60,7 +60,7 @@ export function HeaderMenu({
         <IconSymbol
           name={open ? "xmark" : "line.3.horizontal"}
           size={24}
-          color="#2f2482"
+          color="#FFFFFF"
         />
       </Pressable>
 

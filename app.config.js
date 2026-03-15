@@ -11,7 +11,7 @@ module.exports = {
     icon: "./assets/AppIcons/appstore.png",
     scheme: "adamchat",
     userInterfaceStyle: "light",
-    backgroundColor: "#f4f5f0",
+    backgroundColor: "#000000",
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
@@ -25,7 +25,7 @@ module.exports = {
     android: {
       package: "com.mediasperanta.adam",
       adaptiveIcon: {
-        backgroundColor: "#E6F4FE",
+        backgroundColor: "#000000",
         foregroundImage: "./assets/AppIcons/playstore.png",
       },
       edgeToEdgeEnabled: true,
@@ -41,10 +41,10 @@ module.exports = {
       [
         "expo-splash-screen",
         {
-          image: "./assets/images/logo.jpg",
+          image: "./assets/images/logo-white-with-title.jpeg",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#f4f5f0",
+          backgroundColor: "#000000",
           dark: {
             backgroundColor: "#000000",
           },

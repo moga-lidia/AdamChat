@@ -1,7 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useAuth } from '@/hooks/use-auth';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useAuth } from "@/hooks/use-auth";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface Props {
   onPress: () => void;
@@ -9,10 +9,14 @@ interface Props {
 
 export function AuthButton({ onPress }: Props) {
   const { user } = useAuth();
-  const borderColor = useThemeColor({ light: '#E0E0E0', dark: '#333' }, 'icon');
-  const iconColor = useThemeColor({ light: '#2f2482', dark: '#ECEDEE' }, 'text');
+  const borderColor = useThemeColor({ light: "#E0E0E0", dark: "#333" }, "icon");
+  const iconColor = useThemeColor(
+    { light: "#B5B7DD", dark: "#ECEDEE" },
+    "text",
+  );
 
-  const initial = user?.name?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase();
+  const initial =
+    user?.name?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase();
 
   return (
     <Pressable
@@ -39,20 +43,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     width: 32,
     height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   initialCircle: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#2f2482',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#B5B7DD",
+    alignItems: "center",
+    justifyContent: "center",
   },
   initialText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

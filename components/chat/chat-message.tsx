@@ -1,5 +1,4 @@
 import { TypingIndicator } from "@/components/chat/typing-indicator";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import type { ChatMessage as ChatMessageType } from "@/types/chat";
 import { Image, StyleSheet, Text, View } from "react-native";
 
@@ -16,50 +15,53 @@ function formatTime(timestamp: number): string {
 
 export function ChatMessage({ message, fontSize, isTyping }: Props) {
   const isUser = message.role === "user";
-  const textColor = useThemeColor({}, "text");
-  const userBubbleBg = useThemeColor(
-    { light: "#2f2482", dark: "#4a3a9e" },
-    "tint",
-  );
-  const assistantBubbleBg = useThemeColor(
-    { light: "#EEECEC", dark: "#2A2A2A" },
-    "background",
-  );
 
   return (
     <View style={[styles.row, isUser ? styles.rowUser : styles.rowAssistant]}>
       {!isUser && (
-        <Image
-          source={require("@/assets/images/logo-speranta.jpg")}
-          style={styles.avatar}
-        />
-      )}
-      <View style={styles.bubbleColumn}>
-        <View
-          style={[
-            styles.bubble,
-            isUser
-              ? [styles.bubbleUser, { backgroundColor: userBubbleBg }]
-              : [
-                  styles.bubbleAssistant,
-                  { backgroundColor: assistantBubbleBg },
-                ],
-          ]}
-        >
-          {isTyping ? (
-            <TypingIndicator />
-          ) : (
-            <Text
-              style={[
-                styles.text,
-                { color: isUser ? "#FFFFFF" : textColor },
-                fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
-              ]}
-            >
-              {message.content}
-            </Text>
-          )}
+        <View style={styles.avatarWrapper}>
+          <Image
+            source={require("@/assets/images/logo-white.jpeg")}
+            style={styles.avatar}
+          />
         </View>
+      )}
+      <View
+        style={isUser ? styles.bubbleColumnUser : styles.bubbleColumnAssistant}
+      >
+        {isUser ? (
+          <View style={styles.bubbleUser}>
+            {isTyping ? (
+              <TypingIndicator />
+            ) : (
+              <Text
+                style={[
+                  styles.text,
+                  { color: "#FFFFFF" },
+                  fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
+                ]}
+              >
+                {message.content}
+              </Text>
+            )}
+          </View>
+        ) : (
+          <View>
+            {isTyping ? (
+              <TypingIndicator />
+            ) : (
+              <Text
+                style={[
+                  styles.text,
+                  { color: "#FFFFFF" },
+                  fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
+                ]}
+              >
+                {message.content}
+              </Text>
+            )}
+          </View>
+        )}
         {!isTyping && message.id !== "_streaming" && (
           <Text
             style={[
@@ -87,41 +89,42 @@ const styles = StyleSheet.create({
   rowAssistant: {
     justifyContent: "flex-start",
   },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  bubbleColumnUser: {
+    maxWidth: "78%",
+    marginRight: 4,
+  },
+  bubbleColumnAssistant: {
+    maxWidth: "82%",
+  },
+  avatarWrapper: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     marginRight: 8,
     marginTop: 4,
+    backgroundColor: "#000000",
+    overflow: "hidden",
   },
-  bubble: {
-    borderRadius: 18,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+  avatar: {
+    width: 24,
+    height: 24,
   },
   bubbleUser: {
+    backgroundColor: "#333333",
+    borderRadius: 18,
     borderBottomRightRadius: 4,
-    shadowColor: "rgba(47,36,130,0.3)",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  bubbleAssistant: {
-    borderBottomLeftRadius: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   text: {
     fontSize: 15,
     fontFamily: "Poppins_400Regular",
     lineHeight: 22,
   },
-  bubbleColumn: {
-    maxWidth: "78%",
-  },
   timestamp: {
     fontSize: 11,
     fontFamily: "Poppins_400Regular",
-    color: "#999",
+    color: "#666",
     marginTop: 3,
     marginHorizontal: 4,
   },
