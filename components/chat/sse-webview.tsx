@@ -26,10 +26,22 @@ export function SseWebView({ url, onToken, onDone, onError }: Props) {
     (event: WebViewMessageEvent) => {
       try {
         const msg = JSON.parse(event.nativeEvent.data);
+        console.log("[SSE] raw message:", JSON.stringify(msg));
+
+        // Ignore events when no active URL (stale events from previous streams)
+        if (!activeUrl.current && msg.type !== "data") {
+          console.log("[SSE] ignoring stale event, no active URL");
+          return;
+        }
 
         if (msg.type === "data") {
+          if (!activeUrl.current) {
+            console.log("[SSE] ignoring stale data event");
+            return;
+          }
           receivedData.current = true;
           const parsed = parseSseData(msg.payload);
+          console.log("[SSE] parsed data:", JSON.stringify(parsed));
           if (parsed?.tokenText) {
             onToken(parsed.tokenText);
           }
@@ -37,7 +49,9 @@ export function SseWebView({ url, onToken, onDone, onError }: Props) {
             historyIdRef.current = parsed.conversationHistoryId;
           }
         } else if (msg.type === "done") {
-          onDone(historyIdRef.current);
+          if (receivedData.current) {
+            onDone(historyIdRef.current);
+          }
           receivedData.current = false;
           historyIdRef.current = undefined;
           activeUrl.current = null;
@@ -62,17 +76,28 @@ export function SseWebView({ url, onToken, onDone, onError }: Props) {
     const script = `
       (function() {
         try {
+          // Close any previous EventSource to prevent stale events
+          if (window._sseSource) {
+            window._sseSource.close();
+            window._sseSource = null;
+          }
           var source = new EventSource(${JSON.stringify(targetUrl)});
+          window._sseSource = source;
+          var closed = false;
           source.onmessage = function(e) {
+            if (closed) return;
             window.ReactNativeWebView.postMessage(JSON.stringify({
               type: 'data', payload: e.data
             }));
           };
           source.onerror = function() {
+            if (closed) return;
+            closed = true;
             window.ReactNativeWebView.postMessage(JSON.stringify({
               type: source.readyState === 2 ? 'error' : 'done'
             }));
             source.close();
+            window._sseSource = null;
           };
         } catch(err) {
           window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'error' }));

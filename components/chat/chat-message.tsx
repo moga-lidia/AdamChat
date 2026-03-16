@@ -1,75 +1,65 @@
 import { TypingIndicator } from "@/components/chat/typing-indicator";
 import type { ChatMessage as ChatMessageType } from "@/types/chat";
-import { Image, Linking, StyleSheet, Text, View } from "react-native";
+import * as Clipboard from "expo-clipboard";
+import {
+  Alert,
+  Image,
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-// Matches markdown links like [text](url)
-const MD_LINK_REGEX = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g;
-// Matches bare URLs
-const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+// Matches markdown links [text](url) OR bare URLs (ASCII-only to avoid
+// consuming adjacent non-ASCII text like Romanian characters)
+const TOKEN_REGEX =
+  /\[([^\]]+)\]\((https?:\/\/[^)]+)\)|(https?:\/\/[\x21-\x7E]+)/g;
+
+function isAcademiaUrl(url: string): boolean {
+  return url.includes("academiasperanta.ro") && url.includes("/courses");
+}
 
 function renderTextWithLinks(content: string, textStyle: any[]) {
-  // First: convert markdown links [text](url) to tokens we can split on
-  // Then: handle any remaining bare URLs
   const tokens: { type: "text" | "link"; text: string; url?: string }[] = [];
   let lastIndex = 0;
 
-  // Find all markdown links
-  const mdMatches = [...content.matchAll(MD_LINK_REGEX)];
-
-  if (mdMatches.length === 0) {
-    // No markdown links — handle bare URLs
-    const urlParts = content.split(URL_REGEX);
-    if (urlParts.length === 1) {
-      return <Text style={textStyle}>{content}</Text>;
-    }
-    return (
-      <Text style={textStyle}>
-        {urlParts.map((part, i) =>
-          URL_REGEX.test(part) ? (
-            <Text
-              key={i}
-              style={styles.link}
-              onPress={() => Linking.openURL(part)}
-            >
-              {part}
-            </Text>
-          ) : (
-            <Text key={i}>{part}</Text>
-          ),
-        )}
-      </Text>
-    );
-  }
-
-  for (const match of mdMatches) {
+  for (const match of content.matchAll(TOKEN_REGEX)) {
     const matchStart = match.index!;
-    // Add text before this match
     if (matchStart > lastIndex) {
       tokens.push({ type: "text", text: content.slice(lastIndex, matchStart) });
     }
-    // Add the link
-    tokens.push({ type: "link", text: match[1], url: match[2] });
+    if (match[1] && match[2]) {
+      // Markdown link [text](url)
+      tokens.push({ type: "link", text: match[1], url: match[2] });
+    } else if (match[3]) {
+      // Bare URL
+      const url = match[3];
+      const label = isAcademiaUrl(url)
+        ? "Vezi cursul pe Academia Speranța"
+        : url;
+      tokens.push({ type: "link", text: label, url });
+      // Ensure newline after academia course links for separation
+      if (isAcademiaUrl(url)) {
+        tokens.push({ type: "text", text: "\n" });
+      }
+    }
     lastIndex = matchStart + match[0].length;
   }
-  // Add remaining text
   if (lastIndex < content.length) {
     tokens.push({ type: "text", text: content.slice(lastIndex) });
   }
 
-  // Remove any remaining bare URLs from text tokens
-  const finalTokens: typeof tokens = [];
-  for (const token of tokens) {
-    if (token.type === "text") {
-      const cleaned = token.text.replace(URL_REGEX, "");
-      if (cleaned) finalTokens.push({ type: "text", text: cleaned });
-    } else {
-      finalTokens.push(token);
-    }
+  if (tokens.length === 0) {
+    return <Text style={textStyle}>{content}</Text>;
+  }
+  if (tokens.length === 1 && tokens[0].type === "text") {
+    return <Text style={textStyle}>{tokens[0].text}</Text>;
   }
 
   return (
     <Text style={textStyle}>
-      {finalTokens.map((token, i) =>
+      {tokens.map((token, i) =>
         token.type === "link" ? (
           <Text
             key={i}
@@ -100,6 +90,11 @@ function formatTime(timestamp: number): string {
 export function ChatMessage({ message, fontSize, isTyping }: Props) {
   const isUser = message.role === "user";
 
+  const handleCopy = () => {
+    Clipboard.setStringAsync(message.content);
+    Alert.alert("", "Textul a fost copiat!");
+  };
+
   return (
     <View style={[styles.row, isUser ? styles.rowUser : styles.rowAssistant]}>
       {!isUser && (
@@ -114,7 +109,7 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
         style={isUser ? styles.bubbleColumnUser : styles.bubbleColumnAssistant}
       >
         {isUser ? (
-          <View style={styles.bubbleUser}>
+          <Pressable onLongPress={handleCopy} style={styles.bubbleUser}>
             {isTyping ? (
               <TypingIndicator />
             ) : (
@@ -128,9 +123,9 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
                 {message.content}
               </Text>
             )}
-          </View>
+          </Pressable>
         ) : (
-          <View>
+          <Pressable onLongPress={handleCopy}>
             {isTyping ? (
               <TypingIndicator />
             ) : (
@@ -140,7 +135,7 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
                 fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
               ])
             )}
-          </View>
+          </Pressable>
         )}
         {!isTyping && message.id !== "_streaming" && (
           <Text
