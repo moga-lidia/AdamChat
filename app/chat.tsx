@@ -63,11 +63,11 @@ export default function ChatScreen() {
     "icon",
   );
   const accentColor = useThemeColor(
-    { light: AppColors.primary, dark: AppColors.accent },
+    { light: AppColors.accent, dark: AppColors.accent },
     "tint",
   );
   const featureCardBg = useThemeColor(
-    { light: AppColors.primaryLight, dark: AppColors.accentBg },
+    { light: AppColors.accentBg, dark: AppColors.accentBg },
     "background",
   );
 
@@ -296,6 +296,7 @@ export default function ChatScreen() {
         borderColor={borderColor}
         rightAction={
           <View style={styles.headerRight}>
+            {/* TODO: Re-enable mentor live button
             {mentorConnected ? (
               <Pressable
                 onPress={handleMentorClose}
@@ -309,7 +310,7 @@ export default function ChatScreen() {
                 ]}
               >
                 <View style={styles.liveDot} />
-                <IconSymbol name="bubble.left.fill" size={14} color="#2f2482" />
+                <IconSymbol name="bubble.left.fill" size={14} color="#FFFFFF" />
                 <Text style={styles.mentorButtonText}>
                   {t.mentor.closeConversation}
                 </Text>
@@ -325,12 +326,13 @@ export default function ChatScreen() {
                   },
                 ]}
               >
-                <IconSymbol name="bubble.left.fill" size={14} color="#2f2482" />
+                <IconSymbol name="bubble.left.fill" size={14} color="#FFFFFF" />
                 <Text style={styles.mentorButtonText}>
                   {t.mentor.buttonLabel}
                 </Text>
               </Pressable>
             )}
+            */}
             <HeaderMenu
               onAccount={() => setAuthModalVisible(true)}
               onSettings={() => setShowSettings((v) => !v)}
@@ -403,8 +405,8 @@ export default function ChatScreen() {
                   styles.quickActionButton,
                   styles.studyVideoButton,
                   {
-                    backgroundColor: "#FFFFFF",
-                    borderColor: "#2f2482",
+                    backgroundColor: AppColors.accentBg,
+                    borderColor: AppColors.accent,
                     opacity: pressed ? 0.85 : 1,
                     transform: [{ scale: pressed ? 0.97 : 1 }],
                   },
@@ -413,11 +415,11 @@ export default function ChatScreen() {
                 <IconSymbol
                   name="play.circle.fill"
                   size={15}
-                  color="#2f2482"
+                  color={AppColors.accent}
                   style={styles.studyVideoIcon}
                 />
                 <Text
-                  style={[styles.quickActionText, { color: "#2f2482" }]}
+                  style={[styles.quickActionText, { color: AppColors.accent }]}
                   numberOfLines={1}
                 >
                   {t.studyVideo}
@@ -500,7 +502,8 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   messageList: {
-    paddingVertical: 12,
+    paddingTop: 24,
+    paddingBottom: 12,
   },
   quickActions: {
     alignItems: "center",
@@ -539,29 +542,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#FEF3C7",
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 22,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    shadowColor: "#2f2482",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
   },
   mentorButtonActive: {
-    backgroundColor: "#FEF3C7",
-    borderWidth: 1.5,
-    borderColor: "#2f2482",
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
   },
   liveDot: {
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: "#F59E0B",
+    backgroundColor: "#4ADE80",
   },
   mentorButtonText: {
-    color: "#2f2482",
+    color: "#FFFFFF",
     fontSize: 13,
     fontFamily: "Poppins_700Bold",
   },

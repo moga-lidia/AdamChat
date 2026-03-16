@@ -5,16 +5,25 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CoursesScreen } from "@/components/courses/courses-screen";
 import { Header } from "@/components/layout/header";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { AppColors } from "@/constants/theme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function CoursesRoute() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const bg = useThemeColor({ light: AppColors.background, dark: AppColors.backgroundDark }, "background");
-  const headerBg = useThemeColor({ light: AppColors.headerBg, dark: AppColors.headerBgDark }, "background");
-  const borderColor = useThemeColor({ light: AppColors.border, dark: AppColors.borderDark }, "icon");
+  const bg = useThemeColor(
+    { light: AppColors.background, dark: AppColors.backgroundDark },
+    "background",
+  );
+  const headerBg = useThemeColor(
+    { light: AppColors.headerBg, dark: AppColors.headerBgDark },
+    "background",
+  );
+  const borderColor = useThemeColor(
+    { light: AppColors.border, dark: AppColors.borderDark },
+    "icon",
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: bg }]}>
@@ -27,7 +36,11 @@ export default function CoursesRoute() {
             onPress={() => router.back()}
             style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
           >
-            <IconSymbol name="chevron.left" size={24} color={AppColors.primary} />
+            <IconSymbol
+              name="chevron.left"
+              size={24}
+              color={AppColors.accent}
+            />
           </Pressable>
         }
       />

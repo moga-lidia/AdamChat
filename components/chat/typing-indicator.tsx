@@ -1,9 +1,8 @@
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 
 export function TypingIndicator() {
-  const dotColor = useThemeColor({ light: "#2f2482", dark: "#B5B7DD" }, "tint");
+  const dotColor = "#B5B7DD";
 
   const dots = [
     useRef(new Animated.Value(0)).current,
@@ -70,12 +69,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    paddingVertical: 6,
+    paddingTop: 18,
+    paddingBottom: 6,
     paddingHorizontal: 2,
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
 });

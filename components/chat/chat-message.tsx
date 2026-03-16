@@ -1,7 +1,80 @@
 import { TypingIndicator } from "@/components/chat/typing-indicator";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import type { ChatMessage as ChatMessageType } from "@/types/chat";
-import { Image, StyleSheet, Text, View } from "react-native";
+import * as Clipboard from "expo-clipboard";
+import {
+  Alert,
+  Image,
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+// Matches markdown links [text](url) OR bare URLs (ASCII-only to avoid
+// consuming adjacent non-ASCII text like Romanian characters)
+const TOKEN_REGEX =
+  /\[([^\]]+)\]\((https?:\/\/[^)]+)\)|(https?:\/\/[\x21-\x7E]+)/g;
+
+function isAcademiaUrl(url: string): boolean {
+  return url.includes("academiasperanta.ro") && url.includes("/courses");
+}
+
+function renderTextWithLinks(content: string, textStyle: any[]) {
+  const tokens: { type: "text" | "link"; text: string; url?: string }[] = [];
+  let lastIndex = 0;
+
+  for (const match of content.matchAll(TOKEN_REGEX)) {
+    const matchStart = match.index!;
+    if (matchStart > lastIndex) {
+      tokens.push({ type: "text", text: content.slice(lastIndex, matchStart) });
+    }
+    if (match[1] && match[2]) {
+      // Markdown link [text](url)
+      tokens.push({ type: "link", text: match[1], url: match[2] });
+    } else if (match[3]) {
+      // Bare URL
+      const url = match[3];
+      const label = isAcademiaUrl(url)
+        ? "Vezi cursul pe Academia Speranța"
+        : url;
+      tokens.push({ type: "link", text: label, url });
+      // Ensure newline after academia course links for separation
+      if (isAcademiaUrl(url)) {
+        tokens.push({ type: "text", text: "\n" });
+      }
+    }
+    lastIndex = matchStart + match[0].length;
+  }
+  if (lastIndex < content.length) {
+    tokens.push({ type: "text", text: content.slice(lastIndex) });
+  }
+
+  if (tokens.length === 0) {
+    return <Text style={textStyle}>{content}</Text>;
+  }
+  if (tokens.length === 1 && tokens[0].type === "text") {
+    return <Text style={textStyle}>{tokens[0].text}</Text>;
+  }
+
+  return (
+    <Text style={textStyle}>
+      {tokens.map((token, i) =>
+        token.type === "link" ? (
+          <Text
+            key={i}
+            style={styles.link}
+            onPress={() => Linking.openURL(token.url!)}
+          >
+            {token.text}
+          </Text>
+        ) : (
+          <Text key={i}>{token.text}</Text>
+        ),
+      )}
+    </Text>
+  );
+}
 
 interface Props {
   message: ChatMessageType;
@@ -16,50 +89,54 @@ function formatTime(timestamp: number): string {
 
 export function ChatMessage({ message, fontSize, isTyping }: Props) {
   const isUser = message.role === "user";
-  const textColor = useThemeColor({}, "text");
-  const userBubbleBg = useThemeColor(
-    { light: "#2f2482", dark: "#4a3a9e" },
-    "tint",
-  );
-  const assistantBubbleBg = useThemeColor(
-    { light: "#EEECEC", dark: "#2A2A2A" },
-    "background",
-  );
+
+  const handleCopy = () => {
+    Clipboard.setStringAsync(message.content);
+    Alert.alert("", "Textul a fost copiat!");
+  };
 
   return (
     <View style={[styles.row, isUser ? styles.rowUser : styles.rowAssistant]}>
       {!isUser && (
-        <Image
-          source={require("@/assets/images/logo-speranta.jpg")}
-          style={styles.avatar}
-        />
-      )}
-      <View style={styles.bubbleColumn}>
-        <View
-          style={[
-            styles.bubble,
-            isUser
-              ? [styles.bubbleUser, { backgroundColor: userBubbleBg }]
-              : [
-                  styles.bubbleAssistant,
-                  { backgroundColor: assistantBubbleBg },
-                ],
-          ]}
-        >
-          {isTyping ? (
-            <TypingIndicator />
-          ) : (
-            <Text
-              style={[
-                styles.text,
-                { color: isUser ? "#FFFFFF" : textColor },
-                fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
-              ]}
-            >
-              {message.content}
-            </Text>
-          )}
+        <View style={styles.avatarWrapper}>
+          <Image
+            source={require("@/assets/images/logo-white.jpeg")}
+            style={styles.avatar}
+          />
         </View>
+      )}
+      <View
+        style={isUser ? styles.bubbleColumnUser : styles.bubbleColumnAssistant}
+      >
+        {isUser ? (
+          <Pressable onLongPress={handleCopy} style={styles.bubbleUser}>
+            {isTyping ? (
+              <TypingIndicator />
+            ) : (
+              <Text
+                style={[
+                  styles.text,
+                  { color: "#FFFFFF" },
+                  fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
+                ]}
+              >
+                {message.content}
+              </Text>
+            )}
+          </Pressable>
+        ) : (
+          <Pressable onLongPress={handleCopy}>
+            {isTyping ? (
+              <TypingIndicator />
+            ) : (
+              renderTextWithLinks(message.content, [
+                styles.text,
+                { color: "#FFFFFF" },
+                fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
+              ])
+            )}
+          </Pressable>
+        )}
         {!isTyping && message.id !== "_streaming" && (
           <Text
             style={[
@@ -87,41 +164,42 @@ const styles = StyleSheet.create({
   rowAssistant: {
     justifyContent: "flex-start",
   },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  bubbleColumnUser: {
+    maxWidth: "78%",
+    marginRight: 4,
+  },
+  bubbleColumnAssistant: {
+    maxWidth: "82%",
+  },
+  avatarWrapper: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     marginRight: 8,
     marginTop: 4,
+    backgroundColor: "#000000",
+    overflow: "hidden",
   },
-  bubble: {
-    borderRadius: 18,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+  avatar: {
+    width: 24,
+    height: 24,
   },
   bubbleUser: {
+    backgroundColor: "#333333",
+    borderRadius: 18,
     borderBottomRightRadius: 4,
-    shadowColor: "rgba(47,36,130,0.3)",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  bubbleAssistant: {
-    borderBottomLeftRadius: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   text: {
     fontSize: 15,
     fontFamily: "Poppins_400Regular",
     lineHeight: 22,
   },
-  bubbleColumn: {
-    maxWidth: "78%",
-  },
   timestamp: {
     fontSize: 11,
     fontFamily: "Poppins_400Regular",
-    color: "#999",
+    color: "#666",
     marginTop: 3,
     marginHorizontal: 4,
   },
@@ -130,5 +208,9 @@ const styles = StyleSheet.create({
   },
   timestampAssistant: {
     textAlign: "left",
+  },
+  link: {
+    color: "#B5B7DD",
+    textDecorationLine: "underline" as const,
   },
 });

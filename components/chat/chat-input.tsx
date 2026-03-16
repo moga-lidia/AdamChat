@@ -22,15 +22,11 @@ export function ChatInput({ onSend, onCourses, disabled }: Props) {
   const inputRef = useRef<TextInput>(null);
   const sendAnim = useRef(new Animated.Value(1)).current;
   const { t } = useI18n();
-  const bg = useThemeColor({ light: "#EEECEC", dark: "#2A2A2A" }, "background");
-  const textColor = useThemeColor({}, "text");
+  const bg = useThemeColor({ light: "#2A2A2A", dark: "#2A2A2A" }, "background");
+  const textColor = "#FFFFFF";
   const placeholderColor = useThemeColor(
     { light: "#999", dark: "#666" },
     "icon",
-  );
-  const accentColor = useThemeColor(
-    { light: "#2f2482", dark: "#c1c1e3" },
-    "tint",
   );
 
   const handleSend = () => {
@@ -60,10 +56,10 @@ export function ChatInput({ onSend, onCourses, disabled }: Props) {
           onPress={onCourses}
           style={({ pressed }) => [
             styles.coursesButton,
-            { backgroundColor: accentColor, opacity: pressed ? 0.7 : 1 },
+            { backgroundColor: "#FFFFFF", opacity: pressed ? 0.7 : 1 },
           ]}
         >
-          <IconSymbol name="video.fill" size={18} color="#FFFFFF" />
+          <IconSymbol name="video.fill" size={22} color="#2f2482" />
         </Pressable>
       )}
       <TextInput
@@ -87,15 +83,16 @@ export function ChatInput({ onSend, onCourses, disabled }: Props) {
             styles.sendButton,
             {
               backgroundColor:
-                text.trim() && !disabled ? accentColor : "transparent",
+                text.trim() && !disabled ? "#FFFFFF" : "transparent",
               opacity: pressed ? 0.7 : 1,
             },
           ]}
         >
           <IconSymbol
             name="arrow.up"
-            size={20}
-            color={text.trim() && !disabled ? "#FFFFFF" : placeholderColor}
+            size={22}
+            weight="semibold"
+            color={text.trim() && !disabled ? "#2f2482" : placeholderColor}
           />
         </Pressable>
       </Animated.View>
@@ -122,20 +119,22 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === "ios" ? 8 : 4,
   },
   coursesButton: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 2,
+    marginRight: 4,
+    marginLeft: -2,
     marginBottom: Platform.OS === "ios" ? 4 : 0,
   },
   sendButton: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 6,
+    marginBottom: Platform.OS === "ios" ? 4 : 0,
   },
 });

@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Text, View } from "react-native";
 import { AppColors } from "@/constants/theme";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 interface HeaderProps {
   insets: { top: number };
@@ -8,7 +8,12 @@ interface HeaderProps {
   rightAction?: React.ReactNode;
 }
 
-export function Header({ insets, headerBg, borderColor, rightAction }: HeaderProps) {
+export function Header({
+  insets,
+  headerBg,
+  borderColor,
+  rightAction,
+}: HeaderProps) {
   return (
     <View
       style={[
@@ -22,7 +27,7 @@ export function Header({ insets, headerBg, borderColor, rightAction }: HeaderPro
     >
       <View style={styles.headerLeft}>
         <Image
-          source={require("@/assets/images/logo.jpg")}
+          source={require("@/assets/images/logo-white.jpeg")}
           style={styles.logoImage}
         />
         <Text style={styles.logoText}>ADAM</Text>
@@ -39,7 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingBottom: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 0,
   },
   headerLeft: {
     flexDirection: "row",
@@ -52,7 +57,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   logoText: {
-    color: AppColors.primary,
+    color: AppColors.white,
     fontSize: 18,
     fontFamily: "Poppins_700Bold",
     letterSpacing: 1,
