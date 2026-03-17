@@ -1,3 +1,5 @@
+import { translations, type TranslationKeys } from "@/i18n";
+import type { Lang } from "@/types/chat";
 import {
   createContext,
   useCallback,
@@ -5,8 +7,6 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
-import type { Lang } from "@/types/chat";
-import { translations, type TranslationKeys } from "@/i18n";
 
 interface I18nContextValue {
   lang: Lang;
