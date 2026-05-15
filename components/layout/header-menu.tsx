@@ -1,4 +1,3 @@
-import { FilmReelIcon } from "@/components/ui/film-reel-icon";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";
@@ -18,6 +17,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { FilmReelIcon } from "../ui/film-reel-icon";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const PANEL_WIDTH = SCREEN_WIDTH * 0.75;
@@ -294,20 +294,14 @@ export function HeaderMenu({
               <View style={styles.separator} />
               <Pressable
                 onPress={() => {
-                  animateClose(() =>
-                    Linking.openURL("https://hopeplay.ro"),
-                  );
+                  animateClose(() => Linking.openURL("https://hopeplay.ro"));
                 }}
                 style={({ pressed }) => [
                   styles.menuItem,
                   { opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <IconSymbol
-                  name="play.circle.fill"
-                  size={22}
-                  color="#FFFFFF"
-                />
+                <IconSymbol name="play.circle.fill" size={22} color="#FFFFFF" />
                 <Text style={styles.menuLabel}>{t.menu.hopePlay}</Text>
               </Pressable>
             </View>
@@ -443,6 +437,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 16,
     gap: 14,
+  },
+  menuLogo: {
+    width: 24,
+    height: 24,
   },
   menuLabel: {
     fontSize: 17,
