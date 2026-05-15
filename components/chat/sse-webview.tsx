@@ -1,6 +1,6 @@
 import { parseSseData } from "@/services/chat-api";
 import { useCallback, useEffect, useRef } from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 
 interface Props {
@@ -139,16 +139,21 @@ export function SseWebView({ url, onToken, onDone, onError }: Props) {
       style={styles.hidden}
       javaScriptEnabled
       originWhitelist={["*"]}
-      userAgent="Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1"
+      userAgent={
+        Platform.OS === "ios"
+          ? "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1"
+          : "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
+      }
     />
   );
 }
 
 const styles = StyleSheet.create({
   hidden: {
-    width: 0,
-    height: 0,
-    opacity: 0,
+    width: 1,
+    height: 1,
     position: "absolute",
+    top: -9999,
+    left: -9999,
   },
 });

@@ -51,14 +51,22 @@ function renderTextWithLinks(content: string, textStyle: any[]) {
   }
 
   if (tokens.length === 0) {
-    return <Text style={textStyle}>{content}</Text>;
+    return (
+      <Text style={textStyle} android_hyphenationFrequency="none">
+        {content}
+      </Text>
+    );
   }
   if (tokens.length === 1 && tokens[0].type === "text") {
-    return <Text style={textStyle}>{tokens[0].text}</Text>;
+    return (
+      <Text style={textStyle} android_hyphenationFrequency="none">
+        {tokens[0].text}
+      </Text>
+    );
   }
 
   return (
-    <Text style={textStyle}>
+    <Text style={textStyle} android_hyphenationFrequency="none">
       {tokens.map((token, i) =>
         token.type === "link" ? (
           <Text
@@ -119,6 +127,7 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
                   { color: "#FFFFFF" },
                   fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
                 ]}
+                android_hyphenationFrequency="none"
               >
                 {message.content}
               </Text>

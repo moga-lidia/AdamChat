@@ -1,4 +1,5 @@
 import { AppColors } from "@/constants/theme";
+import { useI18n } from "@/hooks/use-i18n";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 interface HeaderProps {
@@ -14,6 +15,8 @@ export function Header({
   borderColor,
   rightAction,
 }: HeaderProps) {
+  const { t } = useI18n();
+
   return (
     <View
       style={[
@@ -30,7 +33,10 @@ export function Header({
           source={require("@/assets/images/logo-white.jpeg")}
           style={styles.logoImage}
         />
-        <Text style={styles.logoText}>ADAM</Text>
+        <View>
+          <Text style={styles.logoText}>ADAM</Text>
+          <Text style={styles.logoSubtitle}>{t.headerSubtitle}</Text>
+        </View>
       </View>
       {rightAction}
     </View>
@@ -40,7 +46,7 @@ export function Header({
 const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingBottom: 12,
@@ -51,15 +57,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 6,
-    marginRight: 8,
+    width: 60,
+    height: 40,
+    borderRadius: 10,
+    marginRight: 10,
   },
   logoText: {
     color: AppColors.white,
-    fontSize: 18,
+    fontSize: 22,
     fontFamily: "Poppins_700Bold",
-    letterSpacing: 1,
+    letterSpacing: 1.5,
+    lineHeight: 26,
+  },
+  logoSubtitle: {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 11,
+    fontFamily: "Poppins_400Regular",
+    marginTop: -2,
   },
 });

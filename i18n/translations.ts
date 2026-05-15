@@ -25,6 +25,7 @@ export interface TranslationKeys {
     errorMessage: string;
     noConnection: string;
   };
+  headerSubtitle: string;
   quickActions: QuickAction[];
   studyVideo: string;
   menu: {
@@ -39,6 +40,14 @@ export interface TranslationKeys {
     newChatConfirmMessage: string;
     cancel: string;
     confirm: string;
+    sperantaTvLive: string;
+    sperantaFmLive: string;
+    hopeDiscovery: string;
+    hopePlay: string;
+    about: string;
+    aboutDescriptionPart1: string;
+    aboutLinkText: string;
+    aboutDescriptionPart2: string;
   };
   settings: {
     title: string;
@@ -139,6 +148,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       { label: "Spune-mi ceva ce nu știu", prompt: "UNKNOWN_FACT" },
       { label: "Meditația zilei", prompt: "DAILY_MEDITATION" },
     ],
+    headerSubtitle: "Academia Speranța",
     studyVideo: "Vreau să studiez video",
     menu: {
       signOut: "Deconectează-te",
@@ -152,6 +162,16 @@ export const translations: Record<Lang, TranslationKeys> = {
       newChatConfirmMessage: "Sigur vrei să ștergi conversația curentă?",
       cancel: "Anulează",
       confirm: "Da",
+      sperantaTvLive: "Speranța TV Live",
+      sperantaFmLive: "Speranța FM Live",
+      hopeDiscovery: "Hope Discovery",
+      hopePlay: "Hope Play",
+      about: "Despre",
+      aboutDescriptionPart1:
+        "ADAM este un asistent biblic bazat pe inteligență artificială, dezvoltat în cadrul platformei Academia Speranța - un proiect al ",
+      aboutLinkText: "Trustului Media Speranța",
+      aboutDescriptionPart2:
+        ".\n\nAplicația oferă acces la cursuri biblice video și text, răspunde la întrebări despre Biblie și, atunci când este nevoie, facilitează legătura cu mentori umani pentru sprijin și îndrumare spirituală.\n\nScopul proiectului este de a face studiul Bibliei mai accesibil, mai personal și mai relevant pentru oamenii care caută răspunsuri și îndrumare spirituală în mediul digital.",
     },
     settings: {
       title: "Setări",
@@ -261,6 +281,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       { label: "Tell me something I don't know", prompt: "UNKNOWN_FACT" },
       { label: "Daily meditation", prompt: "DAILY_MEDITATION" },
     ],
+    headerSubtitle: "Hope Academy",
     studyVideo: "I want to study video",
     menu: {
       signOut: "Sign out",
@@ -275,6 +296,16 @@ export const translations: Record<Lang, TranslationKeys> = {
         "Are you sure you want to delete the current conversation?",
       cancel: "Cancel",
       confirm: "Yes",
+      sperantaTvLive: "Speranța TV Live",
+      sperantaFmLive: "Speranța FM Live",
+      hopeDiscovery: "Hope Discovery",
+      hopePlay: "Hope Play",
+      about: "About",
+      aboutDescriptionPart1:
+        "ADAM is a Bible assistant powered by artificial intelligence, developed within the Academia Speranța platform - a project of ",
+      aboutLinkText: "Trustul Media Speranța",
+      aboutDescriptionPart2:
+        ".\n\nThe app provides access to biblical video and text courses, answers questions about the Bible, and when needed, connects users with human mentors for spiritual support and guidance.\n\nThe goal of the project is to make Bible study more accessible, more personal, and more relevant for people seeking answers and spiritual guidance in the digital age.",
     },
     settings: {
       title: "Settings",
@@ -384,6 +415,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       { label: "Mondj valamit, amit nem tudok", prompt: "UNKNOWN_FACT" },
       { label: "A nap meditációja", prompt: "DAILY_MEDITATION" },
     ],
+    headerSubtitle: "Hope Academy",
     studyVideo: "Videót szeretnék tanulni",
     menu: {
       signOut: "Kijelentkezés",
@@ -398,6 +430,16 @@ export const translations: Record<Lang, TranslationKeys> = {
         "Biztosan törölni szeretnéd a jelenlegi beszélgetést?",
       cancel: "Mégsem",
       confirm: "Igen",
+      sperantaTvLive: "Speranța TV Live",
+      sperantaFmLive: "Speranța FM Live",
+      hopeDiscovery: "Hope Discovery",
+      hopePlay: "Hope Play",
+      about: "Névjegy",
+      aboutDescriptionPart1:
+        "Az ADAM egy mesterséges intelligenciára épülő bibliai asszisztens, amelyet az Academia Speranța platform keretében fejlesztettek - a ",
+      aboutLinkText: "Trustul Media Speranța",
+      aboutDescriptionPart2:
+        " projektjeként.\n\nAz alkalmazás bibliai videó- és szöveges kurzusokat kínál, válaszol a Bibliával kapcsolatos kérdésekre, és szükség esetén összeköti a felhasználókat emberi mentorokkal lelki támogatás és útmutatás céljából.\n\nA projekt célja, hogy a Biblia tanulmányozását elérhetőbbé, személyesebbé és relevánsabbá tegye azok számára, akik válaszokat és lelki útmutatást keresnek a digitális térben.",
     },
     settings: {
       title: "Beállítások",

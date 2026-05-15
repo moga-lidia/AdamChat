@@ -1,11 +1,14 @@
 // Fallback for using MaterialIcons on Android and web.
 
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
-import { ComponentProps } from 'react';
-import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { SymbolViewProps, SymbolWeight } from "expo-symbols";
+import { ComponentProps } from "react";
+import { OpaqueColorValue, type StyleProp, type TextStyle } from "react-native";
 
-type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
+type IconMapping = Record<
+  SymbolViewProps["name"],
+  ComponentProps<typeof MaterialIcons>["name"]
+>;
 type IconSymbolName = keyof typeof MAPPING;
 
 /**
@@ -14,33 +17,38 @@ type IconSymbolName = keyof typeof MAPPING;
  * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
  */
 const MAPPING = {
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
-  'arrow.up': 'arrow-upward',
-  'gearshape.fill': 'settings',
-  'plus': 'add',
-  'person.fill': 'person',
-  'envelope.fill': 'email',
-  'line.3.horizontal': 'menu',
-  'xmark': 'close',
-  'lock.fill': 'lock',
-  'chevron.left': 'chevron-left',
-  'chevron.down': 'keyboard-arrow-down',
-  'book.fill': 'menu-book',
-  'lightbulb.fill': 'lightbulb',
-  'textformat.size': 'format-size',
-  'circle.lefthalf.filled': 'contrast',
-  'sun.max.fill': 'light-mode',
-  'globe': 'language',
-  'chevron.up': 'keyboard-arrow-up',
-  'play.circle.fill': 'play-circle-filled',
-  'video.fill': 'videocam',
-  'bubble.left.fill': 'chat',
-  'bubble.left.and.bubble.right.fill': 'forum',
-  'arrow.right': 'arrow-forward',
-  'xmark.circle.fill': 'cancel',
+  "house.fill": "home",
+  "paperplane.fill": "send",
+  "chevron.left.forwardslash.chevron.right": "code",
+  "chevron.right": "chevron-right",
+  "arrow.up": "arrow-upward",
+  "gearshape.fill": "settings",
+  plus: "add",
+  "person.fill": "person",
+  "envelope.fill": "email",
+  "line.3.horizontal": "menu",
+  xmark: "close",
+  "lock.fill": "lock",
+  "chevron.left": "chevron-left",
+  "chevron.down": "keyboard-arrow-down",
+  "book.fill": "menu-book",
+  "lightbulb.fill": "lightbulb",
+  "textformat.size": "format-size",
+  "circle.lefthalf.filled": "contrast",
+  "sun.max.fill": "light-mode",
+  globe: "language",
+  "chevron.up": "keyboard-arrow-up",
+  "play.circle.fill": "play-circle-filled",
+  "video.fill": "videocam",
+  "bubble.left.fill": "chat",
+  "bubble.left.and.bubble.right.fill": "forum",
+  "arrow.right": "arrow-forward",
+  "xmark.circle.fill": "cancel",
+  "play.rectangle.fill": "live-tv",
+  "mic.fill": "mic",
+  "rectangle.portrait.and.arrow.right": "logout",
+  "info.circle": "info-outline",
+  film: "movie",
 } as IconMapping;
 
 /**
@@ -60,5 +68,12 @@ export function IconSymbol({
   style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  return (
+    <MaterialIcons
+      color={color}
+      size={size}
+      name={MAPPING[name]}
+      style={style}
+    />
+  );
 }

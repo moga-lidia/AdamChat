@@ -347,6 +347,7 @@ export function AuthModal({ visible, onClose }: Props) {
 
           {view === "email" && (
             <>
+              <View style={styles.viewSpacer} />
               {error && <Text style={styles.error}>{error}</Text>}
 
               <View style={styles.inputRow}>
@@ -428,6 +429,7 @@ export function AuthModal({ visible, onClose }: Props) {
 
           {view === "register" && (
             <>
+              <View style={styles.viewSpacer} />
               {error && <Text style={styles.error}>{error}</Text>}
 
               <View style={styles.inputRow}>
@@ -563,6 +565,7 @@ export function AuthModal({ visible, onClose }: Props) {
 
           {view === "forgot" && (
             <>
+              <View style={styles.viewSpacer} />
               {error && <Text style={styles.error}>{error}</Text>}
 
               <View style={styles.inputRow}>
@@ -654,7 +657,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "stretch",
-    marginBottom: 4,
+    marginBottom: 12,
   },
   closeButton: {
     padding: 4,
@@ -824,6 +827,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+  },
+  viewSpacer: {
+    height: 14,
   },
   bottomLinkLabel: {
     color: "rgba(255,255,255,0.5)",

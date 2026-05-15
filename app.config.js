@@ -6,7 +6,7 @@ module.exports = {
   expo: {
     name: "ADAM | Bible AI",
     slug: "AdamChat",
-    version: "1.0.1",
+    version: "1.2",
     orientation: "portrait",
     icon: "./assets/AppIcons/appstore.png",
     scheme: "adamchat",
@@ -23,7 +23,7 @@ module.exports = {
       },
     },
     android: {
-      package: "com.mediasperanta.adam",
+      package: "com.mediasperanta.adamchat",
       adaptiveIcon: {
         backgroundColor: "#000000",
         foregroundImage: "./assets/AppIcons/playstore.png",
