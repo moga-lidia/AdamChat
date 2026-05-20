@@ -8,6 +8,7 @@ import {
   type PropsWithChildren,
 } from "react";
 
+import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";
 import {
   appendMessage,
@@ -40,27 +41,38 @@ const ChatSessionContext = createContext<ChatSessionContextValue>({
 export function ChatSessionProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<ChatSession | null>(null);
   const { setLang } = useI18n();
+  const { user, loading: authLoading } = useAuth();
 
-  // Load session on mount
+  // Load session on mount (wait for auth to settle first)
   useEffect(() => {
+    if (authLoading) return;
     (async () => {
-      const existing = await loadSession();
-      if (existing) {
-        setSession(existing);
-        if (existing.lang) {
-          setLang(existing.lang);
+      if (user) {
+        const existing = await loadSession();
+        if (existing) {
+          setSession(existing);
+          if (existing.lang) {
+            setLang(existing.lang);
+          }
+          return;
         }
-      } else {
-        const id = Crypto.randomUUID();
-        setSession(createSession(id));
       }
+      const id = Crypto.randomUUID();
+      setSession(createSession(id));
     })();
-  }, [setLang]);
+  }, [authLoading, setLang]);
 
-  // Persist session on change
+  // Persist session only for authenticated users
   useEffect(() => {
-    if (session) saveSession(session);
-  }, [session]);
+    if (session && user) saveSession(session);
+  }, [session, user]);
+
+  // Clear stored session when user signs out
+  useEffect(() => {
+    if (!authLoading && !user) {
+      clearSession();
+    }
+  }, [user, authLoading]);
 
   const initSession = useCallback(
     (lang: Lang, welcomeMessage: string): ChatSession => {

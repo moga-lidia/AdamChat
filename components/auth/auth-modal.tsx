@@ -5,6 +5,7 @@ import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Modal,
   Pressable,
@@ -21,9 +22,11 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";
 import {
   registerWithEmail,
+  requestAccountDeletion,
   signInWithEmail,
   verifyGoogleToken,
 } from "@/services/auth-api";
+import { loadAuthTokens } from "@/services/auth-storage";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -151,6 +154,38 @@ export function AuthModal({ visible, onClose }: Props) {
     onClose();
   };
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      t.auth.deleteAccountConfirmTitle,
+      t.auth.deleteAccountConfirmMessage,
+      [
+        { text: t.menu.cancel, style: "cancel" },
+        {
+          text: t.auth.deleteAccount,
+          style: "destructive",
+          onPress: async () => {
+            const tokens = await loadAuthTokens();
+            if (!tokens?.accessToken) {
+              Alert.alert(t.auth.deleteAccountError);
+              return;
+            }
+            const result = await requestAccountDeletion(
+              tokens.accessToken,
+              lang,
+            );
+            if ("success" in result) {
+              await signOut();
+              onClose();
+              Alert.alert(t.auth.deleteAccountSuccess);
+            } else {
+              Alert.alert(t.auth.deleteAccountError);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   // Authenticated view
   if (user) {
     const initial =
@@ -200,6 +235,16 @@ export function AuthModal({ visible, onClose }: Props) {
               ]}
             >
               <Text style={styles.signOutText}>{t.auth.signOut}</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={handleDeleteAccount}
+              style={({ pressed }) => [
+                styles.deleteButton,
+                { opacity: pressed ? 0.8 : 1 },
+              ]}
+            >
+              <Text style={styles.deleteText}>{t.auth.deleteAccount}</Text>
             </Pressable>
           </View>
         </Pressable>
@@ -874,5 +919,18 @@ const styles = StyleSheet.create({
     color: "#D32F2F",
     fontSize: 15,
     fontFamily: "Poppins_600SemiBold",
+  },
+  deleteButton: {
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    alignSelf: "stretch",
+    marginTop: 10,
+  },
+  deleteText: {
+    color: "rgba(255,255,255,0.4)",
+    fontSize: 13,
+    fontFamily: "Poppins_500Medium",
+    textDecorationLine: "underline",
   },
 });

@@ -108,7 +108,7 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
       {!isUser && (
         <View style={styles.avatarWrapper}>
           <Image
-            source={require("@/assets/images/logo-white.jpeg")}
+            source={require("@/assets/images/logo-white.png")}
             style={styles.avatar}
           />
         </View>

@@ -170,6 +170,35 @@ export async function signInWithEmail(
   }
 }
 
+/** Request account deletion. */
+export async function requestAccountDeletion(
+  accessToken: string,
+  lang: Lang = "ro",
+): Promise<{ success: true } | { error: string }> {
+  const t = getTranslation(lang);
+  try {
+    const res = await fetch(`${API_BASE}/termination-requests`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ callback: WEBSITE }),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => null);
+      return {
+        error: body?.message ?? `${t.errors.connection} (${res.status})`,
+      };
+    }
+
+    return { success: true };
+  } catch {
+    return { error: t.errors.connection };
+  }
+}
+
 /** Fetch the authenticated user's profile. */
 async function fetchUserSelf(accessToken: string): Promise<AuthUser | null> {
   try {

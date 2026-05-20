@@ -24,6 +24,9 @@ export interface TranslationKeys {
     streamingPlaceholder: string;
     errorMessage: string;
     noConnection: string;
+    saveNotePrefix: string;
+    saveNoteAction: string;
+    saveNoteSuffix: string;
   };
   headerSubtitle: string;
   quickActions: QuickAction[];
@@ -44,6 +47,7 @@ export interface TranslationKeys {
     sperantaFmLive: string;
     hopeDiscovery: string;
     hopePlay: string;
+    remenysegFmLive?: string;
     about: string;
     aboutDescriptionPart1: string;
     aboutLinkText: string;
@@ -92,6 +96,11 @@ export interface TranslationKeys {
     googleVerifyError: string;
     termsConsent: string;
     passwordResetUnavailable: string;
+    deleteAccount: string;
+    deleteAccountConfirmTitle: string;
+    deleteAccountConfirmMessage: string;
+    deleteAccountSuccess: string;
+    deleteAccountError: string;
   };
   mentor: {
     buttonLabel: string;
@@ -142,6 +151,9 @@ export const translations: Record<Lang, TranslationKeys> = {
       errorMessage: "Ne pare rău, a apărut o eroare. Încearcă din nou.",
       noConnection:
         "Nu există conexiune la internet. Verifică rețeaua și încearcă din nou.",
+      saveNotePrefix: "",
+      saveNoteAction: "Autentifică-te",
+      saveNoteSuffix: " pentru a salva conversațiile",
     },
     quickActions: [
       { label: "Motivează-mă", prompt: "MOTIVATION" },
@@ -226,6 +238,13 @@ export const translations: Record<Lang, TranslationKeys> = {
       termsConsent: "Prin semnare, ești de acord cu",
       passwordResetUnavailable:
         "Resetarea parolei nu este disponibilă momentan.",
+      deleteAccount: "Șterge contul",
+      deleteAccountConfirmTitle: "Ștergere cont",
+      deleteAccountConfirmMessage:
+        "Ești sigur că vrei să ștergi contul? Toate datele tale vor fi eliminate. Această acțiune este ireversibilă.",
+      deleteAccountSuccess:
+        "Cererea de ștergere a fost trimisă. Contul tău va fi eliminat în curând.",
+      deleteAccountError: "Nu am putut trimite cererea de ștergere.",
     },
     mentor: {
       buttonLabel: "Mentor live",
@@ -275,6 +294,9 @@ export const translations: Record<Lang, TranslationKeys> = {
       streamingPlaceholder: "Generating response, please wait...",
       errorMessage: "Sorry, an error occurred. Please try again.",
       noConnection: "No internet connection. Check your network and try again.",
+      saveNotePrefix: "",
+      saveNoteAction: "Sign in",
+      saveNoteSuffix: " to save your conversations",
     },
     quickActions: [
       { label: "Motivate me", prompt: "MOTIVATION" },
@@ -360,6 +382,13 @@ export const translations: Record<Lang, TranslationKeys> = {
       termsConsent: "By signing up, you agree to the",
       passwordResetUnavailable:
         "Password reset is not available at the moment.",
+      deleteAccount: "Delete account",
+      deleteAccountConfirmTitle: "Delete account",
+      deleteAccountConfirmMessage:
+        "Are you sure you want to delete your account? All your data will be removed. This action is irreversible.",
+      deleteAccountSuccess:
+        "Deletion request has been sent. Your account will be removed soon.",
+      deleteAccountError: "Could not send the deletion request.",
     },
     mentor: {
       buttonLabel: "Mentor live",
@@ -409,6 +438,9 @@ export const translations: Record<Lang, TranslationKeys> = {
       errorMessage: "Sajnáljuk, hiba történt. Kérlek, próbáld újra.",
       noConnection:
         "Nincs internetkapcsolat. Ellenőrizd a hálózatot, és próbáld újra.",
+      saveNotePrefix: "",
+      saveNoteAction: "Jelentkezz be",
+      saveNoteSuffix: " a beszélgetések mentéséhez",
     },
     quickActions: [
       { label: "Motiválj", prompt: "MOTIVATION" },
@@ -434,6 +466,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       sperantaFmLive: "Speranța FM Live",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
+      remenysegFmLive: "Reménység FM Live",
       about: "Névjegy",
       aboutDescriptionPart1:
         "Az ADAM egy mesterséges intelligenciára épülő bibliai asszisztens, amelyet az Academia Speranța platform keretében fejlesztettek - a ",
@@ -493,6 +526,13 @@ export const translations: Record<Lang, TranslationKeys> = {
       googleVerifyError: "Nem sikerült ellenőrizni a Google fiókodat.",
       termsConsent: "A regisztrációval elfogadod a",
       passwordResetUnavailable: "A jelszó visszaállítás jelenleg nem elérhető.",
+      deleteAccount: "Fiók törlése",
+      deleteAccountConfirmTitle: "Fiók törlése",
+      deleteAccountConfirmMessage:
+        "Biztosan törölni szeretnéd a fiókodat? Minden adatod eltávolításra kerül. Ez a művelet visszafordíthatatlan.",
+      deleteAccountSuccess:
+        "A törlési kérelem elküldve. A fiókod hamarosan eltávolításra kerül.",
+      deleteAccountError: "Nem sikerült elküldeni a törlési kérelmet.",
     },
     mentor: {
       buttonLabel: "Mentor live",

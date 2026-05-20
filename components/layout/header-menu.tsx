@@ -1,6 +1,8 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";
+import { requestAccountDeletion } from "@/services/auth-api";
+import { loadAuthTokens } from "@/services/auth-storage";
 import { BlurView } from "expo-blur";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -36,10 +38,11 @@ export function HeaderMenu({
   onNewChat,
 }: HeaderMenuProps) {
   const { user, signOut } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const insets = useSafeAreaInsets();
   const [open, setOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [signOutOpen, setSignOutOpen] = useState(false);
   const slideAnim = useRef(new Animated.Value(PANEL_WIDTH)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -151,20 +154,7 @@ export function HeaderMenu({
               {user ? (
                 <Pressable
                   onPress={() => {
-                    animateClose(() => {
-                      Alert.alert(
-                        t.menu.signOutConfirmTitle,
-                        t.menu.signOutConfirmMessage,
-                        [
-                          { text: t.menu.cancel, style: "cancel" },
-                          {
-                            text: t.menu.signOut,
-                            style: "destructive",
-                            onPress: () => signOut(),
-                          },
-                        ],
-                      );
-                    });
+                    animateClose(() => setSignOutOpen(true));
                   }}
                   style={({ pressed }) => [
                     styles.menuItem,
@@ -272,6 +262,28 @@ export function HeaderMenu({
                 <IconSymbol name="mic.fill" size={22} color="#FFFFFF" />
                 <Text style={styles.menuLabel}>{t.menu.sperantaFmLive}</Text>
               </Pressable>
+
+              {lang === "hu" && t.menu.remenysegFmLive && (
+                <>
+                  <View style={styles.separator} />
+                  <Pressable
+                    onPress={() => {
+                      animateClose(() =>
+                        Linking.openURL("https://live.rvs.ro/mg"),
+                      );
+                    }}
+                    style={({ pressed }) => [
+                      styles.menuItem,
+                      { opacity: pressed ? 0.6 : 1 },
+                    ]}
+                  >
+                    <IconSymbol name="mic.fill" size={22} color="#FFFFFF" />
+                    <Text style={styles.menuLabel}>
+                      {t.menu.remenysegFmLive}
+                    </Text>
+                  </Pressable>
+                </>
+              )}
 
               <View style={styles.separator} />
               <Pressable
@@ -406,6 +418,101 @@ export function HeaderMenu({
           </View>
         </Pressable>
       </Modal>
+
+      {/* Sign out dialog */}
+      <Modal
+        visible={signOutOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSignOutOpen(false)}
+      >
+        <Pressable
+          style={styles.aboutBackdrop}
+          onPress={() => setSignOutOpen(false)}
+        >
+          <BlurView
+            intensity={15}
+            tint="dark"
+            style={StyleSheet.absoluteFill}
+          />
+          <View
+            style={styles.signOutDialog}
+            onStartShouldSetResponder={() => true}
+          >
+            <Text style={styles.signOutTitle}>
+              {t.menu.signOutConfirmTitle}
+            </Text>
+            <Text style={styles.signOutMessage}>
+              {t.menu.signOutConfirmMessage}
+            </Text>
+
+            <Pressable
+              onPress={() => {
+                setSignOutOpen(false);
+                signOut();
+              }}
+              style={({ pressed }) => [
+                styles.signOutBtn,
+                { opacity: pressed ? 0.8 : 1 },
+              ]}
+            >
+              <Text style={styles.signOutBtnText}>{t.menu.signOut}</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => setSignOutOpen(false)}
+              style={({ pressed }) => [
+                styles.signOutCancelBtn,
+                { opacity: pressed ? 0.8 : 1 },
+              ]}
+            >
+              <Text style={styles.signOutCancelText}>{t.menu.cancel}</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                setSignOutOpen(false);
+                Alert.alert(
+                  t.auth.deleteAccountConfirmTitle,
+                  t.auth.deleteAccountConfirmMessage,
+                  [
+                    { text: t.menu.cancel, style: "cancel" },
+                    {
+                      text: t.auth.deleteAccount,
+                      style: "destructive",
+                      onPress: async () => {
+                        const tokens = await loadAuthTokens();
+                        if (!tokens?.accessToken) {
+                          Alert.alert(t.auth.deleteAccountError);
+                          return;
+                        }
+                        const result = await requestAccountDeletion(
+                          tokens.accessToken,
+                          lang,
+                        );
+                        if ("success" in result) {
+                          await signOut();
+                          Alert.alert(t.auth.deleteAccountSuccess);
+                        } else {
+                          Alert.alert(t.auth.deleteAccountError);
+                        }
+                      },
+                    },
+                  ],
+                );
+              }}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.6 : 1,
+                marginTop: 20,
+              })}
+            >
+              <Text style={styles.deleteAccountLink}>
+                {t.auth.deleteAccount}
+              </Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -515,6 +622,63 @@ const styles = StyleSheet.create({
   aboutLink: {
     color: "#fec216",
     fontFamily: "Poppins_600SemiBold",
+    textDecorationLine: "underline",
+  },
+  signOutDialog: {
+    width: "100%",
+    maxWidth: 300,
+    backgroundColor: "rgba(20,20,20,0.92)",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+    paddingHorizontal: 24,
+    paddingTop: 28,
+    paddingBottom: 24,
+    alignItems: "center",
+  },
+  signOutTitle: {
+    color: "#FFFFFF",
+    fontSize: 17,
+    fontFamily: "Poppins_600SemiBold",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  signOutMessage: {
+    color: "rgba(255,255,255,0.6)",
+    fontSize: 14,
+    fontFamily: "Poppins_400Regular",
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  signOutBtn: {
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    alignSelf: "stretch",
+  },
+  signOutBtnText: {
+    color: "#D32F2F",
+    fontSize: 15,
+    fontFamily: "Poppins_600SemiBold",
+  },
+  signOutCancelBtn: {
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    alignSelf: "stretch",
+    marginTop: 10,
+  },
+  signOutCancelText: {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 14,
+    fontFamily: "Poppins_500Medium",
+  },
+  deleteAccountLink: {
+    color: "rgba(255,255,255,0.35)",
+    fontSize: 12,
+    fontFamily: "Poppins_400Regular",
     textDecorationLine: "underline",
   },
 });

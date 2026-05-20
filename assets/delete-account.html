@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delete Account - ADAM | Bible AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .card {
+      max-width: 380px;
+      width: 100%;
+      background: rgba(20,20,20,0.92);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 28px;
+      padding: 40px 28px 36px;
+      text-align: center;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      color: rgba(255,255,255,0.4);
+      font-size: 12px;
+      font-weight: 400;
+      margin-bottom: 32px;
+    }
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin-bottom: 28px;
+    }
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .description {
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .btn {
+      display: block;
+      background: rgba(255,255,255,0.08);
+      color: #D32F2F;
+      text-decoration: none;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      margin-bottom: 24px;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.8; }
+    .steps {
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .steps-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-text {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      line-height: 24px;
+    }
+    .warning {
+      color: rgba(255,255,255,0.35);
+      font-size: 11px;
+      line-height: 1.6;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">ADAM</div>
+    <div class="subtitle">Academia Speranța</div>
+    <div class="divider"></div>
+
+    <div class="title">Delete Account</div>
+    <p class="description">
+      To delete your ADAM account, follow the steps below.
+      Make sure you are signed in to the app.
+    </p>
+
+    <a class="btn" href="adamchat://delete-account">Open ADAM App</a>
+
+    <div class="steps">
+      <div class="steps-title">Steps</div>
+      <div class="step">
+        <span class="step-num">1</span>
+        <span class="step-text">Open the ADAM app and sign in</span>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <span class="step-text">Tap the menu (☰) then tap "Sign out"</span>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <span class="step-text">In the dialog that appears, tap "Delete account"</span>
+      </div>
+      <div class="step">
+        <span class="step-num">4</span>
+        <span class="step-text">Confirm the account deletion</span>
+      </div>
+    </div>
+
+    <p class="warning">
+      When you delete your account, all personal data (name, email)
+      will be permanently removed. Processing the request may take up to 3 business days.
+    </p>
+  </div>
+</body>
+</html>

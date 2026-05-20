@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useAuth } from "@/hooks/use-auth";
 import { AuthModal } from "@/components/auth/auth-modal";
 import { ChatInput } from "@/components/chat/chat-input";
 import { ChatMessage } from "@/components/chat/chat-message";
@@ -38,6 +39,7 @@ import type { ChatMessage as ChatMessageType } from "@/types/chat";
 export default function ChatScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
   const { lang, t, setLang } = useI18n();
   const { session, setSession, resetSession, addMessage } =
     useChatSessionContext();
@@ -373,6 +375,30 @@ export default function ChatScreen() {
         contentContainerStyle={styles.messageList}
         keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
+        ListHeaderComponent={
+          !user ? (
+            <Pressable
+              onPress={() => setAuthModalVisible(true)}
+              style={({ pressed }) => [
+                styles.saveNoteBanner,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <IconSymbol
+                name="person.crop.circle.badge.exclamationmark"
+                size={14}
+                color="rgba(255,255,255,0.45)"
+              />
+              <Text style={styles.saveNoteText}>
+                {t.chat.saveNotePrefix}
+                <Text style={styles.saveNoteLink}>
+                  {t.chat.saveNoteAction}
+                </Text>
+                {t.chat.saveNoteSuffix}
+              </Text>
+            </Pressable>
+          ) : null
+        }
         ListFooterComponent={
           showQuickActions && !mentorConnected ? (
             <View style={styles.quickActions}>
@@ -504,6 +530,27 @@ const styles = StyleSheet.create({
   messageList: {
     paddingTop: 24,
     paddingBottom: 12,
+  },
+  saveNoteBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginHorizontal: 24,
+    marginBottom: 12,
+    borderRadius: 12,
+    backgroundColor: "rgba(255,255,255,0.06)",
+  },
+  saveNoteText: {
+    fontSize: 12,
+    fontFamily: "Poppins_400Regular",
+    color: "rgba(255,255,255,0.45)",
+  },
+  saveNoteLink: {
+    fontFamily: "Poppins_600SemiBold",
+    textDecorationLine: "underline",
   },
   quickActions: {
     alignItems: "center",
