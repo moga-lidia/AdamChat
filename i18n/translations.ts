@@ -51,6 +51,7 @@ export interface TranslationKeys {
     sperantaTvLive: string;
     sperantaFmLive: string;
     sperantaFmMusic: string;
+    sperantaTvYoutube: string;
     hopeDiscovery: string;
     hopePlay: string;
     remenysegFmLive?: string;
@@ -189,6 +190,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       sperantaTvLive: "Speranța TV Live",
       sperantaFmLive: "Speranța FM Live",
       sperantaFmMusic: "Speranța Music",
+      sperantaTvYoutube: "Speranța TV YouTube",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
       about: "Despre",
@@ -339,6 +341,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       sperantaTvLive: "Speranța TV Live",
       sperantaFmLive: "Speranța FM Live",
       sperantaFmMusic: "Speranța Music",
+      sperantaTvYoutube: "Speranța TV YouTube",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
       about: "About",
@@ -490,6 +493,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       sperantaTvLive: "Speranța TV Live",
       sperantaFmLive: "Speranța FM Live",
       sperantaFmMusic: "Speranța Music",
+      sperantaTvYoutube: "Speranța TV YouTube",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
       remenysegFmLive: "Reménység FM Live",

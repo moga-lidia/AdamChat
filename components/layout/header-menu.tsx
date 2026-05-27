@@ -184,19 +184,6 @@ export function HeaderMenu({
                 </Pressable>
               )}
 
-              <View style={styles.separator} />
-
-              <Pressable
-                onPress={() => handleItem(onSettings)}
-                style={({ pressed }) => [
-                  styles.menuItem,
-                  { opacity: pressed ? 0.6 : 1 },
-                ]}
-              >
-                <IconSymbol name="gearshape.fill" size={s(22)} color="#FFFFFF" />
-                <Text style={styles.menuLabel}>{t.menu.settings}</Text>
-              </Pressable>
-
               {onNewChat && (
                 <>
                   <View style={styles.separator} />
@@ -241,11 +228,35 @@ export function HeaderMenu({
                 ]}
               >
                 <IconSymbol
-                  name="play.rectangle.fill"
+                  name="video.fill"
                   size={s(22)}
                   color="#FFFFFF"
                 />
                 <Text style={styles.menuLabel}>{t.menu.sperantaTvLive}</Text>
+              </Pressable>
+
+              <View style={styles.separator} />
+              <Pressable
+                onPress={() => {
+                  animateClose(() =>
+                    Linking.openURL(
+                      "https://www.youtube.com/@sperantatvoficial",
+                    ),
+                  );
+                }}
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <IconSymbol
+                  name="play.rectangle.fill"
+                  size={s(22)}
+                  color="#FFFFFF"
+                />
+                <Text style={styles.menuLabel}>
+                  {t.menu.sperantaTvYoutube}
+                </Text>
               </Pressable>
 
               <View style={styles.separator} />
@@ -332,6 +343,18 @@ export function HeaderMenu({
               >
                 <IconSymbol name="play.circle.fill" size={s(22)} color="#FFFFFF" />
                 <Text style={styles.menuLabel}>{t.menu.hopePlay}</Text>
+              </Pressable>
+
+              <View style={styles.separator} />
+              <Pressable
+                onPress={() => handleItem(onSettings)}
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <IconSymbol name="gearshape.fill" size={s(22)} color="#FFFFFF" />
+                <Text style={styles.menuLabel}>{t.menu.settings}</Text>
               </Pressable>
             </View>
 

@@ -7,11 +7,15 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 
@@ -46,7 +50,7 @@ interface Props {
   onClose: () => void;
 }
 
-type ModalView = "main" | "email" | "register" | "forgot";
+type ModalView = "main" | "email" | "register";
 
 export function AuthModal({ visible, onClose }: Props) {
   const { user, signIn, signOut } = useAuth();
@@ -260,50 +264,63 @@ export function AuthModal({ visible, onClose }: Props) {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable style={styles.backdrop} onPress={onClose}>
-        <BlurView intensity={10} tint="dark" style={StyleSheet.absoluteFill} />
-        <View style={styles.dialog} onStartShouldSetResponder={() => true}>
-          <View style={styles.dialogHeader}>
-            {view !== "main" ? (
-              <Pressable
-                onPress={() => {
-                  setError(null);
-                  setView(view === "email" ? "main" : "email");
-                }}
-                style={({ pressed }) => [
-                  styles.backButton,
-                  { opacity: pressed ? 0.6 : 1 },
-                ]}
-              >
-                <IconSymbol name="chevron.left" size={s(16)} color="#2f2482" />
-                <Text style={styles.backText}>{t.auth.back}</Text>
-              </Pressable>
-            ) : (
-              <View />
-            )}
-            <Pressable
-              onPress={onClose}
-              style={({ pressed }) => [
-                styles.closeButton,
-                { opacity: pressed ? 0.6 : 1 },
-              ]}
-            >
-              <IconSymbol name="xmark" size={s(18)} color="#666" />
-            </Pressable>
-          </View>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.backdrop}>
+            <BlurView
+              intensity={10}
+              tint="dark"
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.dialog} onStartShouldSetResponder={() => true}>
+              <View style={styles.dialogHeader}>
+                {view !== "main" ? (
+                  <Pressable
+                    onPress={() => {
+                      setError(null);
+                      setView(view === "register" ? "email" : "main");
+                    }}
+                    style={({ pressed }) => [
+                      styles.backButton,
+                      { opacity: pressed ? 0.6 : 1 },
+                    ]}
+                  >
+                    <IconSymbol
+                      name="chevron.left"
+                      size={s(16)}
+                      color="#2f2482"
+                    />
+                    <Text style={styles.backText}>{t.auth.back}</Text>
+                  </Pressable>
+                ) : (
+                  <View />
+                )}
+                <Pressable
+                  onPress={onClose}
+                  style={({ pressed }) => [
+                    styles.closeButton,
+                    { opacity: pressed ? 0.6 : 1 },
+                  ]}
+                >
+                  <IconSymbol name="xmark" size={s(18)} color="#666" />
+                </Pressable>
+              </View>
 
-          {view === "main" && (
-            <>
-              <Image
-                source={require("@/assets/images/logo-white-with-title.jpeg")}
-                style={styles.logo}
-              />
-              <Text style={styles.title}>{t.auth.welcome}</Text>
-              <Text style={styles.subtitle}>{t.auth.welcomeTitle}</Text>
+              {view === "main" && (
+                <>
+                  <Image
+                    source={require("@/assets/images/logo-white-with-title.jpeg")}
+                    style={styles.logo}
+                  />
+                  <Text style={styles.title}>{t.auth.welcome}</Text>
+                  <Text style={styles.subtitle}>{t.auth.welcomeTitle}</Text>
 
-              {error && <Text style={styles.error}>{error}</Text>}
+                  {error && <Text style={styles.error}>{error}</Text>}
 
-              {/* TODO: Re-enable Google and Apple sign-in buttons
+                  {/* TODO: Re-enable Google and Apple sign-in buttons
               <Pressable
                 onPress={handleGoogleSignIn}
                 disabled={!request}
@@ -358,314 +375,271 @@ export function AuthModal({ visible, onClose }: Props) {
               )}
               */}
 
-              <Pressable
-                onPress={() => {
-                  setError(null);
-                  setView("email");
-                }}
-                style={({ pressed }) => [
-                  styles.authButton,
-                  styles.emailButton,
-                  { opacity: pressed ? 0.8 : 1 },
-                ]}
-              >
-                <IconSymbol name="envelope.fill" size={s(20)} color="#FFFFFF" />
-                <Text style={styles.emailButtonText}>
-                  {t.auth.continueWithEmail}
-                </Text>
-              </Pressable>
+                  <Pressable
+                    onPress={() => {
+                      setError(null);
+                      setView("email");
+                    }}
+                    style={({ pressed }) => [
+                      styles.authButton,
+                      styles.emailButton,
+                      { opacity: pressed ? 0.8 : 1 },
+                    ]}
+                  >
+                    <IconSymbol
+                      name="envelope.fill"
+                      size={s(20)}
+                      color="#FFFFFF"
+                    />
+                    <Text style={styles.emailButtonText}>
+                      {t.auth.continueWithEmail}
+                    </Text>
+                  </Pressable>
 
-              <Text style={styles.terms}>
-                {t.auth.termsText}{" "}
-                <Text
-                  style={styles.link}
-                  onPress={() => setPrivacyVisible(true)}
-                >
-                  {t.auth.privacyPolicy}
-                </Text>{" "}
-                {t.auth.and}{" "}
-                <Text style={styles.link} onPress={() => setTermsVisible(true)}>
-                  {t.auth.termsOfUse}
-                </Text>
-              </Text>
-            </>
-          )}
-
-          {view === "email" && (
-            <>
-              <View style={styles.viewSpacer} />
-              {error && <Text style={styles.error}>{error}</Text>}
-
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.inputField}
-                  placeholder={t.auth.email}
-                  placeholderTextColor="#999"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  value={email}
-                  onChangeText={setEmail}
-                />
-                <View style={styles.inputIconDivider} />
-                <View style={styles.inputIconWrap}>
-                  <IconSymbol name="envelope.fill" size={s(18)} color="#999" />
-                </View>
-              </View>
-
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.inputField}
-                  placeholder={t.auth.password}
-                  placeholderTextColor="#999"
-                  secureTextEntry={!showPassword}
-                  value={password}
-                  onChangeText={setPassword}
-                />
-                <View style={styles.inputIconDivider} />
-                <Pressable
-                  onPress={() => setShowPassword((v) => !v)}
-                  style={styles.inputIconWrap}
-                >
-                  <IconSymbol
-                    name={showPassword ? "eye.fill" : "eye.slash.fill"}
-                    size={s(18)}
-                    color="#999"
-                  />
-                </Pressable>
-              </View>
-
-              <Pressable
-                onPress={handleEmailSignIn}
-                disabled={loading}
-                style={({ pressed }) => [
-                  styles.submitButton,
-                  { opacity: pressed || loading ? 0.7 : 1 },
-                ]}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#2f2482" size="small" />
-                ) : (
-                  <Text style={styles.submitButtonText}>{t.auth.signIn}</Text>
-                )}
-              </Pressable>
-
-              <View style={styles.linksRow}>
-                <Pressable
-                  onPress={() => {
-                    setError(null);
-                    setView("register");
-                  }}
-                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
-                >
-                  <Text style={styles.linkText}>{t.auth.createAccount}</Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => {
-                    setError(null);
-                    setView("forgot");
-                  }}
-                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
-                >
-                  <Text style={styles.linkText}>{t.auth.forgotPassword}</Text>
-                </Pressable>
-              </View>
-            </>
-          )}
-
-          {view === "register" && (
-            <>
-              <View style={styles.viewSpacer} />
-              {error && <Text style={styles.error}>{error}</Text>}
-
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.inputField}
-                  placeholder={t.auth.firstName}
-                  placeholderTextColor="#999"
-                  autoCapitalize="words"
-                  value={firstName}
-                  onChangeText={setFirstName}
-                />
-              </View>
-
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.inputField}
-                  placeholder={t.auth.lastName}
-                  placeholderTextColor="#999"
-                  autoCapitalize="words"
-                  value={lastName}
-                  onChangeText={setLastName}
-                />
-              </View>
-
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.inputField}
-                  placeholder={t.auth.email}
-                  placeholderTextColor="#999"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  value={email}
-                  onChangeText={setEmail}
-                />
-              </View>
-
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.inputField}
-                  placeholder={t.auth.password}
-                  placeholderTextColor="#999"
-                  secureTextEntry={!showPassword}
-                  value={password}
-                  onChangeText={setPassword}
-                />
-                <View style={styles.inputIconDivider} />
-                <Pressable
-                  onPress={() => setShowPassword((v) => !v)}
-                  style={styles.inputIconWrap}
-                >
-                  <IconSymbol
-                    name={showPassword ? "eye.fill" : "eye.slash.fill"}
-                    size={s(18)}
-                    color="#999"
-                  />
-                </Pressable>
-              </View>
-
-              <Text style={styles.termsSmall}>
-                {t.auth.termsConsent}{" "}
-                <Text
-                  style={styles.link}
-                  onPress={() => setPrivacyVisible(true)}
-                >
-                  {t.auth.privacyPolicy}
-                </Text>{" "}
-                {t.auth.and}{" "}
-                <Text style={styles.link} onPress={() => setTermsVisible(true)}>
-                  {t.auth.termsOfUse}
-                </Text>
-              </Text>
-
-              <Pressable
-                onPress={async () => {
-                  if (
-                    !firstName.trim() ||
-                    !lastName.trim() ||
-                    !email.trim() ||
-                    !password.trim()
-                  ) {
-                    setError(t.auth.fillAllFields);
-                    return;
-                  }
-                  setLoading(true);
-                  setError(null);
-                  const result = await registerWithEmail(
-                    {
-                      firstName: firstName.trim(),
-                      lastName: lastName.trim(),
-                      email: email.trim(),
-                      password: password.trim(),
-                    },
-                    lang,
-                  );
-                  setLoading(false);
-                  if ("error" in result) {
-                    setError(result.error);
-                  } else {
-                    signIn(result.user);
-                    onClose();
-                  }
-                }}
-                disabled={loading}
-                style={({ pressed }) => [
-                  styles.submitButton,
-                  { opacity: pressed || loading ? 0.7 : 1 },
-                ]}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#2f2482" size="small" />
-                ) : (
-                  <Text style={styles.submitButtonText}>
-                    {t.auth.createAccount}
+                  <Text style={styles.terms}>
+                    {t.auth.termsText}{" "}
+                    <Text
+                      style={styles.link}
+                      onPress={() => setPrivacyVisible(true)}
+                    >
+                      {t.auth.privacyPolicy}
+                    </Text>{" "}
+                    {t.auth.and}{" "}
+                    <Text
+                      style={styles.link}
+                      onPress={() => setTermsVisible(true)}
+                    >
+                      {t.auth.termsOfUse}
+                    </Text>
                   </Text>
-                )}
-              </Pressable>
+                </>
+              )}
 
-              <View style={styles.bottomLinkRow}>
-                <Text style={styles.bottomLinkLabel}>{t.auth.haveAccount}</Text>
-                <Pressable
-                  onPress={() => {
-                    setError(null);
-                    setView("email");
-                  }}
-                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
-                >
-                  <Text style={styles.linkText}>{t.auth.signIn}</Text>
-                </Pressable>
-              </View>
-            </>
-          )}
+              {view === "email" && (
+                <>
+                  <View style={styles.viewSpacer} />
+                  {error && <Text style={styles.error}>{error}</Text>}
 
-          {view === "forgot" && (
-            <>
-              <View style={styles.viewSpacer} />
-              {error && <Text style={styles.error}>{error}</Text>}
+                  <View style={styles.inputRow}>
+                    <TextInput
+                      style={styles.inputField}
+                      placeholder={t.auth.email}
+                      placeholderTextColor="#999"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      value={email}
+                      onChangeText={setEmail}
+                    />
+                    <View style={styles.inputIconDivider} />
+                    <View style={styles.inputIconWrap}>
+                      <IconSymbol
+                        name="envelope.fill"
+                        size={s(18)}
+                        color="#999"
+                      />
+                    </View>
+                  </View>
 
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.inputField}
-                  placeholder={t.auth.email}
-                  placeholderTextColor="#999"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  value={email}
-                  onChangeText={setEmail}
-                />
-                <View style={styles.inputIconDivider} />
-                <View style={styles.inputIconWrap}>
-                  <IconSymbol name="envelope.fill" size={s(18)} color="#999" />
-                </View>
-              </View>
+                  <View style={styles.inputRow}>
+                    <TextInput
+                      style={styles.inputField}
+                      placeholder={t.auth.password}
+                      placeholderTextColor="#999"
+                      secureTextEntry={!showPassword}
+                      value={password}
+                      onChangeText={setPassword}
+                    />
+                    <View style={styles.inputIconDivider} />
+                    <Pressable
+                      onPress={() => setShowPassword((v) => !v)}
+                      style={styles.inputIconWrap}
+                    >
+                      <IconSymbol
+                        name={showPassword ? "eye.fill" : "eye.slash.fill"}
+                        size={s(18)}
+                        color="#999"
+                      />
+                    </Pressable>
+                  </View>
 
-              <Pressable
-                onPress={() => {
-                  // TODO: integrate with backend password reset endpoint
-                  setError(t.auth.passwordResetUnavailable);
-                }}
-                disabled={loading}
-                style={({ pressed }) => [
-                  styles.submitButton,
-                  { opacity: pressed || loading ? 0.7 : 1 },
-                ]}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#2f2482" size="small" />
-                ) : (
-                  <Text style={styles.submitButtonText}>
-                    {t.auth.sendRequest}
+                  <Pressable
+                    onPress={handleEmailSignIn}
+                    disabled={loading}
+                    style={({ pressed }) => [
+                      styles.submitButton,
+                      { opacity: pressed || loading ? 0.7 : 1 },
+                    ]}
+                  >
+                    {loading ? (
+                      <ActivityIndicator color="#2f2482" size="small" />
+                    ) : (
+                      <Text style={styles.submitButtonText}>
+                        {t.auth.signIn}
+                      </Text>
+                    )}
+                  </Pressable>
+
+                  <View style={styles.linksRow}>
+                    <Pressable
+                      onPress={() => {
+                        setError(null);
+                        setView("register");
+                      }}
+                      style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+                    >
+                      <Text style={styles.linkText}>
+                        {t.auth.createAccount}
+                      </Text>
+                    </Pressable>
+                  </View>
+                </>
+              )}
+
+              {view === "register" && (
+                <>
+                  <View style={styles.viewSpacer} />
+                  {error && <Text style={styles.error}>{error}</Text>}
+
+                  <View style={styles.inputRow}>
+                    <TextInput
+                      style={styles.inputField}
+                      placeholder={t.auth.firstName}
+                      placeholderTextColor="#999"
+                      autoCapitalize="words"
+                      value={firstName}
+                      onChangeText={setFirstName}
+                    />
+                  </View>
+
+                  <View style={styles.inputRow}>
+                    <TextInput
+                      style={styles.inputField}
+                      placeholder={t.auth.lastName}
+                      placeholderTextColor="#999"
+                      autoCapitalize="words"
+                      value={lastName}
+                      onChangeText={setLastName}
+                    />
+                  </View>
+
+                  <View style={styles.inputRow}>
+                    <TextInput
+                      style={styles.inputField}
+                      placeholder={t.auth.email}
+                      placeholderTextColor="#999"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      value={email}
+                      onChangeText={setEmail}
+                    />
+                  </View>
+
+                  <View style={styles.inputRow}>
+                    <TextInput
+                      style={styles.inputField}
+                      placeholder={t.auth.password}
+                      placeholderTextColor="#999"
+                      secureTextEntry={!showPassword}
+                      value={password}
+                      onChangeText={setPassword}
+                    />
+                    <View style={styles.inputIconDivider} />
+                    <Pressable
+                      onPress={() => setShowPassword((v) => !v)}
+                      style={styles.inputIconWrap}
+                    >
+                      <IconSymbol
+                        name={showPassword ? "eye.fill" : "eye.slash.fill"}
+                        size={s(18)}
+                        color="#999"
+                      />
+                    </Pressable>
+                  </View>
+
+                  <Text style={styles.termsSmall}>
+                    {t.auth.termsConsent}{" "}
+                    <Text
+                      style={styles.link}
+                      onPress={() => setPrivacyVisible(true)}
+                    >
+                      {t.auth.privacyPolicy}
+                    </Text>{" "}
+                    {t.auth.and}{" "}
+                    <Text
+                      style={styles.link}
+                      onPress={() => setTermsVisible(true)}
+                    >
+                      {t.auth.termsOfUse}
+                    </Text>
                   </Text>
-                )}
-              </Pressable>
 
-              <View style={styles.bottomLinkRow}>
-                <Pressable
-                  onPress={() => {
-                    setError(null);
-                    setView("email");
-                  }}
-                  style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
-                >
-                  <Text style={styles.linkText}>{t.auth.signIn}</Text>
-                </Pressable>
-              </View>
-            </>
-          )}
-        </View>
-      </Pressable>
+                  <Pressable
+                    onPress={async () => {
+                      if (
+                        !firstName.trim() ||
+                        !lastName.trim() ||
+                        !email.trim() ||
+                        !password.trim()
+                      ) {
+                        setError(t.auth.fillAllFields);
+                        return;
+                      }
+                      setLoading(true);
+                      setError(null);
+                      const result = await registerWithEmail(
+                        {
+                          firstName: firstName.trim(),
+                          lastName: lastName.trim(),
+                          email: email.trim(),
+                          password: password.trim(),
+                        },
+                        lang,
+                      );
+                      setLoading(false);
+                      if ("error" in result) {
+                        setError(result.error);
+                      } else {
+                        signIn(result.user);
+                        onClose();
+                      }
+                    }}
+                    disabled={loading}
+                    style={({ pressed }) => [
+                      styles.submitButton,
+                      { opacity: pressed || loading ? 0.7 : 1 },
+                    ]}
+                  >
+                    {loading ? (
+                      <ActivityIndicator color="#2f2482" size="small" />
+                    ) : (
+                      <Text style={styles.submitButtonText}>
+                        {t.auth.createAccount}
+                      </Text>
+                    )}
+                  </Pressable>
+
+                  <View style={styles.bottomLinkRow}>
+                    <Text style={styles.bottomLinkLabel}>
+                      {t.auth.haveAccount}
+                    </Text>
+                    <Pressable
+                      onPress={() => {
+                        setError(null);
+                        setView("email");
+                      }}
+                      style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+                    >
+                      <Text style={styles.linkText}>{t.auth.signIn}</Text>
+                    </Pressable>
+                  </View>
+                </>
+              )}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
       <PrivacyPolicyModal
         visible={privacyVisible}
         onClose={() => setPrivacyVisible(false)}
