@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 
+import { s } from "@/constants/scale";
 import { useI18n } from "@/hooks/use-i18n";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import {
@@ -216,10 +217,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   screenTitle: {
-    fontSize: 22,
+    fontSize: s(22),
     fontFamily: "Poppins_700Bold",
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingHorizontal: s(16),
+    paddingTop: s(16),
   },
   loadingContainer: {
     justifyContent: "center",
@@ -230,32 +231,32 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   chipRow: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
+    paddingHorizontal: s(16),
+    paddingVertical: s(12),
+    gap: s(8),
   },
   chip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: s(16),
+    paddingVertical: s(8),
+    borderRadius: s(20),
   },
   chipText: {
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_500Medium",
   },
   list: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
-    gap: 16,
+    paddingHorizontal: s(16),
+    paddingBottom: s(24),
+    gap: s(16),
   },
   card: {
-    borderRadius: 16,
+    borderRadius: s(16),
     overflow: "hidden",
     boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
     elevation: 4,
   },
   imageContainer: {
-    height: 180,
+    height: s(180),
     position: "relative",
   },
   courseImage: {
@@ -267,15 +268,15 @@ const styles = StyleSheet.create({
   },
   categoryBadge: {
     position: "absolute",
-    top: 12,
-    left: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+    top: s(12),
+    left: s(12),
+    paddingHorizontal: s(10),
+    paddingVertical: s(4),
+    borderRadius: s(8),
   },
   categoryBadgeText: {
     color: "#FFFFFF",
-    fontSize: 11,
+    fontSize: s(11),
     fontFamily: "Poppins_600SemiBold",
   },
   titleOverlay: {
@@ -283,36 +284,36 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: s(14),
+    paddingVertical: s(10),
     backgroundColor: "rgba(0,0,0,0.45)",
   },
   courseTitle: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: s(16),
     fontFamily: "Poppins_600SemiBold",
-    lineHeight: 22,
+    lineHeight: s(22),
   },
   cardFooter: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: s(14),
+    paddingVertical: s(10),
   },
   footerText: {
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_400Regular",
   },
   freeBadge: {
     backgroundColor: "#1B7A4A",
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 6,
+    paddingHorizontal: s(10),
+    paddingVertical: s(3),
+    borderRadius: s(6),
   },
   freeBadgeText: {
     color: "#FFFFFF",
-    fontSize: 11,
+    fontSize: s(11),
     fontFamily: "Poppins_700Bold",
   },
 });

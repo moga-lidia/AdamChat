@@ -1,4 +1,5 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -31,7 +32,7 @@ export function AuthButton({ onPress }: Props) {
           <Text style={styles.initialText}>{initial}</Text>
         </View>
       ) : (
-        <IconSymbol name="person.fill" size={18} color={iconColor} />
+        <IconSymbol name="person.fill" size={s(18)} color={iconColor} />
       )}
     </Pressable>
   );
@@ -40,23 +41,23 @@ export function AuthButton({ onPress }: Props) {
 const styles = StyleSheet.create({
   button: {
     borderWidth: 1,
-    borderRadius: 16,
-    width: 32,
-    height: 32,
+    borderRadius: s(16),
+    width: s(32),
+    height: s(32),
     alignItems: "center",
     justifyContent: "center",
   },
   initialCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: s(24),
+    height: s(24),
+    borderRadius: s(12),
     backgroundColor: "#B5B7DD",
     alignItems: "center",
     justifyContent: "center",
   },
   initialText: {
     color: "#FFFFFF",
-    fontSize: 13,
+    fontSize: s(13),
     fontWeight: "700",
   },
 });

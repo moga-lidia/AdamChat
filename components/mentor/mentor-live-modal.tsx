@@ -17,6 +17,7 @@ import {
 } from "react-native";
 
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 import { useI18n } from "@/hooks/use-i18n";
 
 const MENTOR_DATA_KEY = "adam_mentor_data";
@@ -212,7 +213,7 @@ export function MentorLiveModal({ visible, onClose, onConnect }: Props) {
                     <View style={styles.titleIcon}>
                       <IconSymbol
                         name="bubble.left.fill"
-                        size={22}
+                        size={s(22)}
                         color="#FFFFFF"
                       />
                     </View>
@@ -227,7 +228,7 @@ export function MentorLiveModal({ visible, onClose, onConnect }: Props) {
                     <View style={styles.errorBox}>
                       <IconSymbol
                         name="exclamationmark.triangle.fill"
-                        size={14}
+                        size={s(14)}
                         color="#e74c3c"
                       />
                       <Text style={styles.errorText}>{error}</Text>
@@ -245,7 +246,7 @@ export function MentorLiveModal({ visible, onClose, onConnect }: Props) {
                     <View style={styles.inputIconLeft}>
                       <IconSymbol
                         name="person.fill"
-                        size={16}
+                        size={s(16)}
                         color="#b0aed0"
                       />
                     </View>
@@ -275,7 +276,7 @@ export function MentorLiveModal({ visible, onClose, onConnect }: Props) {
                     <View style={styles.inputIconLeft}>
                       <IconSymbol
                         name="envelope.fill"
-                        size={16}
+                        size={s(16)}
                         color="#b0aed0"
                       />
                     </View>
@@ -308,7 +309,7 @@ export function MentorLiveModal({ visible, onClose, onConnect }: Props) {
                     <View style={styles.inputIconLeft}>
                       <IconSymbol
                         name="mappin.circle.fill"
-                        size={16}
+                        size={s(16)}
                         color="#b0aed0"
                       />
                     </View>
@@ -327,7 +328,7 @@ export function MentorLiveModal({ visible, onClose, onConnect }: Props) {
                         { transform: [{ rotate: chevronRotation }] },
                       ]}
                     >
-                      <IconSymbol name="chevron.down" size={12} color="#999" />
+                      <IconSymbol name="chevron.down" size={s(12)} color="#999" />
                     </Animated.View>
                   </Pressable>
 
@@ -368,7 +369,7 @@ export function MentorLiveModal({ visible, onClose, onConnect }: Props) {
                             {selectedCounty?.code === c.code && (
                               <IconSymbol
                                 name="checkmark"
-                                size={13}
+                                size={s(13)}
                                 color="#2f2482"
                               />
                             )}
@@ -390,7 +391,7 @@ export function MentorLiveModal({ visible, onClose, onConnect }: Props) {
                       <Text style={styles.submitText}>{t.mentor.submit}</Text>
                       <IconSymbol
                         name="paperplane.fill"
-                        size={16}
+                        size={s(16)}
                         color="#FFFFFF"
                         style={styles.submitIcon}
                       />
@@ -425,70 +426,70 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: s(20),
   },
   dialog: {
     width: "100%",
-    maxWidth: 360,
+    maxWidth: s(360),
     backgroundColor: "rgba(20,20,20,0.92)",
-    borderRadius: 24,
+    borderRadius: s(24),
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
     overflow: "hidden",
   },
   accentBar: {
-    height: 5,
+    height: s(5),
     backgroundColor: "#B5B7DD",
   },
   dialogContent: {
-    paddingHorizontal: 24,
-    paddingTop: 22,
-    paddingBottom: 24,
+    paddingHorizontal: s(24),
+    paddingTop: s(22),
+    paddingBottom: s(24),
   },
   dialogHeader: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: s(20),
   },
   titleIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: s(48),
+    height: s(48),
+    borderRadius: s(24),
     backgroundColor: "#B5B7DD",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: s(12),
   },
   title: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: s(18),
     fontFamily: "Poppins_700Bold",
     textAlign: "center",
   },
   dialogDescription: {
     color: "rgba(255,255,255,0.6)",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_400Regular",
-    lineHeight: 19,
+    lineHeight: s(19),
     textAlign: "center",
-    marginTop: 6,
-    paddingHorizontal: 8,
+    marginTop: s(6),
+    paddingHorizontal: s(8),
   },
   /* Error */
   errorBox: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: s(8),
     backgroundColor: "#fef2f2",
     borderWidth: 1,
     borderColor: "#fecaca",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginBottom: 18,
+    borderRadius: s(12),
+    paddingHorizontal: s(14),
+    paddingVertical: s(10),
+    marginBottom: s(18),
   },
   errorText: {
     color: "#dc2626",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_500Medium",
     flex: 1,
   },
@@ -496,64 +497,64 @@ const styles = StyleSheet.create({
   /* Fields */
   fieldLabel: {
     color: "#FFFFFF",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_600SemiBold",
-    marginBottom: 7,
-    letterSpacing: 0.2,
+    marginBottom: s(7),
+    letterSpacing: s(0.2),
   },
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 14,
+    borderRadius: s(14),
     borderWidth: 1.5,
     borderColor: "rgba(255,255,255,0.15)",
-    marginBottom: 16,
+    marginBottom: s(16),
   },
   inputRowFocused: {
     borderColor: "rgba(255,255,255,0.3)",
     backgroundColor: "rgba(255,255,255,0.12)",
   },
   inputIconLeft: {
-    paddingLeft: 14,
+    paddingLeft: s(14),
   },
   inputField: {
     flex: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: s(12),
+    paddingVertical: s(10),
     color: "#FFFFFF",
-    fontSize: 15,
+    fontSize: s(15),
     fontFamily: "Poppins_400Regular",
   },
   pickerText: {
-    paddingVertical: 10,
+    paddingVertical: s(10),
   },
   placeholderText: {
     color: "#c0c0c0",
   },
   chevronWrap: {
-    paddingRight: 14,
+    paddingRight: s(14),
   },
 
   /* County dropdown */
   countyDropdown: {
     borderWidth: 1.5,
     borderColor: "rgba(255,255,255,0.15)",
-    borderRadius: 14,
-    marginTop: -8,
-    marginBottom: 16,
+    borderRadius: s(14),
+    marginTop: s(-8),
+    marginBottom: s(16),
     backgroundColor: "rgba(30,30,30,0.9)",
     overflow: "hidden",
   },
   countyScroll: {
-    maxHeight: 200,
+    maxHeight: s(200),
   },
   countyItem: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: s(16),
+    paddingVertical: s(10),
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: "rgba(255,255,255,0.1)",
   },
@@ -567,7 +568,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(47,36,130,0.07)",
   },
   countyText: {
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_400Regular",
     color: "rgba(255,255,255,0.7)",
   },
@@ -579,8 +580,8 @@ const styles = StyleSheet.create({
   /* Buttons */
   buttonsColumn: {
     alignItems: "center",
-    gap: 4,
-    marginTop: 8,
+    gap: s(4),
+    marginTop: s(8),
   },
   submitButton: {
     alignSelf: "stretch",
@@ -588,28 +589,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#4a3da6",
-    borderRadius: 14,
-    paddingVertical: 12,
-    gap: 8,
+    borderRadius: s(14),
+    paddingVertical: s(12),
+    gap: s(8),
   },
   submitButtonPressed: {
     backgroundColor: "#3d3291",
   },
   submitIcon: {
-    marginTop: 1,
+    marginTop: s(1),
   },
   submitText: {
     color: "#FFFFFF",
-    fontSize: 15,
+    fontSize: s(15),
     fontFamily: "Poppins_700Bold",
   },
   cancelButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: s(8),
+    paddingHorizontal: s(16),
   },
   cancelText: {
     color: "#888",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_600SemiBold",
   },
 });

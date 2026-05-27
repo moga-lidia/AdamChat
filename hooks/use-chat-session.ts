@@ -77,7 +77,7 @@ export function useChatSession() {
 
       // Check connectivity before sending
       try {
-        await fetch("https://academiasperanta.ro", { method: "HEAD" });
+        await fetch("https://clients3.google.com/generate_204", { method: "HEAD" });
       } catch {
         Alert.alert("", t.chat.noConnection);
         return;

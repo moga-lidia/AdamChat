@@ -1,4 +1,5 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 import type { Lang } from "@/types/chat";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
@@ -43,7 +44,7 @@ export function LanguageDropdown({ value, onChange }: LanguageDropdownProps) {
 
   const dropdownHeight = heightAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, LANG_OPTIONS.length * 42],
+    outputRange: [0, LANG_OPTIONS.length * s(42)],
   });
 
   const handleSelect = (lang: Lang) => {
@@ -66,7 +67,7 @@ export function LanguageDropdown({ value, onChange }: LanguageDropdownProps) {
         <Animated.View style={{ transform: [{ rotate: chevronRotation }] }}>
           <IconSymbol
             name="chevron.down"
-            size={16}
+            size={s(16)}
             color="rgba(255,255,255,0.6)"
           />
         </Animated.View>
@@ -114,7 +115,7 @@ export function LanguageDropdown({ value, onChange }: LanguageDropdownProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: 180,
+    width: s(180),
     zIndex: 10,
   },
   trigger: {
@@ -123,23 +124,23 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(40,40,40,1)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.25)",
-    borderRadius: 22,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    gap: 8,
+    borderRadius: s(22),
+    paddingHorizontal: s(14),
+    paddingVertical: s(10),
+    gap: s(8),
   },
   triggerOpen: {
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
+    borderBottomLeftRadius: s(4),
+    borderBottomRightRadius: s(4),
     borderBottomColor: "rgba(255,255,255,0.1)",
   },
   flag: {
-    fontSize: 17,
+    fontSize: s(17),
   },
   triggerLabel: {
     flex: 1,
     color: "rgba(255,255,255,0.85)",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_500Medium",
   },
   menu: {
@@ -147,16 +148,16 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(40,40,40,1)",
     borderColor: "rgba(255,255,255,0.3)",
     borderTopWidth: 0,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
+    borderBottomLeftRadius: s(16),
+    borderBottomRightRadius: s(16),
     marginTop: -1,
   },
   option: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    gap: 8,
+    paddingHorizontal: s(14),
+    paddingVertical: s(10),
+    gap: s(8),
   },
   optionActive: {
     backgroundColor: "rgba(255,255,255,0.1)",
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
   optionLabel: {
     flex: 1,
     color: "rgba(255,255,255,0.5)",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_400Regular",
   },
   optionLabelActive: {
@@ -172,9 +173,9 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins_500Medium",
   },
   checkDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: s(6),
+    height: s(6),
+    borderRadius: s(3),
     backgroundColor: "#FFFFFF",
   },
 });

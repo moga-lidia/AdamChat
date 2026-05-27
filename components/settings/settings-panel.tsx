@@ -1,4 +1,5 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 import { useI18n } from "@/hooks/use-i18n";
 import type { Lang } from "@/types/chat";
 import { BlurView } from "expo-blur";
@@ -92,7 +93,7 @@ function CustomSlider({
     <View style={sliderStyles.container}>
       <View style={sliderStyles.labelRow}>
         <View style={sliderStyles.labelWithIcon}>
-          <IconSymbol name={icon} size={16} color="#FFFFFF" />
+          <IconSymbol name={icon} size={s(16)} color="#FFFFFF" />
           <Text style={sliderStyles.label}>{label}</Text>
         </View>
         <Text style={sliderStyles.value}>{displayValue}</Text>
@@ -123,53 +124,53 @@ function CustomSlider({
 
 const sliderStyles = StyleSheet.create({
   container: {
-    marginBottom: 28,
+    marginBottom: s(28),
   },
   labelRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 6,
+    marginBottom: s(6),
   },
   labelWithIcon: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: s(8),
   },
   label: {
     color: "#FFFFFF",
-    fontSize: 15,
+    fontSize: s(15),
     fontWeight: "600",
   },
   value: {
     color: "#8886A0",
-    fontSize: 15,
+    fontSize: s(15),
     fontWeight: "700",
   },
   trackOuter: {
-    height: 32,
+    height: s(32),
     justifyContent: "center",
   },
   track: {
-    height: 6,
+    height: s(6),
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 3,
+    borderRadius: s(3),
   },
   trackFill: {
-    height: 6,
+    height: s(6),
     backgroundColor: "#2f2482",
-    borderRadius: 3,
+    borderRadius: s(3),
   },
   thumb: {
     position: "absolute",
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: s(22),
+    height: s(22),
+    borderRadius: s(11),
     backgroundColor: "#FFFFFF",
     borderWidth: 2,
     borderColor: "#2f2482",
-    marginLeft: -11,
-    top: 5,
+    marginLeft: s(-11),
+    top: s(5),
     boxShadow: "0px 2px 4px rgba(0,0,0,0.15)",
     elevation: 3,
   },
@@ -249,7 +250,7 @@ export function SettingsPanel({
                 { opacity: pressed ? 0.6 : 1 },
               ]}
             >
-              <IconSymbol name="xmark" size={18} color="#666" />
+              <IconSymbol name="xmark" size={s(18)} color="#666" />
             </Pressable>
           </View>
 
@@ -289,7 +290,7 @@ export function SettingsPanel({
               ]}
             >
               <View style={sliderStyles.labelWithIcon}>
-                <IconSymbol name="globe" size={16} color="#FFFFFF" />
+                <IconSymbol name="globe" size={s(16)} color="#FFFFFF" />
                 <Text style={sliderStyles.label}>{t.settings.language}</Text>
               </View>
               <View style={langStyles.selectedRow}>
@@ -302,7 +303,7 @@ export function SettingsPanel({
                 <Animated.View
                   style={{ transform: [{ rotate: chevronRotate }] }}
                 >
-                  <IconSymbol name="chevron.down" size={14} color="#7B7799" />
+                  <IconSymbol name="chevron.down" size={s(14)} color="#7B7799" />
                 </Animated.View>
               </View>
             </Pressable>
@@ -363,41 +364,41 @@ const panelStyles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 24,
+    padding: s(24),
   },
   dialog: {
     width: "100%",
-    maxWidth: 360,
+    maxWidth: s(360),
     backgroundColor: "rgba(20,20,20,0.92)",
-    borderRadius: 16,
+    borderRadius: s(16),
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: 28,
-    paddingTop: 34,
-    paddingBottom: 18,
+    paddingHorizontal: s(28),
+    paddingTop: s(34),
+    paddingBottom: s(18),
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 24,
-    marginTop: -22,
-    marginRight: -16,
+    marginBottom: s(24),
+    marginTop: s(-22),
+    marginRight: s(-16),
   },
   title: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: s(18),
     fontWeight: "700",
-    marginTop: 14,
+    marginTop: s(14),
   },
   closeButton: {
-    padding: 4,
+    padding: s(4),
   },
 });
 
 const langStyles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: s(16),
   },
   row: {
     flexDirection: "row",
@@ -409,22 +410,22 @@ const langStyles = StyleSheet.create({
     alignItems: "center",
   },
   flag: {
-    fontSize: 18,
-    marginRight: 6,
+    fontSize: s(18),
+    marginRight: s(6),
   },
   selectedLabel: {
-    fontSize: 15,
+    fontSize: s(15),
     fontWeight: "700",
     color: "#B5B7DD",
-    marginRight: 6,
+    marginRight: s(6),
   },
   options: {
-    marginTop: 14,
+    marginTop: s(14),
   },
   option: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 11,
+    paddingVertical: s(11),
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: "rgba(255,255,255,0.12)",
   },
@@ -433,7 +434,7 @@ const langStyles = StyleSheet.create({
   },
   optionLabel: {
     flex: 1,
-    fontSize: 14,
+    fontSize: s(14),
     color: "rgba(255,255,255,0.5)",
   },
   optionLabelActive: {
@@ -441,9 +442,9 @@ const langStyles = StyleSheet.create({
     fontWeight: "600",
   },
   checkDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: s(8),
+    height: s(8),
+    borderRadius: s(4),
     backgroundColor: "#B5B7DD",
   },
 });

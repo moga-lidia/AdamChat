@@ -14,6 +14,9 @@ export interface TranslationKeys {
   welcome: {
     title: string;
     subtitle: string;
+    heroDescription: string;
+    poweredBy: string;
+    trustName: string;
     featuresTitle: string;
     features: WelcomeFeature[];
     start: string;
@@ -27,6 +30,8 @@ export interface TranslationKeys {
     saveNotePrefix: string;
     saveNoteAction: string;
     saveNoteSuffix: string;
+    viewCourse: string;
+    textCopied: string;
   };
   headerSubtitle: string;
   quickActions: QuickAction[];
@@ -45,6 +50,7 @@ export interface TranslationKeys {
     confirm: string;
     sperantaTvLive: string;
     sperantaFmLive: string;
+    sperantaFmMusic: string;
     hopeDiscovery: string;
     hopePlay: string;
     remenysegFmLive?: string;
@@ -132,7 +138,11 @@ export const translations: Record<Lang, TranslationKeys> = {
     welcome: {
       title: "Bine ai venit!",
       subtitle:
-        "Sunt Adam, asistentul biblic AI dezvoltat de Academia Speranța.",
+        "Sunt Adam, dezvoltat de Academia Speranța,\nîn cadrul Trustului Media Speranța.",
+      heroDescription: "Sunt Adam, asistentul biblic AI dezvoltat de",
+      poweredBy: "în cadrul",
+      // "Trustului" = genitive form, only in Romanian; other languages use "Trustul"
+      trustName: "Trustului Media Speranța",
       featuresTitle: "Sunt aici să te ajut cu:",
       features: [
         { icon: "book.fill", text: "Explicații biblice clare" },
@@ -154,6 +164,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       saveNotePrefix: "",
       saveNoteAction: "Autentifică-te",
       saveNoteSuffix: " pentru a salva conversațiile",
+      viewCourse: "Vezi cursul pe Academia Speranța",
+      textCopied: "Textul a fost copiat!",
     },
     quickActions: [
       { label: "Motivează-mă", prompt: "MOTIVATION" },
@@ -176,12 +188,13 @@ export const translations: Record<Lang, TranslationKeys> = {
       confirm: "Da",
       sperantaTvLive: "Speranța TV Live",
       sperantaFmLive: "Speranța FM Live",
+      sperantaFmMusic: "Speranța Music",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
       about: "Despre",
       aboutDescriptionPart1:
-        "ADAM este un asistent biblic bazat pe inteligență artificială, dezvoltat în cadrul platformei Academia Speranța - un proiect al ",
-      aboutLinkText: "Trustului Media Speranța",
+        "ADAM este un asistent biblic bazat pe inteligență artificială, dezvoltat în cadrul platformei Academia Speranța. Un proiect dezvoltat de\n",
+      aboutLinkText: "Trustul Media Speranța",
       aboutDescriptionPart2:
         ".\n\nAplicația oferă acces la cursuri biblice video și text, răspunde la întrebări despre Biblie și, atunci când este nevoie, facilitează legătura cu mentori umani pentru sprijin și îndrumare spirituală.\n\nScopul proiectului este de a face studiul Bibliei mai accesibil, mai personal și mai relevant pentru oamenii care caută răspunsuri și îndrumare spirituală în mediul digital.",
     },
@@ -276,7 +289,10 @@ export const translations: Record<Lang, TranslationKeys> = {
     welcome: {
       title: "Welcome!",
       subtitle:
-        "I'm Adam, the AI Bible assistant developed by Academia Speranța.",
+        "I'm Adam, developed by Academia Speranța,\nwithin Trustul Media Speranța.",
+      heroDescription: "I'm Adam, the biblical AI assistant developed by",
+      poweredBy: "powered by",
+      trustName: "Trustul Media Speranța",
       featuresTitle: "I'm here to help you with:",
       features: [
         { icon: "book.fill", text: "Clear biblical explanations" },
@@ -297,6 +313,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       saveNotePrefix: "",
       saveNoteAction: "Sign in",
       saveNoteSuffix: " to save your conversations",
+      viewCourse: "View course on Academia Speranța",
+      textCopied: "Text copied!",
     },
     quickActions: [
       { label: "Motivate me", prompt: "MOTIVATION" },
@@ -320,11 +338,12 @@ export const translations: Record<Lang, TranslationKeys> = {
       confirm: "Yes",
       sperantaTvLive: "Speranța TV Live",
       sperantaFmLive: "Speranța FM Live",
+      sperantaFmMusic: "Speranța Music",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
       about: "About",
       aboutDescriptionPart1:
-        "ADAM is a Bible assistant powered by artificial intelligence, developed within the Academia Speranța platform - a project of ",
+        "ADAM is a Bible assistant powered by artificial intelligence, developed within the Academia Speranța platform - a project of\n",
       aboutLinkText: "Trustul Media Speranța",
       aboutDescriptionPart2:
         ".\n\nThe app provides access to biblical video and text courses, answers questions about the Bible, and when needed, connects users with human mentors for spiritual support and guidance.\n\nThe goal of the project is to make Bible study more accessible, more personal, and more relevant for people seeking answers and spiritual guidance in the digital age.",
@@ -419,7 +438,11 @@ export const translations: Record<Lang, TranslationKeys> = {
   hu: {
     welcome: {
       title: "Isten hozott!",
-      subtitle: "Adam vagyok, az Academia Speranța AI bibliai asszisztense.",
+      subtitle:
+        "Adam vagyok, az Academia Speranța-tól,\na Trustul Media Speranța keretében.",
+      heroDescription: "Adam vagyok, a bibliai AI asszisztens, fejlesztette az",
+      poweredBy: "a projekt a",
+      trustName: "Trustul Media Speranța",
       featuresTitle: "Azért vagyok itt, hogy segítsek:",
       features: [
         { icon: "book.fill", text: "Világos bibliai magyarázatok" },
@@ -441,6 +464,8 @@ export const translations: Record<Lang, TranslationKeys> = {
       saveNotePrefix: "",
       saveNoteAction: "Jelentkezz be",
       saveNoteSuffix: " a beszélgetések mentéséhez",
+      viewCourse: "Kurzus megtekintése az Academia Speranțán",
+      textCopied: "Szöveg másolva!",
     },
     quickActions: [
       { label: "Motiválj", prompt: "MOTIVATION" },
@@ -464,12 +489,13 @@ export const translations: Record<Lang, TranslationKeys> = {
       confirm: "Igen",
       sperantaTvLive: "Speranța TV Live",
       sperantaFmLive: "Speranța FM Live",
+      sperantaFmMusic: "Speranța Music",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
       remenysegFmLive: "Reménység FM Live",
       about: "Névjegy",
       aboutDescriptionPart1:
-        "Az ADAM egy mesterséges intelligenciára épülő bibliai asszisztens, amelyet az Academia Speranța platform keretében fejlesztettek - a ",
+        "Az ADAM egy mesterséges intelligenciára épülő bibliai asszisztens, amelyet az Academia Speranța platform keretében fejlesztettek - a\n",
       aboutLinkText: "Trustul Media Speranța",
       aboutDescriptionPart2:
         " projektjeként.\n\nAz alkalmazás bibliai videó- és szöveges kurzusokat kínál, válaszol a Bibliával kapcsolatos kérdésekre, és szükség esetén összeköti a felhasználókat emberi mentorokkal lelki támogatás és útmutatás céljából.\n\nA projekt célja, hogy a Biblia tanulmányozását elérhetőbbé, személyesebbé és relevánsabbá tegye azok számára, akik válaszokat és lelki útmutatást keresnek a digitális térben.",

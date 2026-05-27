@@ -2,10 +2,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import {
-  Dimensions,
   Image,
   Linking,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -14,12 +14,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { LanguageDropdown } from "@/components/layout/language-dropdown";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { IS_SMALL, s } from "@/constants/scale";
 import { useChatSessionContext } from "@/contexts/chat-session-context";
 import { useI18n } from "@/hooks/use-i18n";
-
-const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
-// Scale factor relative to Pixel 8 height (~851dp)
-const SCALE = SCREEN_HEIGHT / 851;
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -67,40 +64,49 @@ export default function WelcomeScreen() {
       </View>
 
       {/* Content */}
-      <View style={styles.welcomeBody}>
+      <ScrollView
+        style={styles.welcomeBody}
+        contentContainerStyle={styles.welcomeBodyContent}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={[styles.welcomeTitle, { color: accentColor }]}>
           {t.welcome.title}
         </Text>
         <Text style={[styles.welcomeSubtitle, { color: subtitleColor }]}>
-          {t.welcome.subtitle
-            .split(/(Adam|Academia Speranța)/)
-            .map((part, i) => {
-              if (part === "Adam") {
-                return (
-                  <Text
-                    key={i}
-                    style={[styles.welcomeSubtitleBold, { color: accentColor }]}
-                  >
-                    Adam
-                  </Text>
-                );
-              }
-              if (part === "Academia Speranța") {
-                return (
-                  <Text
-                    key={i}
-                    style={[styles.welcomeSubtitleBold, styles.academiaLink]}
-                    onPress={() =>
-                      Linking.openURL("https://academiasperanta.ro/")
-                    }
-                  >
-                    Academia Speranța
-                  </Text>
-                );
-              }
-              return <Text key={i}>{part}</Text>;
-            })}
+          {t.welcome.heroDescription.split("Adam").map((part, i, arr) =>
+            i < arr.length - 1 ? (
+              <Text key={i}>
+                {part}
+                <Text style={styles.welcomeSubtitleBold}>Adam</Text>
+              </Text>
+            ) : (
+              <Text key={i}>{part}</Text>
+            ),
+          )}{" "}
+          <Text
+            style={styles.welcomeSubtitleLink}
+            onPress={() => Linking.openURL("https://academiasperanta.ro/")}
+          >
+            Academia Speranța
+          </Text>
         </Text>
+        <Pressable
+          onPress={() => Linking.openURL("https://speranta.media")}
+          style={({ pressed }) => [
+            styles.poweredBySection,
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
+        >
+          <Image
+            source={require("@/assets/images/logo vectorial trust.png")}
+            style={styles.poweredByLogo}
+            resizeMode="contain"
+          />
+          <Text style={styles.poweredByText}>
+            {t.welcome.poweredBy}{" "}
+            <Text style={styles.poweredByBold}>{t.welcome.trustName}</Text>
+          </Text>
+        </Pressable>
 
         <Text style={[styles.featuresTitle, { color: subtitleColor }]}>
           {t.welcome.featuresTitle}
@@ -113,7 +119,7 @@ export default function WelcomeScreen() {
             >
               <IconSymbol
                 name={feature.icon as any}
-                size={22}
+                size={s(22)}
                 color={accentColor}
                 style={styles.featureIcon}
               />
@@ -141,11 +147,11 @@ export default function WelcomeScreen() {
             {t.welcome.start}
           </Text>
         </Pressable>
-      </View>
+      </ScrollView>
 
       {/* Language selector pinned to bottom */}
       <View
-        style={[styles.welcomeFooter, { paddingBottom: insets.bottom + 16 }]}
+        style={[styles.welcomeFooter, { paddingBottom: insets.bottom + s(16) }]}
       >
         <LanguageDropdown value={lang} onChange={setLang} />
       </View>
@@ -162,22 +168,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   heroBg: {
-    width: SCREEN_WIDTH,
-    height: Math.round(270 * SCALE),
+    width: "100%",
+    height: s(IS_SMALL ? 225 : 270),
   },
   heroGradient: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: 80,
+    height: s(80),
   },
   adamLogoText: {
-    marginTop: Math.round(-85 * SCALE),
-    fontSize: Math.round(70 * SCALE),
+    marginTop: s(-85),
+    fontSize: s(70),
     fontFamily: "Poppins_500Medium_Italic",
     color: "#FFFFFF",
-    letterSpacing: 12,
+    letterSpacing: s(22),
+    paddingLeft: s(26),
     textAlign: "center",
     textShadowColor: "rgba(0,0,0,0.7)",
     textShadowOffset: { width: 0, height: 4 },
@@ -185,69 +192,94 @@ const styles = StyleSheet.create({
   },
   welcomeBody: {
     flex: 1,
+    paddingHorizontal: s(36),
+  },
+  welcomeBodyContent: {
     alignItems: "center",
-    paddingHorizontal: 36,
-    paddingTop: Math.round(30 * SCALE),
+    paddingTop: s(IS_SMALL ? 22 : 30),
+    paddingBottom: s(20),
   },
   welcomeTitle: {
-    fontSize: Math.round(22 * SCALE),
+    fontSize: s(22),
     fontFamily: "Poppins_600SemiBold",
-    marginBottom: Math.round(6 * SCALE),
+    marginBottom: s(2),
     textAlign: "center",
   },
   welcomeSubtitle: {
-    fontSize: Math.round(13 * SCALE),
+    fontSize: s(13),
     fontFamily: "Poppins_400Regular",
-    lineHeight: Math.round(20 * SCALE),
+    lineHeight: s(20),
     textAlign: "center",
-    marginBottom: Math.round(22 * SCALE),
-  },
-  academiaLink: {
-    textDecorationLine: "underline",
+    marginTop: s(4),
   },
   welcomeSubtitleBold: {
     fontFamily: "Poppins_700Bold",
+    color: "#FFFFFF",
+  },
+  welcomeSubtitleLink: {
+    textDecorationLine: "underline",
+    fontFamily: "Poppins_500Medium",
+  },
+  poweredBySection: {
+    alignItems: "center",
+    marginTop: s(8),
+  },
+  poweredByLogo: {
+    width: s(32),
+    height: s(25),
+    marginBottom: s(3),
+  },
+  poweredByText: {
+    fontSize: s(12),
+    fontFamily: "Poppins_400Regular",
+    color: "rgba(255,255,255,0.4)",
+  },
+  poweredByBold: {
+    fontFamily: "Poppins_500Medium",
+    color: "rgba(255,255,255,0.55)",
+    textDecorationLine: "underline",
   },
   featuresTitle: {
-    fontSize: Math.round(13 * SCALE),
+    fontSize: s(13),
     fontFamily: "Poppins_500Medium",
-    marginBottom: Math.round(8 * SCALE),
+    marginTop: s(IS_SMALL ? 28 : 38),
+    marginBottom: s(8),
     textAlign: "center",
   },
   featureCards: {
     width: "100%",
-    gap: Math.round(8 * SCALE),
-    marginBottom: Math.round(28 * SCALE),
+    gap: s(8),
+    marginBottom: s(28),
   },
   featureCard: {
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: Math.round(10 * SCALE),
-    gap: 10,
+    borderRadius: s(14),
+    paddingHorizontal: s(14),
+    paddingVertical: s(10),
+    gap: s(10),
   },
   featureIcon: {
     flexShrink: 0,
   },
   featureText: {
     flex: 1,
-    fontSize: Math.round(14 * SCALE),
+    fontSize: s(14),
     fontFamily: "Poppins_500Medium",
-    lineHeight: Math.round(20 * SCALE),
+    lineHeight: s(20),
   },
   welcomeFooter: {
     alignItems: "center",
-    paddingTop: Math.round(8 * SCALE),
+    paddingTop: s(8),
   },
   startButton: {
-    borderRadius: 28,
-    paddingHorizontal: 50,
-    paddingVertical: Math.round(12 * SCALE),
+    borderRadius: s(27),
+    paddingHorizontal: s(48),
+    paddingVertical: s(11),
   },
   startButtonText: {
-    fontSize: Math.round(20 * SCALE),
+    fontSize: s(19),
     fontFamily: "Poppins_700Bold",
-    letterSpacing: 4,
+    letterSpacing: s(4),
   },
 });

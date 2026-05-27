@@ -1,4 +1,5 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 import { useI18n } from "@/hooks/use-i18n";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useRef, useState } from "react";
@@ -59,7 +60,7 @@ export function ChatInput({ onSend, onCourses, disabled }: Props) {
             { backgroundColor: "#FFFFFF", opacity: pressed ? 0.7 : 1 },
           ]}
         >
-          <IconSymbol name="video.fill" size={22} color="#2f2482" />
+          <IconSymbol name="video.fill" size={s(22)} color="#2f2482" />
         </Pressable>
       )}
       <TextInput
@@ -90,7 +91,7 @@ export function ChatInput({ onSend, onCourses, disabled }: Props) {
         >
           <IconSymbol
             name="arrow.up"
-            size={22}
+            size={s(22)}
             weight="semibold"
             color={text.trim() && !disabled ? "#2f2482" : placeholderColor}
           />
@@ -104,37 +105,35 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 24,
-    marginHorizontal: 12,
-    marginBottom: 8,
+    paddingHorizontal: s(12),
+    paddingVertical: s(8),
+    borderRadius: s(24),
+    marginHorizontal: s(12),
+    marginBottom: s(8),
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: s(16),
     fontFamily: "Poppins_400Regular",
-    maxHeight: 120,
-    paddingHorizontal: 8,
-    paddingVertical: Platform.OS === "ios" ? 8 : 4,
+    maxHeight: s(120),
+    paddingHorizontal: s(8),
+    paddingVertical: Platform.OS === "ios" ? s(8) : s(4),
   },
   coursesButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: s(38),
+    height: s(38),
+    borderRadius: s(19),
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 4,
-    marginLeft: -2,
-    marginBottom: Platform.OS === "ios" ? 4 : 0,
+    marginRight: s(4),
+    marginLeft: s(-2),
   },
   sendButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: s(38),
+    height: s(38),
+    borderRadius: s(19),
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 6,
-    marginBottom: Platform.OS === "ios" ? 4 : 0,
+    marginLeft: s(6),
   },
 });

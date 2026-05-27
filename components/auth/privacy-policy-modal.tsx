@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 
 interface Props {
   visible: boolean;
@@ -33,7 +34,7 @@ export function PrivacyPolicyModal({ visible, onClose }: Props) {
               { opacity: pressed ? 0.6 : 1 },
             ]}
           >
-            <IconSymbol name="xmark" size={18} color="#666" />
+            <IconSymbol name="xmark" size={s(18)} color="#666" />
           </Pressable>
         </View>
 
@@ -371,47 +372,47 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: s(20),
+    paddingVertical: s(16),
     borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",
   },
   headerTitle: {
     color: "#1A1A1A",
-    fontSize: 18,
+    fontSize: s(18),
     fontFamily: "Poppins_700Bold",
     flex: 1,
   },
   closeButton: {
-    padding: 4,
+    padding: s(4),
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
+    padding: s(20),
+    paddingBottom: s(40),
   },
   sectionTitle: {
     color: "#1A1A1A",
-    fontSize: 16,
+    fontSize: s(16),
     fontFamily: "Poppins_700Bold",
-    marginTop: 24,
-    marginBottom: 8,
+    marginTop: s(24),
+    marginBottom: s(8),
   },
   subTitle: {
     color: "#1A1A1A",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_600SemiBold",
-    marginTop: 16,
-    marginBottom: 6,
+    marginTop: s(16),
+    marginBottom: s(6),
   },
   body: {
     color: "#444",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_400Regular",
-    lineHeight: 22,
-    marginBottom: 8,
+    lineHeight: s(22),
+    marginBottom: s(8),
   },
   bold: {
     fontFamily: "Poppins_700Bold",

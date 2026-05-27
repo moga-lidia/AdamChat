@@ -1,3 +1,4 @@
+import { s } from "@/constants/scale";
 import { AppColors } from "@/constants/theme";
 import { useI18n } from "@/hooks/use-i18n";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -24,7 +25,7 @@ export function Header({
         {
           backgroundColor: headerBg,
           borderBottomColor: borderColor,
-          paddingTop: insets.top + 8,
+          paddingTop: insets.top + s(8),
         },
       ]}
     >
@@ -48,8 +49,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
+    paddingHorizontal: s(16),
+    paddingBottom: s(12),
     borderBottomWidth: 0,
   },
   headerLeft: {
@@ -57,22 +58,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoImage: {
-    width: 60,
-    height: 40,
-    borderRadius: 10,
-    marginRight: 10,
+    width: s(60),
+    height: s(40),
+    borderRadius: s(10),
+    marginRight: s(10),
   },
   logoText: {
     color: AppColors.white,
-    fontSize: 22,
+    fontSize: s(22),
     fontFamily: "Poppins_700Bold",
-    letterSpacing: 1.5,
-    lineHeight: 26,
+    letterSpacing: s(1.5),
+    lineHeight: s(26),
   },
   logoSubtitle: {
     color: "rgba(255,255,255,0.5)",
-    fontSize: 11,
+    fontSize: s(11),
     fontFamily: "Poppins_400Regular",
-    marginTop: -2,
+    marginTop: s(-2),
   },
 });

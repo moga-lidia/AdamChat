@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useAuth } from "@/hooks/use-auth";
 import { AuthModal } from "@/components/auth/auth-modal";
 import { ChatInput } from "@/components/chat/chat-input";
 import { ChatMessage } from "@/components/chat/chat-message";
@@ -26,13 +25,16 @@ import {
 } from "@/components/mentor/mentor-live-modal";
 import { SettingsPanel } from "@/components/settings/settings-panel";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 import { AppColors } from "@/constants/theme";
 import { useChatSessionContext } from "@/contexts/chat-session-context";
 import { useSettings } from "@/contexts/settings-context";
+import { useAuth } from "@/hooks/use-auth";
 import { useChatSession } from "@/hooks/use-chat-session";
 import { useI18n } from "@/hooks/use-i18n";
 import { useKeyboardPadding } from "@/hooks/use-keyboard-padding";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { translations } from "@/i18n/translations";
 import { StompClient, WS_URL } from "@/services/stomp-client";
 import type { ChatMessage as ChatMessageType } from "@/types/chat";
 
@@ -312,7 +314,7 @@ export default function ChatScreen() {
                 ]}
               >
                 <View style={styles.liveDot} />
-                <IconSymbol name="bubble.left.fill" size={14} color="#FFFFFF" />
+                <IconSymbol name="bubble.left.fill" size={s(14)} color="#FFFFFF" />
                 <Text style={styles.mentorButtonText}>
                   {t.mentor.closeConversation}
                 </Text>
@@ -328,7 +330,7 @@ export default function ChatScreen() {
                   },
                 ]}
               >
-                <IconSymbol name="bubble.left.fill" size={14} color="#FFFFFF" />
+                <IconSymbol name="bubble.left.fill" size={s(14)} color="#FFFFFF" />
                 <Text style={styles.mentorButtonText}>
                   {t.mentor.buttonLabel}
                 </Text>
@@ -357,7 +359,16 @@ export default function ChatScreen() {
         lang={lang}
         onLangChange={(newLang) => {
           setLang(newLang);
-          setSession((prev) => (prev ? { ...prev, lang: newLang } : prev));
+          const newT = translations[newLang];
+          setSession((prev) => {
+            if (!prev) return prev;
+            const messages = prev.messages.map((msg, i) =>
+              i === 0 && msg.role === "assistant"
+                ? { ...msg, content: newT.chat.welcomeMessage }
+                : msg,
+            );
+            return { ...prev, lang: newLang, messages };
+          });
         }}
       />
 
@@ -386,14 +397,12 @@ export default function ChatScreen() {
             >
               <IconSymbol
                 name="person.crop.circle.badge.exclamationmark"
-                size={14}
+                size={s(14)}
                 color="rgba(255,255,255,0.45)"
               />
               <Text style={styles.saveNoteText}>
                 {t.chat.saveNotePrefix}
-                <Text style={styles.saveNoteLink}>
-                  {t.chat.saveNoteAction}
-                </Text>
+                <Text style={styles.saveNoteLink}>{t.chat.saveNoteAction}</Text>
                 {t.chat.saveNoteSuffix}
               </Text>
             </Pressable>
@@ -440,7 +449,7 @@ export default function ChatScreen() {
               >
                 <IconSymbol
                   name="play.circle.fill"
-                  size={15}
+                  size={s(15)}
                   color={AppColors.accent}
                   style={styles.studyVideoIcon}
                 />
@@ -528,23 +537,23 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   messageList: {
-    paddingTop: 24,
-    paddingBottom: 12,
+    paddingTop: s(24),
+    paddingBottom: s(12),
   },
   saveNoteBanner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginHorizontal: 24,
-    marginBottom: 12,
-    borderRadius: 12,
+    gap: s(6),
+    paddingVertical: s(8),
+    paddingHorizontal: s(16),
+    marginHorizontal: s(24),
+    marginBottom: s(12),
+    borderRadius: s(12),
     backgroundColor: "rgba(255,255,255,0.06)",
   },
   saveNoteText: {
-    fontSize: 12,
+    fontSize: s(12),
     fontFamily: "Poppins_400Regular",
     color: "rgba(255,255,255,0.45)",
   },
@@ -554,45 +563,45 @@ const styles = StyleSheet.create({
   },
   quickActions: {
     alignItems: "center",
-    gap: 10,
-    marginTop: 16,
-    paddingHorizontal: 12,
+    gap: s(10),
+    marginTop: s(16),
+    paddingHorizontal: s(12),
   },
   quickActionButton: {
     borderWidth: 1,
-    borderRadius: 22,
-    paddingHorizontal: 22,
-    paddingVertical: 10,
+    borderRadius: s(22),
+    paddingHorizontal: s(22),
+    paddingVertical: s(10),
   },
   quickActionText: {
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_500Medium",
   },
   studyVideoButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 7,
+    gap: s(7),
   },
   studyVideoIcon: {
-    marginTop: 1,
+    marginTop: s(1),
   },
   studyVideoText: {
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_500Medium",
   },
   headerRight: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: s(10),
   },
   mentorButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: s(6),
     backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 22,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    borderRadius: s(22),
+    paddingHorizontal: s(14),
+    paddingVertical: s(8),
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
   },
@@ -602,14 +611,14 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.3)",
   },
   liveDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
+    width: s(7),
+    height: s(7),
+    borderRadius: s(4),
     backgroundColor: "#4ADE80",
   },
   mentorButtonText: {
     color: "#FFFFFF",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_700Bold",
   },
 });

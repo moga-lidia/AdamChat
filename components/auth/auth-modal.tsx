@@ -18,6 +18,7 @@ import {
 import { PrivacyPolicyModal } from "@/components/auth/privacy-policy-modal";
 import { TermsModal } from "@/components/auth/terms-modal";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";
 import {
@@ -215,7 +216,7 @@ export function AuthModal({ visible, onClose }: Props) {
               >
                 <IconSymbol
                   name="xmark"
-                  size={18}
+                  size={s(18)}
                   color="rgba(255,255,255,0.6)"
                 />
               </Pressable>
@@ -274,7 +275,7 @@ export function AuthModal({ visible, onClose }: Props) {
                   { opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <IconSymbol name="chevron.left" size={16} color="#2f2482" />
+                <IconSymbol name="chevron.left" size={s(16)} color="#2f2482" />
                 <Text style={styles.backText}>{t.auth.back}</Text>
               </Pressable>
             ) : (
@@ -287,7 +288,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 { opacity: pressed ? 0.6 : 1 },
               ]}
             >
-              <IconSymbol name="xmark" size={18} color="#666" />
+              <IconSymbol name="xmark" size={s(18)} color="#666" />
             </Pressable>
           </View>
 
@@ -368,7 +369,7 @@ export function AuthModal({ visible, onClose }: Props) {
                   { opacity: pressed ? 0.8 : 1 },
                 ]}
               >
-                <IconSymbol name="envelope.fill" size={20} color="#FFFFFF" />
+                <IconSymbol name="envelope.fill" size={s(20)} color="#FFFFFF" />
                 <Text style={styles.emailButtonText}>
                   {t.auth.continueWithEmail}
                 </Text>
@@ -408,7 +409,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 />
                 <View style={styles.inputIconDivider} />
                 <View style={styles.inputIconWrap}>
-                  <IconSymbol name="envelope.fill" size={18} color="#999" />
+                  <IconSymbol name="envelope.fill" size={s(18)} color="#999" />
                 </View>
               </View>
 
@@ -428,7 +429,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 >
                   <IconSymbol
                     name={showPassword ? "eye.fill" : "eye.slash.fill"}
-                    size={18}
+                    size={s(18)}
                     color="#999"
                   />
                 </Pressable>
@@ -528,7 +529,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 >
                   <IconSymbol
                     name={showPassword ? "eye.fill" : "eye.slash.fill"}
-                    size={18}
+                    size={s(18)}
                     color="#999"
                   />
                 </Pressable>
@@ -626,7 +627,7 @@ export function AuthModal({ visible, onClose }: Props) {
                 />
                 <View style={styles.inputIconDivider} />
                 <View style={styles.inputIconWrap}>
-                  <IconSymbol name="envelope.fill" size={18} color="#999" />
+                  <IconSymbol name="envelope.fill" size={s(18)} color="#999" />
                 </View>
               </View>
 
@@ -683,18 +684,18 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 24,
+    padding: s(24),
   },
   dialog: {
     width: "100%",
-    maxWidth: 360,
+    maxWidth: s(360),
     backgroundColor: "rgba(20,20,20,0.92)",
-    borderRadius: 20,
+    borderRadius: s(20),
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 24,
+    paddingHorizontal: s(24),
+    paddingTop: s(16),
+    paddingBottom: s(24),
     alignItems: "center",
   },
   dialogHeader: {
@@ -702,41 +703,41 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "stretch",
-    marginBottom: 12,
+    marginBottom: s(12),
   },
   closeButton: {
-    padding: 4,
+    padding: s(4),
   },
   logo: {
-    width: 70,
-    height: 70,
-    borderRadius: 16,
-    marginBottom: 16,
+    width: s(70),
+    height: s(70),
+    borderRadius: s(16),
+    marginBottom: s(16),
   },
   title: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: s(18),
     fontFamily: "Poppins_700Bold",
     textAlign: "center",
-    marginBottom: 6,
+    marginBottom: s(6),
   },
   subtitle: {
     color: "rgba(255,255,255,0.6)",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_400Regular",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: s(24),
   },
   error: {
     color: "#D32F2F",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_400Regular",
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: s(12),
     backgroundColor: "rgba(211,47,47,0.15)",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: s(12),
+    paddingVertical: s(8),
+    borderRadius: s(8),
     overflow: "hidden",
     alignSelf: "stretch",
   },
@@ -744,10 +745,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
-    paddingVertical: 14,
-    marginBottom: 10,
-    gap: 10,
+    borderRadius: s(12),
+    paddingVertical: s(14),
+    marginBottom: s(10),
+    gap: s(10),
     alignSelf: "stretch",
   },
   googleButton: {
@@ -757,12 +758,12 @@ const styles = StyleSheet.create({
   },
   googleG: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: s(18),
     fontWeight: "700",
   },
   googleButtonText: {
     color: "#2f2482",
-    fontSize: 15,
+    fontSize: s(15),
     fontFamily: "Poppins_600SemiBold",
   },
   appleButton: {
@@ -770,7 +771,7 @@ const styles = StyleSheet.create({
   },
   appleButtonText: {
     color: "#FFFFFF",
-    fontSize: 15,
+    fontSize: s(15),
     fontFamily: "Poppins_600SemiBold",
   },
   emailButton: {
@@ -778,17 +779,17 @@ const styles = StyleSheet.create({
   },
   emailButtonText: {
     color: "#FFFFFF",
-    fontSize: 15,
+    fontSize: s(15),
     fontFamily: "Poppins_600SemiBold",
   },
   terms: {
     color: "rgba(255,255,255,0.5)",
-    fontSize: 11,
+    fontSize: s(11),
     fontFamily: "Poppins_400Regular",
     textAlign: "center",
-    lineHeight: 17,
-    marginTop: 12,
-    paddingHorizontal: 8,
+    lineHeight: s(17),
+    marginTop: s(12),
+    paddingHorizontal: s(8),
   },
   link: {
     color: "#B5B7DD",
@@ -798,11 +799,11 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: s(4),
   },
   backText: {
     color: "#B5B7DD",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_600SemiBold",
   },
   inputRow: {
@@ -810,62 +811,62 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "stretch",
     backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 12,
+    borderRadius: s(12),
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",
-    marginBottom: 14,
+    marginBottom: s(14),
     overflow: "hidden",
   },
   inputField: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: s(16),
+    paddingVertical: s(16),
     color: "#FFFFFF",
-    fontSize: 15,
+    fontSize: s(15),
     fontFamily: "Poppins_400Regular",
   },
   inputIconDivider: {
     width: 1,
-    height: 28,
+    height: s(28),
     backgroundColor: "rgba(255,255,255,0.15)",
   },
   inputIconWrap: {
-    paddingHorizontal: 14,
+    paddingHorizontal: s(14),
   },
   submitButton: {
     alignSelf: "stretch",
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.3)",
-    borderRadius: 28,
-    paddingVertical: 14,
+    borderRadius: s(28),
+    paddingVertical: s(14),
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 4,
-    marginBottom: 16,
+    marginTop: s(4),
+    marginBottom: s(16),
   },
   submitButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: s(16),
     fontFamily: "Poppins_600SemiBold",
   },
   linksRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignSelf: "stretch",
-    paddingHorizontal: 4,
+    paddingHorizontal: s(4),
   },
   linkText: {
     color: "#B5B7DD",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_500Medium",
   },
   termsSmall: {
     color: "rgba(255,255,255,0.5)",
-    fontSize: 12,
+    fontSize: s(12),
     fontFamily: "Poppins_400Regular",
     textAlign: "center",
-    lineHeight: 18,
-    marginBottom: 16,
+    lineHeight: s(18),
+    marginBottom: s(16),
     alignSelf: "stretch",
   },
   bottomLinkRow: {
@@ -874,62 +875,62 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   viewSpacer: {
-    height: 14,
+    height: s(14),
   },
   bottomLinkLabel: {
     color: "rgba(255,255,255,0.5)",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_400Regular",
   },
   // Authenticated state
   avatarCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: s(56),
+    height: s(56),
+    borderRadius: s(28),
     backgroundColor: "#2f2482",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: s(12),
   },
   avatarText: {
     color: "#FFFFFF",
-    fontSize: 22,
+    fontSize: s(22),
     fontFamily: "Poppins_700Bold",
   },
   userName: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: s(18),
     fontFamily: "Poppins_700Bold",
-    marginBottom: 4,
+    marginBottom: s(4),
   },
   userEmail: {
     color: "rgba(255,255,255,0.6)",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_400Regular",
-    marginBottom: 24,
+    marginBottom: s(24),
   },
   signOutButton: {
     backgroundColor: "rgba(211,47,47,0.15)",
-    borderRadius: 12,
-    paddingVertical: 14,
+    borderRadius: s(12),
+    paddingVertical: s(14),
     alignItems: "center",
     alignSelf: "stretch",
   },
   signOutText: {
     color: "#D32F2F",
-    fontSize: 15,
+    fontSize: s(15),
     fontFamily: "Poppins_600SemiBold",
   },
   deleteButton: {
-    borderRadius: 12,
-    paddingVertical: 14,
+    borderRadius: s(12),
+    paddingVertical: s(14),
     alignItems: "center",
     alignSelf: "stretch",
-    marginTop: 10,
+    marginTop: s(10),
   },
   deleteText: {
     color: "rgba(255,255,255,0.4)",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_500Medium",
     textDecorationLine: "underline",
   },

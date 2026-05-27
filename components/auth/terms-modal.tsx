@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 
 interface Props {
   visible: boolean;
@@ -33,7 +34,7 @@ export function TermsModal({ visible, onClose }: Props) {
               { opacity: pressed ? 0.6 : 1 },
             ]}
           >
-            <IconSymbol name="xmark" size={18} color="#666" />
+            <IconSymbol name="xmark" size={s(18)} color="#666" />
           </Pressable>
         </View>
 
@@ -44,11 +45,11 @@ export function TermsModal({ visible, onClose }: Props) {
         >
           <Text style={styles.body}>Vă mulțumim că folosiți Connect!</Text>
           <Text style={styles.body}>
-            Acești Termeni de utilizare ({"\u201E"}Termenii{"\u201D"})
+            Acești Termeni de utilizare ({"„"}Termenii{"”"})
             reglementează accesul dumneavoastră la website-ul Connect,
             aplicațiile, API-ul și widgeturile Connect, precum și utilizarea
-            acestora ({"\u201E"}Connect{"\u201D"} sau
-            {"\u201E"}Serviciul{"\u201D"}). Vă rugăm să citiți cu atenție acești
+            acestora ({"„"}Connect{"”"} sau
+            {"„"}Serviciul{"”"}). Vă rugăm să citiți cu atenție acești
             Termeni și să ne contactați dacă aveți întrebări. Prin accesarea sau
             utilizarea platformei Connect, sunteți de acord cu acești Termeni,
             cu Politica noastră de confidențialitate, Politica privind modulele
@@ -109,8 +110,8 @@ export function TermsModal({ visible, onClose }: Props) {
             creați un cont business și să fiți de acord cu Termenii noștri de
             utilizare comercială. Dacă creați un cont în numele unei companii,
             organizații sau altei entități, atunci dumneavoastră și entitatea
-            respectivă sunteți incluși în termenul {"\u201E"}dumneavoastră
-            {"\u201D"} și declarați că aveți autoritatea de a acorda toate
+            respectivă sunteți incluși în termenul {"„"}dumneavoastră
+            {"”"} și declarați că aveți autoritatea de a acorda toate
             permisiunile și licențele prevăzute în acești Termeni, de a garanta
             că entitatea va respecta acești Termeni și de a-i accepta în numele
             ei.
@@ -129,7 +130,7 @@ export function TermsModal({ visible, onClose }: Props) {
             Connect vă permite să publicați conținutul lecțiilor și al
             cursurilor, inclusiv fotografii, comentarii, linkuri și alte
             materiale. Tot ceea ce publicați sau distribuiți pe Connect este
-            denumit {"\u201E"}Conținut al utilizatorului{"\u201D"}. Dețineți
+            denumit {"„"}Conținut al utilizatorului{"”"}. Dețineți
             toate drepturile asupra conținutului pe care îl publicați pe Connect
             și sunteți pe deplin responsabil pentru acesta.
           </Text>
@@ -293,7 +294,7 @@ export function TermsModal({ visible, onClose }: Props) {
           </Text>
           <Text style={styles.body}>
             Serviciul și tot conținutul publicat pe Connect sunt furnizate{" "}
-            {"\u201E"}ca atare{"\u201D"}, fără nicio garanție, expresă sau
+            {"„"}ca atare{"”"}, fără nicio garanție, expresă sau
             implicită.{"\n\n"}În acest sens, Connect respinge orice garanții și
             condiții privind vandabilitatea, potrivirea pentru un anumit scop,
             absența încălcărilor sau orice garanții implicite ce pot decurge din
@@ -350,65 +351,65 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: s(20),
+    paddingVertical: s(16),
     borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",
   },
   headerTitle: {
     color: "#1A1A1A",
-    fontSize: 18,
+    fontSize: s(18),
     fontFamily: "Poppins_700Bold",
     flex: 1,
   },
   closeButton: {
-    padding: 4,
+    padding: s(4),
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
+    padding: s(20),
+    paddingBottom: s(40),
   },
   sectionTitle: {
     color: "#1A1A1A",
-    fontSize: 16,
+    fontSize: s(16),
     fontFamily: "Poppins_700Bold",
-    marginTop: 24,
-    marginBottom: 8,
+    marginTop: s(24),
+    marginBottom: s(8),
   },
   subTitle: {
     color: "#1A1A1A",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_600SemiBold",
-    marginTop: 16,
-    marginBottom: 6,
+    marginTop: s(16),
+    marginBottom: s(6),
   },
   body: {
     color: "#444",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_400Regular",
-    lineHeight: 22,
-    marginBottom: 8,
+    lineHeight: s(22),
+    marginBottom: s(8),
   },
   summary: {
     color: "#666",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_400Regular",
     fontStyle: "italic",
-    lineHeight: 20,
-    marginBottom: 8,
-    paddingLeft: 12,
+    lineHeight: s(20),
+    marginBottom: s(8),
+    paddingLeft: s(12),
     borderLeftWidth: 3,
     borderLeftColor: "#2f2482",
   },
   effectiveDate: {
     color: "#999",
-    fontSize: 13,
+    fontSize: s(13),
     fontFamily: "Poppins_500Medium",
     textAlign: "center",
-    marginTop: 32,
-    marginBottom: 16,
+    marginTop: s(32),
+    marginBottom: s(16),
   },
 });

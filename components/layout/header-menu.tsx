@@ -1,4 +1,5 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { s } from "@/constants/scale";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";
 import { requestAccountDeletion } from "@/services/auth-api";
@@ -101,7 +102,7 @@ export function HeaderMenu({
         onPress={() => setOpen(true)}
         style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
       >
-        <IconSymbol name="line.3.horizontal" size={24} color="#FFFFFF" />
+        <IconSymbol name="line.3.horizontal" size={s(24)} color="#FFFFFF" />
       </Pressable>
 
       <Modal
@@ -132,8 +133,8 @@ export function HeaderMenu({
               styles.panel,
               {
                 width: PANEL_WIDTH,
-                paddingTop: insets.top - 4,
-                paddingBottom: insets.bottom + 20,
+                paddingTop: insets.top + s(8),
+                paddingBottom: insets.bottom + s(20),
                 transform: [{ translateX: slideAnim }],
               },
             ]}
@@ -146,7 +147,7 @@ export function HeaderMenu({
                 { opacity: pressed ? 0.6 : 1 },
               ]}
             >
-              <IconSymbol name="xmark" size={20} color="#FFFFFF" />
+              <IconSymbol name="xmark" size={s(20)} color="#FFFFFF" />
             </Pressable>
 
             {/* Menu items */}
@@ -163,7 +164,7 @@ export function HeaderMenu({
                 >
                   <IconSymbol
                     name="rectangle.portrait.and.arrow.right"
-                    size={22}
+                    size={s(22)}
                     color="#FF6B6B"
                   />
                   <Text style={[styles.menuLabel, { color: "#FF6B6B" }]}>
@@ -178,7 +179,7 @@ export function HeaderMenu({
                     { opacity: pressed ? 0.6 : 1 },
                   ]}
                 >
-                  <IconSymbol name="person.fill" size={22} color="#FFFFFF" />
+                  <IconSymbol name="person.fill" size={s(22)} color="#FFFFFF" />
                   <Text style={styles.menuLabel}>{t.menu.signIn}</Text>
                 </Pressable>
               )}
@@ -192,7 +193,7 @@ export function HeaderMenu({
                   { opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <IconSymbol name="gearshape.fill" size={22} color="#FFFFFF" />
+                <IconSymbol name="gearshape.fill" size={s(22)} color="#FFFFFF" />
                 <Text style={styles.menuLabel}>{t.menu.settings}</Text>
               </Pressable>
 
@@ -206,7 +207,7 @@ export function HeaderMenu({
                       { opacity: pressed ? 0.6 : 1 },
                     ]}
                   >
-                    <IconSymbol name="plus" size={22} color="#FFFFFF" />
+                    <IconSymbol name="plus" size={s(22)} color="#FFFFFF" />
                     <Text style={styles.menuLabel}>{t.menu.newChat}</Text>
                   </Pressable>
                 </>
@@ -221,7 +222,7 @@ export function HeaderMenu({
                   { opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <IconSymbol name="book.fill" size={22} color="#FFFFFF" />
+                <IconSymbol name="book.fill" size={s(22)} color="#FFFFFF" />
                 <Text style={styles.menuLabel}>{t.menu.courses}</Text>
               </Pressable>
 
@@ -241,7 +242,7 @@ export function HeaderMenu({
               >
                 <IconSymbol
                   name="play.rectangle.fill"
-                  size={22}
+                  size={s(22)}
                   color="#FFFFFF"
                 />
                 <Text style={styles.menuLabel}>{t.menu.sperantaTvLive}</Text>
@@ -259,8 +260,24 @@ export function HeaderMenu({
                   { opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <IconSymbol name="mic.fill" size={22} color="#FFFFFF" />
+                <IconSymbol name="mic.fill" size={s(22)} color="#FFFFFF" />
                 <Text style={styles.menuLabel}>{t.menu.sperantaFmLive}</Text>
+              </Pressable>
+
+              <View style={styles.separator} />
+              <Pressable
+                onPress={() => {
+                  animateClose(() =>
+                    Linking.openURL("https://live.rvs.ro/splay"),
+                  );
+                }}
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <IconSymbol name="music.note" size={s(22)} color="#FFFFFF" />
+                <Text style={styles.menuLabel}>{t.menu.sperantaFmMusic}</Text>
               </Pressable>
 
               {lang === "hu" && t.menu.remenysegFmLive && (
@@ -277,7 +294,7 @@ export function HeaderMenu({
                       { opacity: pressed ? 0.6 : 1 },
                     ]}
                   >
-                    <IconSymbol name="mic.fill" size={22} color="#FFFFFF" />
+                    <IconSymbol name="mic.fill" size={s(22)} color="#FFFFFF" />
                     <Text style={styles.menuLabel}>
                       {t.menu.remenysegFmLive}
                     </Text>
@@ -299,7 +316,7 @@ export function HeaderMenu({
                   { opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <FilmReelIcon size={22} color="#FFFFFF" />
+                <FilmReelIcon size={s(22)} color="#FFFFFF" />
                 <Text style={styles.menuLabel}>{t.menu.hopeDiscovery}</Text>
               </Pressable>
 
@@ -313,13 +330,13 @@ export function HeaderMenu({
                   { opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <IconSymbol name="play.circle.fill" size={22} color="#FFFFFF" />
+                <IconSymbol name="play.circle.fill" size={s(22)} color="#FFFFFF" />
                 <Text style={styles.menuLabel}>{t.menu.hopePlay}</Text>
               </Pressable>
             </View>
 
             {/* About item */}
-            <View style={{ paddingTop: 12 }}>
+            <View style={{ paddingTop: s(12) }}>
               <View style={styles.separator} />
               <Pressable
                 onPress={() => {
@@ -330,9 +347,9 @@ export function HeaderMenu({
                   { opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <IconSymbol name="info.circle" size={22} color="#FFFFFF" />
+                <IconSymbol name="info.circle" size={s(22)} color="#FFFFFF" />
                 <Text
-                  style={[styles.menuLabel, { marginLeft: 14, marginRight: 6 }]}
+                  style={[styles.menuLabel, { marginLeft: s(14), marginRight: s(6) }]}
                 >
                   {t.menu.about}
                 </Text>
@@ -378,7 +395,7 @@ export function HeaderMenu({
               >
                 <IconSymbol
                   name="xmark"
-                  size={18}
+                  size={s(18)}
                   color="rgba(255,255,255,0.6)"
                 />
               </Pressable>
@@ -503,7 +520,7 @@ export function HeaderMenu({
               }}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.6 : 1,
-                marginTop: 20,
+                marginTop: s(20),
               })}
             >
               <Text style={styles.deleteAccountLink}>
@@ -530,11 +547,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(20,20,20,0.92)",
     borderLeftWidth: 1,
     borderLeftColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: 24,
+    paddingHorizontal: s(24),
   },
   closeButton: {
     alignSelf: "flex-end",
-    padding: 4,
+    padding: s(4),
   },
   menuItems: {
     flex: 1,
@@ -542,15 +559,15 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 16,
-    gap: 14,
+    paddingVertical: s(16),
+    gap: s(14),
   },
   menuLogo: {
-    width: 24,
-    height: 24,
+    width: s(24),
+    height: s(24),
   },
   menuLabel: {
-    fontSize: 17,
+    fontSize: s(17),
     fontFamily: "Poppins_500Medium",
     color: "#FFFFFF",
   },
@@ -561,26 +578,26 @@ const styles = StyleSheet.create({
   menuAbout: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 16,
+    paddingVertical: s(16),
     gap: 0,
   },
   menuAboutLogo: {
-    width: 28,
-    height: 20,
+    width: s(28),
+    height: s(20),
   },
   aboutBackdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 24,
+    padding: s(24),
   },
   aboutDialog: {
     width: "100%",
-    maxWidth: 340,
+    maxWidth: s(340),
     maxHeight: "80%",
     backgroundColor: "rgba(20,20,20,0.92)",
-    borderRadius: 28,
+    borderRadius: s(28),
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
     overflow: "hidden",
@@ -590,33 +607,33 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "stretch",
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingHorizontal: s(16),
+    paddingTop: s(12),
   },
   aboutCloseButton: {
-    padding: 4,
+    padding: s(4),
   },
   aboutContent: {
-    paddingHorizontal: 28,
-    paddingTop: 8,
-    paddingBottom: 28,
+    paddingHorizontal: s(28),
+    paddingTop: s(8),
+    paddingBottom: s(28),
     alignItems: "center",
   },
   aboutLogoWrap: {
-    marginBottom: 16,
+    marginBottom: s(16),
   },
   aboutLogo: {
-    width: 120,
-    height: 132,
+    width: s(120),
+    height: s(132),
   },
   aboutScroll: {
     flexGrow: 0,
   },
   aboutText: {
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_400Regular",
     color: "rgba(255,255,255,0.65)",
-    lineHeight: 22,
+    lineHeight: s(22),
     textAlign: "center",
   },
   aboutLink: {
@@ -626,58 +643,58 @@ const styles = StyleSheet.create({
   },
   signOutDialog: {
     width: "100%",
-    maxWidth: 300,
+    maxWidth: s(300),
     backgroundColor: "rgba(20,20,20,0.92)",
-    borderRadius: 20,
+    borderRadius: s(20),
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: 24,
-    paddingTop: 28,
-    paddingBottom: 24,
+    paddingHorizontal: s(24),
+    paddingTop: s(28),
+    paddingBottom: s(24),
     alignItems: "center",
   },
   signOutTitle: {
     color: "#FFFFFF",
-    fontSize: 17,
+    fontSize: s(17),
     fontFamily: "Poppins_600SemiBold",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: s(8),
   },
   signOutMessage: {
     color: "rgba(255,255,255,0.6)",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_400Regular",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: s(24),
   },
   signOutBtn: {
     backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 12,
-    paddingVertical: 14,
+    borderRadius: s(12),
+    paddingVertical: s(14),
     alignItems: "center",
     alignSelf: "stretch",
   },
   signOutBtnText: {
     color: "#D32F2F",
-    fontSize: 15,
+    fontSize: s(15),
     fontFamily: "Poppins_600SemiBold",
   },
   signOutCancelBtn: {
     backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 12,
-    paddingVertical: 14,
+    borderRadius: s(12),
+    paddingVertical: s(14),
     alignItems: "center",
     alignSelf: "stretch",
-    marginTop: 10,
+    marginTop: s(10),
   },
   signOutCancelText: {
     color: "rgba(255,255,255,0.5)",
-    fontSize: 14,
+    fontSize: s(14),
     fontFamily: "Poppins_500Medium",
   },
   deleteAccountLink: {
     color: "rgba(255,255,255,0.35)",
-    fontSize: 12,
+    fontSize: s(12),
     fontFamily: "Poppins_400Regular",
     textDecorationLine: "underline",
   },

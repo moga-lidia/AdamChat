@@ -1,4 +1,6 @@
 import { TypingIndicator } from "@/components/chat/typing-indicator";
+import { s } from "@/constants/scale";
+import { useI18n } from "@/hooks/use-i18n";
 import type { ChatMessage as ChatMessageType } from "@/types/chat";
 import * as Clipboard from "expo-clipboard";
 import {
@@ -20,7 +22,7 @@ function isAcademiaUrl(url: string): boolean {
   return url.includes("academiasperanta.ro") && url.includes("/courses");
 }
 
-function renderTextWithLinks(content: string, textStyle: any[]) {
+function renderTextWithLinks(content: string, textStyle: any[], viewCourseLabel?: string) {
   const tokens: { type: "text" | "link"; text: string; url?: string }[] = [];
   let lastIndex = 0;
 
@@ -35,8 +37,8 @@ function renderTextWithLinks(content: string, textStyle: any[]) {
     } else if (match[3]) {
       // Bare URL
       const url = match[3];
-      const label = isAcademiaUrl(url)
-        ? "Vezi cursul pe Academia Speranța"
+      const label = isAcademiaUrl(url) && viewCourseLabel
+        ? viewCourseLabel
         : url;
       tokens.push({ type: "link", text: label, url });
       // Ensure newline after academia course links for separation
@@ -97,10 +99,11 @@ function formatTime(timestamp: number): string {
 
 export function ChatMessage({ message, fontSize, isTyping }: Props) {
   const isUser = message.role === "user";
+  const { t } = useI18n();
 
   const handleCopy = () => {
     Clipboard.setStringAsync(message.content);
-    Alert.alert("", "Textul a fost copiat!");
+    Alert.alert("", t.chat.textCopied);
   };
 
   return (
@@ -125,7 +128,7 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
                 style={[
                   styles.text,
                   { color: "#FFFFFF" },
-                  fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
+                  fontSize != null && { fontSize: s(fontSize), lineHeight: s(fontSize * 1.4) },
                 ]}
                 android_hyphenationFrequency="none"
               >
@@ -141,8 +144,8 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
               renderTextWithLinks(message.content, [
                 styles.text,
                 { color: "#FFFFFF" },
-                fontSize != null && { fontSize, lineHeight: fontSize * 1.4 },
-              ])
+                fontSize != null && { fontSize: s(fontSize), lineHeight: s(fontSize * 1.4) },
+              ], t.chat.viewCourse)
             )}
           </Pressable>
         )}
@@ -164,8 +167,8 @@ export function ChatMessage({ message, fontSize, isTyping }: Props) {
 const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
-    marginVertical: 4,
-    paddingHorizontal: 12,
+    marginVertical: s(4),
+    paddingHorizontal: s(12),
   },
   rowUser: {
     justifyContent: "flex-end",
@@ -175,42 +178,42 @@ const styles = StyleSheet.create({
   },
   bubbleColumnUser: {
     maxWidth: "78%",
-    marginRight: 4,
+    marginRight: s(4),
   },
   bubbleColumnAssistant: {
     maxWidth: "82%",
   },
   avatarWrapper: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    marginRight: 8,
-    marginTop: 4,
+    width: s(24),
+    height: s(24),
+    borderRadius: s(12),
+    marginRight: s(8),
+    marginTop: s(4),
     backgroundColor: "#000000",
     overflow: "hidden",
   },
   avatar: {
-    width: 24,
-    height: 24,
+    width: s(24),
+    height: s(24),
   },
   bubbleUser: {
     backgroundColor: "#333333",
-    borderRadius: 18,
-    borderBottomRightRadius: 4,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    borderRadius: s(18),
+    borderBottomRightRadius: s(4),
+    paddingHorizontal: s(14),
+    paddingVertical: s(10),
   },
   text: {
-    fontSize: 15,
+    fontSize: s(15),
     fontFamily: "Poppins_400Regular",
-    lineHeight: 22,
+    lineHeight: s(22),
   },
   timestamp: {
-    fontSize: 11,
+    fontSize: s(11),
     fontFamily: "Poppins_400Regular",
     color: "#666",
-    marginTop: 3,
-    marginHorizontal: 4,
+    marginTop: s(3),
+    marginHorizontal: s(4),
   },
   timestampUser: {
     textAlign: "right",

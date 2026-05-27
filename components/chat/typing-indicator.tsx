@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 
+import { s } from "@/constants/scale";
+
 export function TypingIndicator() {
   const dotColor = "#B5B7DD";
 
@@ -48,7 +50,7 @@ export function TypingIndicator() {
                 {
                   translateY: anim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, -6],
+                    outputRange: [0, -s(6)],
                   }),
                 },
               ],
@@ -68,14 +70,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
-    paddingTop: 18,
-    paddingBottom: 6,
-    paddingHorizontal: 2,
+    gap: s(5),
+    paddingTop: s(18),
+    paddingBottom: s(6),
+    paddingHorizontal: s(2),
   },
   dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: s(6),
+    height: s(6),
+    borderRadius: s(3),
   },
 });
