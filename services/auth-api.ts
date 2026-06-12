@@ -80,13 +80,16 @@ export function verifyAppleToken(
   }
 }
 
-/** Register a new user with email/password. */
+/** Register a new user with email/password. Retries once on failure, then falls back to sign-in. */
 export async function registerWithEmail(
   data: RegisterRequest,
   lang: Lang = "ro",
 ): Promise<{ user: AuthUser; tokens: AuthTokens } | { error: string }> {
   const t = getTranslation(lang);
-  try {
+
+  const attemptRegister = async (): Promise<
+    { user: AuthUser; tokens: AuthTokens } | { error: string; status?: number }
+  > => {
     const url = `${API_BASE}/users/register/disciple?website=${encodeURIComponent(WEBSITE)}&environmentId=${ENVIRONMENT_ID}`;
     const res = await fetch(url, {
       method: "POST",
@@ -96,15 +99,17 @@ export async function registerWithEmail(
       },
       body: JSON.stringify(data),
     });
+    const rawBody = await res.text();
 
     if (!res.ok) {
-      const body = await res.json().catch(() => null);
+      const body = rawBody ? JSON.parse(rawBody) : null;
       return {
         error: body?.message ?? `${t.errors.registration} (${res.status})`,
+        status: res.status,
       };
     }
 
-    const tokenData = (await res.json()) as TokenResponse;
+    const tokenData = JSON.parse(rawBody) as TokenResponse;
     const tokens: AuthTokens = {
       accessToken: tokenData.accessToken,
       refreshToken: tokenData.refreshToken,
@@ -121,6 +126,22 @@ export async function registerWithEmail(
     };
 
     return { user, tokens };
+  };
+
+  try {
+    const first = await attemptRegister();
+    if (!("error" in first)) return first;
+
+    const second = await attemptRegister();
+    if (!("error" in second)) return second;
+
+    // Both register attempts failed — try signing in as fallback
+    const signInResult = await signInWithEmail(data.email, data.password, lang);
+    if (!("error" in signInResult)) {
+      return signInResult;
+    }
+
+    return { error: second.error };
   } catch {
     return { error: t.errors.connection };
   }
@@ -142,15 +163,16 @@ export async function signInWithEmail(
       },
       body: JSON.stringify({ email, password, grantType: "password" }),
     });
+    const rawBody = await res.text();
 
     if (!res.ok) {
-      const body = await res.json().catch(() => null);
+      const body = rawBody ? JSON.parse(rawBody) : null;
       return {
         error: body?.message ?? `${t.errors.wrongCredentials} (${res.status})`,
       };
     }
 
-    const tokenData = (await res.json()) as TokenResponse;
+    const tokenData = JSON.parse(rawBody) as TokenResponse;
     const tokens: AuthTokens = {
       accessToken: tokenData.accessToken,
       refreshToken: tokenData.refreshToken,
@@ -170,20 +192,22 @@ export async function signInWithEmail(
   }
 }
 
-/** Request account deletion. */
+/** Delete user account permanently. */
 export async function requestAccountDeletion(
   accessToken: string,
   lang: Lang = "ro",
+  userId?: string,
 ): Promise<{ success: true } | { error: string }> {
   const t = getTranslation(lang);
   try {
-    const res = await fetch(`${API_BASE}/termination-requests`, {
-      method: "POST",
+    const uid = userId ?? (await fetchUserSelf(accessToken))?.id;
+    if (!uid) return { error: t.errors.connection };
+
+    const res = await fetch(`${API_BASE}/users/${uid}`, {
+      method: "DELETE",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ callback: WEBSITE }),
     });
 
     if (!res.ok) {

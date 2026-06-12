@@ -189,13 +189,13 @@ export const translations: Record<Lang, TranslationKeys> = {
       confirm: "Da",
       sperantaTvLive: "Speranța TV Live",
       sperantaFmLive: "Speranța FM Live",
-      sperantaFmMusic: "Speranța Music",
+      sperantaFmMusic: "Speranța FM Music",
       sperantaTvYoutube: "Speranța TV YouTube",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
       about: "Despre",
       aboutDescriptionPart1:
-        "ADAM este un asistent biblic bazat pe inteligență artificială, dezvoltat în cadrul platformei Academia Speranța. Un proiect dezvoltat de\n",
+        "ADAM este un asistent biblic bazat pe inteligență artificială, dezvoltat în cadrul platformei Academia Speranța. Un proiect realizat de\n",
       aboutLinkText: "Trustul Media Speranța",
       aboutDescriptionPart2:
         ".\n\nAplicația oferă acces la cursuri biblice video și text, răspunde la întrebări despre Biblie și, atunci când este nevoie, facilitează legătura cu mentori umani pentru sprijin și îndrumare spirituală.\n\nScopul proiectului este de a face studiul Bibliei mai accesibil, mai personal și mai relevant pentru oamenii care caută răspunsuri și îndrumare spirituală în mediul digital.",
@@ -258,7 +258,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       deleteAccountConfirmMessage:
         "Ești sigur că vrei să ștergi contul? Toate datele tale vor fi eliminate. Această acțiune este ireversibilă.",
       deleteAccountSuccess:
-        "Cererea de ștergere a fost trimisă. Contul tău va fi eliminat în curând.",
+        "Cererea de ștergere a fost trimisă. Contul tău și toate datele asociate vor fi șterse definitiv.",
       deleteAccountError: "Nu am putut trimite cererea de ștergere.",
     },
     mentor: {
@@ -283,7 +283,7 @@ export const translations: Record<Lang, TranslationKeys> = {
     errors: {
       registration: "Eroare la înregistrare",
       connection: "Eroare de conexiune. Încearcă din nou.",
-      wrongCredentials: "Email sau parolă incorectă.",
+      wrongCredentials: "Email sau parolă incorectă, sau contul nu există.",
       profileLoad: "Nu am putut încărca profilul utilizatorului.",
     },
   },
@@ -340,7 +340,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       confirm: "Yes",
       sperantaTvLive: "Speranța TV Live",
       sperantaFmLive: "Speranța FM Live",
-      sperantaFmMusic: "Speranța Music",
+      sperantaFmMusic: "Speranța FM Music",
       sperantaTvYoutube: "Speranța TV YouTube",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
@@ -409,7 +409,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       deleteAccountConfirmMessage:
         "Are you sure you want to delete your account? All your data will be removed. This action is irreversible.",
       deleteAccountSuccess:
-        "Deletion request has been sent. Your account will be removed soon.",
+        "Deletion request has been sent. Your account and all associated data will be permanently deleted.",
       deleteAccountError: "Could not send the deletion request.",
     },
     mentor: {
@@ -434,7 +434,8 @@ export const translations: Record<Lang, TranslationKeys> = {
     errors: {
       registration: "Registration error",
       connection: "Connection error. Please try again.",
-      wrongCredentials: "Wrong email or password.",
+      wrongCredentials:
+        "Wrong email or password, or the account does not exist.",
       profileLoad: "Could not load user profile.",
     },
   },
@@ -492,7 +493,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       confirm: "Igen",
       sperantaTvLive: "Speranța TV Live",
       sperantaFmLive: "Speranța FM Live",
-      sperantaFmMusic: "Speranța Music",
+      sperantaFmMusic: "Speranța FM Music",
       sperantaTvYoutube: "Speranța TV YouTube",
       hopeDiscovery: "Hope Discovery",
       hopePlay: "Hope Play",
@@ -561,7 +562,7 @@ export const translations: Record<Lang, TranslationKeys> = {
       deleteAccountConfirmMessage:
         "Biztosan törölni szeretnéd a fiókodat? Minden adatod eltávolításra kerül. Ez a művelet visszafordíthatatlan.",
       deleteAccountSuccess:
-        "A törlési kérelem elküldve. A fiókod hamarosan eltávolításra kerül.",
+        "A törlési kérelem elküldve. A fiókod és az összes kapcsolódó adat véglegesen törlésre kerül.",
       deleteAccountError: "Nem sikerült elküldeni a törlési kérelmet.",
     },
     mentor: {
@@ -585,7 +586,7 @@ export const translations: Record<Lang, TranslationKeys> = {
     errors: {
       registration: "Regisztrációs hiba",
       connection: "Csatlakozási hiba. Kérlek, próbáld újra.",
-      wrongCredentials: "Hibás e-mail vagy jelszó.",
+      wrongCredentials: "Hibás e-mail vagy jelszó, vagy a fiók nem létezik.",
       profileLoad: "Nem sikerült betölteni a felhasználói profilt.",
     },
   },

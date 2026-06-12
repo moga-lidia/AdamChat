@@ -177,6 +177,7 @@ export function AuthModal({ visible, onClose }: Props) {
             const result = await requestAccountDeletion(
               tokens.accessToken,
               lang,
+              user?.id,
             );
             if ("success" in result) {
               await signOut();
